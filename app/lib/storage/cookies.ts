@@ -1,7 +1,6 @@
 import Cookies from 'js-cookie';
-import { Storage } from 'redux-persist';
 
-const cookieStorage: Storage = {
+const cookieStorage = {
   getItem: (key: string) => {
     const item = Cookies.get(key);
     return item ? Promise.resolve(item) : Promise.resolve(null);
