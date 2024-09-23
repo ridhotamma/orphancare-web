@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 
 const LoginPage = () => {
@@ -65,12 +66,12 @@ const LoginPage = () => {
                 </label>
               </div>
               <div className='text-sm'>
-                <a
-                  href='#'
+                <Link
+                  href='/auth/forgot-password'
                   className='font-medium text-primary hover:text-secondary'
                 >
                   Forgot your password?
-                </a>
+                </Link>
               </div>
             </div>
             <button
@@ -80,15 +81,6 @@ const LoginPage = () => {
               Sign In
             </button>
           </form>
-          <p className='mt-8 text-center text-sm text-text'>
-            Not a member?{' '}
-            <a
-              href='#'
-              className='font-medium text-primary hover:text-secondary'
-            >
-              Sign up now
-            </a>
-          </p>
         </div>
       </div>
     </div>

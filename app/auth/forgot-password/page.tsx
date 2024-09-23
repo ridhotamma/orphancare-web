@@ -62,14 +62,14 @@ const ForgotPasswordPage = () => {
                 If an account exists for {email}, you will receive password
                 reset instructions.
               </p>
-              <Link href='/login' className='text-primary hover:text-secondary'>
+              <Link href='/auth/login' className='text-primary hover:text-secondary'>
                 Return to Login
               </Link>
             </div>
           )}
           <div className='mt-8 text-center'>
             <Link
-              href='/login'
+              href='/auth/login'
               className='text-sm text-primary hover:text-secondary'
             >
               Remember your password? Sign in
