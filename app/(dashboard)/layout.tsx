@@ -11,6 +11,7 @@ import {
   Moon,
   X,
   MoreVertical,
+  MonitorSmartphone,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
@@ -34,6 +35,8 @@ import {
   DropdownMenuTrigger,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuRadioItem,
+  DropdownMenuRadioGroup,
 } from '@/components/ui/dropdown-menu';
 import {
   Dialog,
@@ -98,8 +101,7 @@ const ThemeSettingsDialog: React.FC<ThemeSettingsDialogProps> = ({
               </SelectItem>
               <SelectItem value='system'>
                 <div className='flex items-center'>
-                  <Sun className='mr-2 h-4 w-4 dark:hidden' />
-                  <Moon className='mr-2 h-4 w-4 hidden dark:inline' />
+                  <MonitorSmartphone className='mr-2 h-4 w-4' />
                   System
                 </div>
               </SelectItem>
@@ -122,9 +124,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [themeDialogOpen, setThemeDialogOpen] = useState(false);
   const pathname = usePathname();
+  
   const { theme, setTheme } = useTheme() as {
     theme: Theme | undefined;
-    setTheme: (theme: Theme) => void;
+    setTheme: (value: string) => void;
   };
 
   const user = {
@@ -241,15 +244,33 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
             {/* Desktop version */}
             <div className='hidden lg:flex items-center gap-2'>
-              <Button
-                variant='outline'
-                size='icon'
-                onClick={() => setThemeDialogOpen(true)}
-              >
-                <Sun className='h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0' />
-                <Moon className='absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100' />
-                <span className='sr-only'>Toggle theme</span>
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant='outline' size='icon'>
+                    <Sun className='h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0' />
+                    <Moon className='absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100' />
+                    <span className='sr-only'>Toggle theme</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className='w-56'>
+                  <DropdownMenuLabel>Theme Settings</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuRadioGroup
+                    value={theme}
+                    onValueChange={setTheme}
+                  >
+                    <DropdownMenuRadioItem value='light'>
+                      Light
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value='dark'>
+                      Dark
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value='system'>
+                      System
+                    </DropdownMenuRadioItem>
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button
