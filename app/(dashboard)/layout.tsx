@@ -1,10 +1,13 @@
+// File: /dashboard/layout.tsx
+
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 import { Menu, X, LogOut, Settings2 } from 'lucide-react';
 import menuItems from '@/app/constants/menu-map';
-import Image from 'next/image';
 
 type DashboardLayoutProps = {
   children: React.ReactNode;
@@ -12,6 +15,7 @@ type DashboardLayoutProps = {
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
@@ -20,6 +24,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     role: 'Administrator',
     avatarUrl: 'https://randomuser.me/api/portraits/women/90.jpg',
   };
+
+  const currentPageTitle = useMemo(() => {
+    const currentMenuItem = menuItems.find((item) => item.href === pathname);
+    return currentMenuItem ? currentMenuItem.label : 'Dashboard';
+  }, [pathname]);
 
   return (
     <div className='flex h-screen bg-background'>
@@ -51,7 +60,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className='flex items-center py-2 px-4 hover:bg-blue-600 rounded'
+                    className={`flex items-center py-2 px-4 rounded transition-colors duration-200 ${
+                      pathname === item.href
+                        ? 'bg-blue-700 text-white'
+                        : 'text-white hover:bg-blue-600'
+                    }`}
                     onClick={() => setSidebarOpen(false)}
                   >
                     <item.icon className='mr-3 h-5 w-5' />
@@ -96,8 +109,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               >
                 <Menu className='h-6 w-6' />
               </button>
-              <h2 className='text-2xl font-semibold text-text ml-4'>
-                Dashboard
+              <h2 className='text-2xl font-semibold text-text ml-4 lg:ml-0'>
+                {currentPageTitle}
               </h2>
             </div>
             {/* Logout button */}
