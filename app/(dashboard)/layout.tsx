@@ -3,8 +3,16 @@
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, LogOut, Settings2, Sun, Moon, X } from 'lucide-react';
-import menuItems from '@/constants/menu-map';
+import {
+  Menu,
+  LogOut,
+  Settings2,
+  Sun,
+  Moon,
+  X,
+  MoreVertical,
+} from 'lucide-react';
+import { useTheme } from 'next-themes';
 
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -24,8 +32,87 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { useTheme } from 'next-themes';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+// You'll need to create this file with your menu items
+import menuItems from '@/constants/menu-map';
+
+type Theme = 'light' | 'dark' | 'system';
+
+interface ThemeSettingsDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+}
+
+const ThemeSettingsDialog: React.FC<ThemeSettingsDialogProps> = ({
+  open,
+  onOpenChange,
+  theme,
+  setTheme,
+}) => {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Choose a theme</DialogTitle>
+          <DialogDescription>
+            Select your preferred theme option.
+          </DialogDescription>
+        </DialogHeader>
+        <div className='py-4'>
+          <Select value={theme} onValueChange={setTheme}>
+            <SelectTrigger className='w-full'>
+              <SelectValue placeholder='Select a theme' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='light'>
+                <div className='flex items-center'>
+                  <Sun className='mr-2 h-4 w-4' />
+                  Light
+                </div>
+              </SelectItem>
+              <SelectItem value='dark'>
+                <div className='flex items-center'>
+                  <Moon className='mr-2 h-4 w-4' />
+                  Dark
+                </div>
+              </SelectItem>
+              <SelectItem value='system'>
+                <div className='flex items-center'>
+                  <Sun className='mr-2 h-4 w-4 dark:hidden' />
+                  <Moon className='mr-2 h-4 w-4 hidden dark:inline' />
+                  System
+                </div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <DialogFooter>
+          <Button onClick={() => onOpenChange(false)}>Close</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 type DashboardLayoutProps = {
   children: React.ReactNode;
@@ -33,7 +120,12 @@ type DashboardLayoutProps = {
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [themeDialogOpen, setThemeDialogOpen] = useState(false);
   const pathname = usePathname();
+  const { theme, setTheme } = useTheme() as {
+    theme: Theme | undefined;
+    setTheme: (theme: Theme) => void;
+  };
 
   const user = {
     name: 'John Doe',
@@ -49,8 +141,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const handleLogout = () => {
     console.log('Logging out...');
   };
-
-  const { setTheme } = useTheme();
 
   const SidebarContent = () => (
     <div className='flex flex-col h-full w-full bg-primary dark:bg-blue-950 text-white'>
@@ -149,27 +239,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               </h2>
             </div>
 
+            {/* Desktop version */}
             <div className='hidden lg:flex items-center gap-2'>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant='outline' size='icon'>
-                    <Sun className='h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0' />
-                    <Moon className='absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100' />
-                    <span className='sr-only'>Toggle theme</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align='end'>
-                  <DropdownMenuItem onClick={() => setTheme('light')}>
-                    Light
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setTheme('dark')}>
-                    Dark
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setTheme('system')}>
-                    System
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Button
+                variant='outline'
+                size='icon'
+                onClick={() => setThemeDialogOpen(true)}
+              >
+                <Sun className='h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0' />
+                <Moon className='absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100' />
+                <span className='sr-only'>Toggle theme</span>
+              </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button
@@ -199,12 +279,65 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 </AlertDialogContent>
               </AlertDialog>
             </div>
+
+            {/* Mobile version */}
+            <div className='lg:hidden'>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant='ghost' size='icon'>
+                    <MoreVertical className='h-5 w-5' />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align='end'>
+                  <DropdownMenuLabel>Options</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onSelect={() => setThemeDialogOpen(true)}>
+                    <Sun className='h-4 w-4 mr-2 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0' />
+                    <Moon className='absolute h-4 w-4 mr-2 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100' />
+                    <span>Theme Settings</span>
+                  </DropdownMenuItem>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                        <LogOut className='h-4 w-4 mr-2' />
+                        Logout
+                      </DropdownMenuItem>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you sure you want to logout?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action will end your current session. You&apos;ll
+                          need to log in again to access your account.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleLogout}>
+                          Logout
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </header>
         <main className='flex-1 overflow-x-hidden overflow-y-auto bg-background'>
           <div className='container mx-auto px-6 py-8'>{children}</div>
         </main>
       </div>
+
+      {/* Theme Settings Dialog */}
+      <ThemeSettingsDialog
+        open={themeDialogOpen}
+        onOpenChange={setThemeDialogOpen}
+        theme={theme || 'system'}
+        setTheme={setTheme}
+      />
     </div>
   );
 };

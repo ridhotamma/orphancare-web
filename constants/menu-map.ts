@@ -34,7 +34,7 @@ const menuItems: MenuItem[] = [
   {
     id: 'caretakers',
     label: 'Care Takers',
-    title: 'Caretaker Data',
+    title: 'Care Takers Data',
     href: '/users/caretakers',
     icon: UserCog,
   },
@@ -47,7 +47,7 @@ const menuItems: MenuItem[] = [
   },
   {
     id: 'bedrooms',
-    label: 'Bedrooms',
+    label: 'Bed Rooms',
     title: 'Bed Room Data',
     href: '/bedrooms',
     icon: Bed,
