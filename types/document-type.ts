@@ -1,4 +1,4 @@
-import { Document } from '@/app/types/document';
+import { Document } from '@/types/document';
 
 export type DocumentType = {
   id: string;

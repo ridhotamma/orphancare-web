@@ -1,4 +1,4 @@
-import { Guardian } from "@/app/types/guardian";
+import { Guardian } from "@/types/guardian";
 
 export type GuardianType = {
     id: string;

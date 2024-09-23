@@ -1,6 +1,6 @@
-import { Profile } from '@/app/types/profile';
-import { Document } from '@/app/types/document';
-import { RoleType } from '@/app/types/enums';
+import { Profile } from '@/types/profile';
+import { Document } from '@/types/document';
+import { RoleType } from '@/types/enums';
 
 export type User = {
   id: string;
@@ -8,7 +8,7 @@ export type User = {
   password: string;
   username: string;
   roles: Set<RoleType>;
-  profile: Profile | null;
+  profile: Partial<Profile> | null;
   active: boolean;
   documents: Set<Document>;
   createdAt: Date;

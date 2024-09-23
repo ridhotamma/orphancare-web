@@ -5,6 +5,6 @@ export enum Gender {
 }
 
 export enum RoleType {
-  ADMIN = 'ADMIN',
-  USER = 'USER',
+  ADMIN = 'ROLE_USER',
+  USER = 'ROLE_ADMIN',
 }

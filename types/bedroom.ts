@@ -1,5 +1,5 @@
-import { BedRoomType } from '@/app/types/bedroom-type';
-import { Profile } from '@/app/types/profile';
+import { BedRoomType } from '@/types/bedroom-type';
+import { Profile } from '@/types/profile';
 
 export type BedRoom = {
   id: string; 

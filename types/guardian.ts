@@ -1,5 +1,5 @@
-import { Address } from '@/app/types/address';
-import { GuardianType } from '@/app/types/guardian-type';
+import { Address } from '@/types/address';
+import { GuardianType } from '@/types/guardian-type';
 
 export type Guardian = {
   id: string;

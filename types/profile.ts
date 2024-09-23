@@ -1,8 +1,8 @@
-import { User } from '@/app/types/user';
-import { Address } from '@/app/types/address';
-import { BedRoom } from '@/app/types/bedroom';
-import { Guardian } from '@/app/types/guardian';
-import { Gender } from '@/app/types/enums';
+import { User } from '@/types/user';
+import { Address } from '@/types/address';
+import { BedRoom } from '@/types/bedroom';
+import { Guardian } from '@/types/guardian';
+import { Gender } from '@/types/enums';
 
 export type Profile = {
   id: string;
