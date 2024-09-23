@@ -1,13 +1,18 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import BackgroundImage from '@/images/background-image-1.webp';
 
 const LoginPage = () => {
   return (
     <div className='flex min-h-screen bg-background'>
       <div className='hidden lg:block lg:w-1/2 relative'>
         <Image
-          src='https://picsum.photos/1080?random=1'
+          src={BackgroundImage}
           alt='Login background'
           layout='fill'
           objectFit='cover'
@@ -20,50 +25,33 @@ const LoginPage = () => {
             Welcome Back
           </h2>
           <form className='space-y-6'>
-            <div>
-              <label
-                htmlFor='email'
-                className='block text-sm font-medium text-text mb-1'
-              >
-                Email Address
-              </label>
-              <input
+            <div className='space-y-2'>
+              <Label htmlFor='email'>Email Address</Label>
+              <Input
                 type='email'
                 id='email'
-                name='email'
-                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary'
+                placeholder='Enter your email'
                 required
               />
             </div>
-            <div>
-              <label
-                htmlFor='password'
-                className='block text-sm font-medium text-text mb-1'
-              >
-                Password
-              </label>
-              <input
+            <div className='space-y-2'>
+              <Label htmlFor='password'>Password</Label>
+              <Input
                 type='password'
                 id='password'
-                name='password'
-                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary'
+                placeholder='Enter your password'
                 required
               />
             </div>
             <div className='flex items-center justify-between'>
-              <div className='flex items-center'>
-                <input
-                  id='remember-me'
-                  name='remember-me'
-                  type='checkbox'
-                  className='h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded'
-                />
-                <label
+              <div className='flex items-center space-x-2'>
+                <Checkbox id='remember-me' />
+                <Label
                   htmlFor='remember-me'
-                  className='ml-2 block text-sm text-text'
+                  className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
                 >
                   Remember me
-                </label>
+                </Label>
               </div>
               <div className='text-sm'>
                 <Link
@@ -74,12 +62,9 @@ const LoginPage = () => {
                 </Link>
               </div>
             </div>
-            <button
-              type='submit'
-              className='w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-opacity-90 transition duration-300'
-            >
+            <Button type='submit' className='w-full'>
               Sign In
-            </button>
+            </Button>
           </form>
         </div>
       </div>

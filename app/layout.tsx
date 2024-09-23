@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Nunito } from 'next/font/google';
+import { ThemeProvider } from '@/components/provider/theme-provider';
 import './globals.css';
 
 const nunito = Nunito({
@@ -18,8 +19,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en'>
-      <body className={`${nunito.className} antialiased`}>{children}</body>
+    <html lang='en' suppressHydrationWarning>
+      <body className={`${nunito.className} antialiased`}>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='dark'
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

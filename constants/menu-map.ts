@@ -12,6 +12,7 @@ export interface MenuItem {
   id: string;
   label: string;
   href: string;
+  title: string;
   icon: LucideIcon;
 }
 
@@ -19,26 +20,42 @@ const menuItems: MenuItem[] = [
   {
     id: 'dashboard',
     label: 'Dashboard',
+    title: 'Dashboard',
     href: '/dashboard',
     icon: LayoutDashboard,
   },
   {
     id: 'orphan-children',
-    label: 'Orphan Children',
+    label: 'Children',
+    title: 'Children Data',
     href: '/users/children',
     icon: Users,
   },
   {
     id: 'caretakers',
     label: 'Care Takers',
+    title: 'Caretaker Data',
     href: '/users/caretakers',
     icon: UserCog,
   },
-  { id: 'documents', label: 'Documents', href: '/documents', icon: FileText },
-  { id: 'bedrooms', label: 'Bedrooms', href: '/bedrooms', icon: Bed },
+  {
+    id: 'documents',
+    label: 'Documents',
+    title: 'Manage Document',
+    href: '/documents',
+    icon: FileText,
+  },
+  {
+    id: 'bedrooms',
+    label: 'Bedrooms',
+    title: 'Bed Room Data',
+    href: '/bedrooms',
+    icon: Bed,
+  },
   {
     id: 'inventories',
     label: 'Inventories',
+    title: 'Manage Inventories',
     href: '/inventories',
     icon: Package,
   },

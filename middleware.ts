@@ -8,11 +8,6 @@ export function middleware(request: NextRequest) {
     url.pathname = '/users/children';
     return NextResponse.redirect(url);
   }
-
-  if (url.pathname === '/') {
-    url.pathname = '/dashboard';
-    return NextResponse.redirect(url);
-  }
 }
 
 export const config = {
