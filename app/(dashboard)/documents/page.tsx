@@ -1,8 +1,8 @@
 'use client'
 
-import DocumentList from '@/components/documents/DocumentList';
-import { TabItem } from '@/components/layout/TabLayout';
-import TabLayout from '@/components/layout/TabLayout';
+import DocumentList from '@/components/documents/document-list';
+import { TabItem } from '@/components/layout/tab-layout';
+import TabLayout from '@/components/layout/tab-layout';
 import { BookLock, File } from 'lucide-react';
 
 const DocumentsPage = () => {

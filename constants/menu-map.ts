@@ -6,6 +6,8 @@ import {
   FileText,
   Bed,
   Package,
+  CalendarDays,
+  Gift,
 } from 'lucide-react';
 
 export interface MenuItem {
@@ -58,6 +60,20 @@ const menuItems: MenuItem[] = [
     title: 'Manage Inventories',
     href: '/inventories',
     icon: Package,
+  },
+  {
+    id: 'events',
+    label: 'Events',
+    title: 'Events',
+    href: '/events',
+    icon: CalendarDays,
+  },
+  {
+    id: 'donations',
+    label: 'Donations',
+    title: 'Donations',
+    href: '/donations',
+    icon: Gift,
   },
 ];
 

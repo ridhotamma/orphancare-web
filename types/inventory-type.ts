@@ -1,4 +1,4 @@
-export interface InventoryType {
+export type InventoryType = {
   id: string;
   name: string;
   type: string;

@@ -4,23 +4,17 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { BedDouble, Users, ArrowRight, Search, Plus } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { BedDouble, Users, Search, Plus, Eye } from 'lucide-react';
 import { mockBedRooms } from '@/data/mockup/bedroom-mockup';
 import { Profile } from '@/types/profile';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 const BedRoomPage: React.FC = () => {
-  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleAddBedroom = () => {
     console.log('add bed room');
-  };
-
-  const handleBedRoomClick = (id: string) => {
-    router.push(`/bedrooms/${id}`);
   };
 
   return (
@@ -43,9 +37,9 @@ const BedRoomPage: React.FC = () => {
         </div>
       </div>
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-        {mockBedRooms.map((bedroom) => (
+        {mockBedRooms.map((bedroom, index) => (
           <Card
-            key={bedroom.id}
+            key={index}
             className='hover:shadow-lg transition-shadow duration-300'
           >
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
@@ -65,7 +59,7 @@ const BedRoomPage: React.FC = () => {
                     <>
                       {index < 5 && (
                         <Avatar
-                          key={profile.id}
+                          key={index}
                           className='border-2 border-background transition-all ease-in-out duration-200'
                         >
                           <AvatarImage
@@ -95,13 +89,9 @@ const BedRoomPage: React.FC = () => {
                   </span>
                 </div>
               </div>
-              <button
-                onClick={() => handleBedRoomClick(bedroom.id)}
-                className='mt-4 flex items-center text-sm text-blue-500 hover:text-blue-600'
-              >
-                View Details
-                <ArrowRight className='ml-1 h-4 w-4' />
-              </button>
+              <Button variant='outline' className='w-full mt-8'>
+                <Eye className='mr-2 h-4 w-4' /> View Details
+              </Button>
             </CardContent>
           </Card>
         ))}
