@@ -110,7 +110,7 @@ const CareTakersPage = () => {
         {mockUsers.map((user) => (
           <div key={user.id}>
             <Card className='w-full overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300'>
-              <CardHeader className='bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4'>
+              <CardHeader className='bg-gradient-to-r from-blue-500 to-purple-500 dark:from-blue-700 dark:to-purple-700 text-white p-4'>
                 <div className='flex items-center space-x-4'>
                   <Avatar className='h-16 w-16 border-2 border-white'>
                     <AvatarImage
@@ -160,7 +160,7 @@ const CareTakersPage = () => {
                   </div>
                 </div>
               </CardContent>
-              <CardFooter className='bg-gray-50 p-4'>
+              <CardFooter className='p-4'>
                 <Button variant='outline' className='w-full'>
                   <Eye className='mr-2 h-4 w-4' /> View Details
                 </Button>

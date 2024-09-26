@@ -37,7 +37,7 @@ const statusColors = {
 const EventCard: React.FC<{ event: Event }> = ({ event }) => (
   <Card className='overflow-hidden transition-all hover:shadow-lg'>
     <CardContent className='p-0'>
-      <div className='bg-gradient-to-r from-blue-500 to-purple-500 p-4 text-white'>
+      <div className='bg-gradient-to-r from-blue-500 to-purple-500 dark:from-blue-700 dark:to-purple-700 p-4 text-white'>
         <h3 className='text-xl font-semibold mb-2'>{event.name}</h3>
         <Badge className={`${statusColors[event.status]} text-xs font-medium`}>
           {event.status}
@@ -61,7 +61,7 @@ const EventCard: React.FC<{ event: Event }> = ({ event }) => (
         </div>
       </div>
     </CardContent>
-    <CardFooter className='bg-gray-50 p-4'>
+    <CardFooter className='p-4'>
       <Button variant='outline' className='w-full'>
         <Eye className='mr-2 h-4 w-4' /> View Details
       </Button>

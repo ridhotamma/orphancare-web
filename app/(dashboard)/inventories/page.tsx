@@ -88,7 +88,7 @@ const InventoriesPage = () => {
                 </div>
               </div>
             </CardContent>
-            <CardFooter className='bg-gray-50 p-4'>
+            <CardFooter className='p-4'>
               <Button variant='outline' className='w-full'>
                 <Eye className='mr-2 h-4 w-4' /> View Details
               </Button>
