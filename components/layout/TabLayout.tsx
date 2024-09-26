@@ -16,7 +16,7 @@ const TabLayout: React.FC<TabLayoutProps> = ({ tabs, defaultTab }) => {
   const defaultValue = defaultTab || tabs[0]?.label;
 
   return (
-    <div className='w-full p-6 min-h-screen'>
+    <div className='w-full min-h-screen'>
       <Tabs defaultValue={defaultValue} className='w-full'>
         <TabsList className='w-full flex rounded-lg p-1'>
           {tabs.map((tab) => (

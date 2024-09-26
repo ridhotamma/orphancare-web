@@ -8,3 +8,10 @@ export enum RoleType {
   ADMIN = 'ROLE_USER',
   USER = 'ROLE_ADMIN',
 }
+
+export enum EventStatus {
+  FINISHED = 'FINISHED',
+  PENDING = 'PENDING',
+  ON_PROGRESS = 'ON_PROGRESS',
+  CANCELLED = 'CANCELLED',
+}

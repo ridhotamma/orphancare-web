@@ -1,6 +1,7 @@
-const InventoriesPage = () => {
-    return <div>documents page</div>;
-  };
-  
-  export default InventoriesPage;
-  
+import React from 'react';
+
+const InventoriesPage: React.FC = () => {
+  return <div>hello world</div>;
+};
+
+export default InventoriesPage;

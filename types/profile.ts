@@ -14,7 +14,7 @@ export type Profile = {
   bio?: string;
   phoneNumber?: string;
   gender: Gender;
-  user: User;
+  user: Partial<User>;
   address?: Address;
   bedRoom?: BedRoom;
   guardian?: Guardian;
