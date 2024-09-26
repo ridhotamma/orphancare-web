@@ -117,7 +117,7 @@ const ChildrenPage = () => {
                       src={user.profile?.profilePicture}
                       alt={user.username}
                     />
-                    <AvatarFallback className='text-xl font-bold text-gray-600'>
+                    <AvatarFallback className='text-xl font-bold text-gray-600 dark:text-gray-200'>
                       {user.username.slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
@@ -136,15 +136,15 @@ const ChildrenPage = () => {
               </CardHeader>
               <CardContent className='p-4'>
                 <div className='space-y-3'>
-                  <div className='flex items-center text-sm text-gray-600'>
+                  <div className='flex items-center text-sm text-gray-600 dark:text-gray-200'>
                     <Mail className='mr-2 h-4 w-4' />
                     {user.email}
                   </div>
-                  <div className='flex items-center text-sm text-gray-600'>
+                  <div className='flex items-center text-sm text-gray-600 dark:text-gray-200'>
                     <FileText className='mr-2 h-4 w-4' />
                     Documents: {user.documents.size}
                   </div>
-                  <div className='flex items-center text-sm text-gray-600'>
+                  <div className='flex items-center text-sm text-gray-600 dark:text-gray-200'>
                     <Calendar className='mr-2 h-4 w-4' />
                     Joined: {user.createdAt.toLocaleDateString()}
                   </div>

@@ -23,7 +23,7 @@ const InventoriesPage = () => {
       <div className='mb-8 flex flex-col sm:flex-row gap-4'>
         <div className='relative flex-grow'>
           <Search
-            className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'
+            className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-100'
             size={18}
           />
           <Input
@@ -61,7 +61,7 @@ const InventoriesPage = () => {
               <div className='flex items-center justify-between mb-4'>
                 <div className='flex items-center'>
                   <Package className='mr-2 text-blue-500' size={24} />
-                  <h3 className='font-semibold text-lg text-gray-800'>
+                  <h3 className='font-semibold text-lg text-gray-800 dark:text-gray-200'>
                     {item.name}
                   </h3>
                 </div>
@@ -70,20 +70,23 @@ const InventoriesPage = () => {
                 </Badge>
               </div>
               <div className='space-y-3'>
-                <p className='text-sm text-gray-600'>
+                <p className='text-sm text-gray-600 dark:text-gray-400'>
                   Quantity:{' '}
-                  <span className='font-medium text-gray-800'>
+                  <span className='font-medium text-gray-800 dark:text-gray-200'>
                     {item.quantity}
                   </span>
                 </p>
-                <p className='text-sm text-gray-600'>
+                <p className='text-sm text-gray-600 dark:text-gray-400'>
                   Unit:{' '}
-                  <span className='font-medium text-gray-800'>
+                  <span className='font-medium text-gray-800 dark:text-gray-200'>
                     {item.unit?.name || 'N/A'}
                   </span>
                 </p>
-                <div className='flex items-center text-xs text-gray-500'>
-                  <Calendar className='mr-2 text-gray-400' size={14} />
+                <div className='flex items-center text-xs text-gray-500 dark:text-gray-200'>
+                  <Calendar
+                    className='mr-2 text-gray-400 dark:text-gray-100'
+                    size={14}
+                  />
                   Last updated: {item.updatedAt.toLocaleDateString()}
                 </div>
               </div>

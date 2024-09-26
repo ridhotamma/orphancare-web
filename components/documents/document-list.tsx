@@ -43,7 +43,7 @@ const DocumentIcon: React.FC<DocumentIconProps> = ({ type }) => {
     case 'image/jpeg':
       return <ImageIcon className='h-6 w-6 text-green-500' />;
     default:
-      return <FileIcon className='h-6 w-6 text-gray-500' />;
+      return <FileIcon className='h-6 w-6 text-gray-500 dark:text-gray-200' />;
   }
 };
 
@@ -115,7 +115,7 @@ const DocumentList: React.FC = () => {
           >
             <CardHeader className='flex items-center'>
               <DocumentIcon type={doc.documentType.type} />
-              <CardTitle className='text-lg font-semibold truncate'>
+              <CardTitle className='text-lg font-semibold line-clamp-1 max-w-full'>
                 {doc.name}
               </CardTitle>
             </CardHeader>
@@ -133,14 +133,14 @@ const DocumentList: React.FC = () => {
                       .join('')}
                   </AvatarFallback>
                 </Avatar>
-                <span className='text-sm text-gray-600'>
+                <span className='text-sm text-gray-600 dark:text-gray-200'>
                   {doc.owner.profile?.fullName}
                 </span>
               </div>
               <Badge variant='secondary' className='mb-2'>
                 {doc.documentType.name}
               </Badge>
-              <div className='text-sm text-gray-500 space-y-1'>
+              <div className='text-sm text-gray-500 dark:text-gray-200 space-y-1'>
                 <p>Created: {doc.createdAt.toLocaleDateString()}</p>
                 <p>Updated: {doc.updatedAt.toLocaleDateString()}</p>
               </div>

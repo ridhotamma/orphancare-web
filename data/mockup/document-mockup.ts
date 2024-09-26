@@ -3,7 +3,7 @@ import { Document } from '@/types/document';
 export const mockDocuments: Document[] = [
   {
     id: '1',
-    name: 'Project Proposal',
+    name: 'Project Proposal Lorem Ipsum Doler Sit Amet',
     url: 'https://example.com/project-proposal.pdf',
     owner: {
       id: 'user1',
@@ -23,7 +23,7 @@ export const mockDocuments: Document[] = [
   },
   {
     id: '2',
-    name: 'Meeting Notes',
+    name: 'Meeting Notes Lorem Ipsum Doler Sit Amet',
     url: 'https://example.com/meeting-notes.docx',
     owner: {
       id: 'user2',
@@ -43,7 +43,7 @@ export const mockDocuments: Document[] = [
   },
   {
     id: '3',
-    name: 'Product Image',
+    name: 'Product Image Lorem Ipsum Doler Sit Amet',
     url: 'https://example.com/product-image.jpg',
     owner: {
       id: 'user3',
