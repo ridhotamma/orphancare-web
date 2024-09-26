@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Nunito } from 'next/font/google';
 import { ThemeProvider } from '@/components/provider/theme-provider';
+import { Toaster } from '@/components/ui/toaster';
+
 import './globals.css';
 
 const nunito = Nunito({
@@ -27,7 +29,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <main>{children}</main>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

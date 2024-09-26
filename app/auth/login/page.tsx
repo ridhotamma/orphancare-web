@@ -1,13 +1,74 @@
+'use client';
+import React, { useState, FormEvent, ChangeEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import BackgroundImage from '@/images/background-image-1.webp';
+import { requests } from '@/lib/api';
+import { useToast } from '@/hooks/use-toast';
 
-const LoginPage = () => {
+import BackgroundImage from '@/images/background-image-1.webp';
+import cookieStorage from '@/lib/storage/cookies';
+import { Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
+interface LoginFormData {
+  username: string;
+  password: string;
+  rememberMe: boolean;
+}
+
+const LoginPage: React.FC = () => {
+  const { toast } = useToast();
+  const router = useRouter();
+
+  const [formData, setFormData] = useState<LoginFormData>({
+    username: '',
+    password: '',
+    rememberMe: false,
+  });
+
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleCheckboxChange = (checked: boolean) => {
+    setFormData((prev) => ({ ...prev, rememberMe: checked }));
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await requests({
+        url: '/auth/login',
+        method: 'POST',
+        data: formData,
+      });
+      const authToken = response.jwt;
+      cookieStorage.setItem('authToken', authToken);
+      router.push('/dashboard')
+      
+      toast({
+        title: 'Login Success',
+        variant: 'success',
+      });
+    } catch (error: any) {
+      toast({
+        title: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className='flex min-h-screen bg-background'>
       <div className='hidden lg:block lg:w-1/2 relative'>
@@ -24,14 +85,17 @@ const LoginPage = () => {
           <h2 className='text-3xl font-bold mb-6 text-primary text-center'>
             Welcome Back
           </h2>
-          <form className='space-y-6'>
+          <form className='space-y-6' onSubmit={handleSubmit}>
             <div className='space-y-2'>
-              <Label htmlFor='email'>Email Address</Label>
+              <Label htmlFor='username'>Username</Label>
               <Input
-                type='email'
-                id='email'
-                placeholder='Enter your email'
+                type='username'
+                id='username'
+                name='username'
+                placeholder='Enter your username'
                 required
+                value={formData.username}
+                onChange={handleInputChange}
               />
             </div>
             <div className='space-y-2'>
@@ -39,13 +103,20 @@ const LoginPage = () => {
               <Input
                 type='password'
                 id='password'
+                name='password'
                 placeholder='Enter your password'
                 required
+                value={formData.password}
+                onChange={handleInputChange}
               />
             </div>
             <div className='flex items-center justify-between'>
               <div className='flex items-center space-x-2'>
-                <Checkbox id='remember-me' />
+                <Checkbox
+                  id='remember-me'
+                  checked={formData.rememberMe}
+                  onCheckedChange={handleCheckboxChange}
+                />
                 <Label
                   htmlFor='remember-me'
                   className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
@@ -62,8 +133,9 @@ const LoginPage = () => {
                 </Link>
               </div>
             </div>
-            <Button type='submit' className='w-full'>
-              Sign In
+            <Button disabled={loading} type='submit' className='w-full'>
+              {loading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+              {loading ? 'Please Wait..' : 'Sign In'}
             </Button>
           </form>
         </div>

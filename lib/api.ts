@@ -1,13 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios';
 
-const API_URLS = {
-  development: 'https://jsonplaceholder.typicode.com',
-  staging: 'https://staging-api.example.com',
-  production: 'https://api.example.com',
-};
-
-const env = process.env.NODE_ENV || 'development';
-const baseURL = API_URLS[env as keyof typeof API_URLS];
+const baseURL = process.env.NEXT_PUBLIC_API_URL
 
 const axiosInstance = axios.create({
   baseURL,

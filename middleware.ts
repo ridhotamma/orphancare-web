@@ -3,9 +3,27 @@ import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
+  const authToken = request.cookies.get('authToken');
+
+  const AUTH_URLS = ['/auth/login', '/auth/forgot-password'];
+
+  if (authToken && AUTH_URLS.includes(url.pathname)) {
+    url.pathname = '/dashboard';
+    return NextResponse.redirect(url);
+  }
+
+  if (!authToken && !AUTH_URLS.includes(url.pathname)) {
+    url.pathname = '/auth/login';
+    return NextResponse.redirect(url);
+  }
 
   if (url.pathname === '/users') {
     url.pathname = '/users/children';
+    return NextResponse.redirect(url);
+  }
+
+  if (url.pathname === '/') {
+    url.pathname = '/dashboard';
     return NextResponse.redirect(url);
   }
 }
