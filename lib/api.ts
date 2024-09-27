@@ -1,14 +1,29 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig, AxiosInstance } from 'axios';
+import cookieStorage from './storage/cookies';
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL
+const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
-const axiosInstance = axios.create({
-  baseURL,
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+const createAxiosInstance = (): AxiosInstance => {
+  const instance = axios.create({
+    baseURL,
+    timeout: 10000,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  instance.interceptors.request.use(async (config) => {
+    const authToken = await cookieStorage.getItem('authToken');
+    if (authToken) {
+      config.headers['Authorization'] = `Bearer ${authToken}`;
+    }
+    return config;
+  });
+
+  return instance;
+};
+
+const axiosInstance = createAxiosInstance();
 
 interface ServiceProps extends AxiosRequestConfig {
   url: string;

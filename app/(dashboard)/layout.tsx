@@ -1,14 +1,15 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { Theme } from '@/types/themes';
+import { User } from '@/types/user';
 import ThemeSettingsDialog from '@/components/shared/ThemeSettingsDialog';
 import Header from '@/components/shared/Header';
 import Sidebar from '@/components/shared/Sidebar';
-import { User } from '@/types/user';
 import menuItems from '@/constants/menu-map';
+import cookieStorage from '@/lib/storage/cookies';
 
 type DashboardLayoutProps = {
   children: React.ReactNode;
@@ -36,8 +37,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     return currentMenuItem ? currentMenuItem.title : 'Dashboard';
   }, [pathname]);
 
+  const router = useRouter();
+
   const handleLogout = () => {
-    console.log('Logging out...');
+    console.log('logout');
+    cookieStorage.removeItem('authToken');
+    router.push('/auth/login');
   };
 
   return (
