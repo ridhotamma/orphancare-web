@@ -3,9 +3,12 @@
 import DocumentList from '@/components/documents/document-list';
 import { TabItem } from '@/components/layout/tab-layout';
 import TabLayout from '@/components/layout/tab-layout';
+import { usePageTitle } from '@/hooks/use-page-title';
 import { BookLock, File } from 'lucide-react';
 
 const DocumentsPage = () => {
+  usePageTitle('Documents')
+  
   const tabItems: TabItem[] = [
     {
       label: 'Your Documents',

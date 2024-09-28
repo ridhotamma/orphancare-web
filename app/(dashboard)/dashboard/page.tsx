@@ -32,6 +32,8 @@ import {
   ShortProfile,
 } from '@/types/dashboard-analytics';
 import LoadingContainer from '@/components/container/loading-container';
+import { usePageTitle } from '@/hooks/use-page-title';
+import { useAuth } from '@/context/auth-context';
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -57,6 +59,8 @@ const DashboardPage = () => {
     initialDashboardState()
   );
 
+  usePageTitle('Dashboard');
+
   const {
     profile = {} as ShortProfile,
     donationTrends = [],
@@ -64,6 +68,8 @@ const DashboardPage = () => {
     latestDonations = [],
     latestEvents = [],
   } = dashboardData;
+
+  const { setUnauthorized } = useAuth();
 
   useEffect(() => {
     const getDashboardAnalyticsData = async () => {
@@ -75,10 +81,14 @@ const DashboardPage = () => {
         });
         setDashboardData(data);
       } catch (error: any) {
-        toast({
-          title: error.message,
-          variant: 'destructive',
-        });
+        if (error.status === 401) {
+          setUnauthorized(true);
+        } else {
+          toast({
+            title: error.message,
+            variant: 'destructive',
+          });
+        }
       } finally {
         setLoading(false);
       }
@@ -125,7 +135,9 @@ const DashboardPage = () => {
 
           <Card className='hover:shadow-lg transition-shadow duration-300'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>Total Pengasuh</CardTitle>
+              <CardTitle className='text-sm font-medium'>
+                Total Pengasuh
+              </CardTitle>
               <Home className='h-4 w-4 text-purple-500' />
             </CardHeader>
             <CardContent>
@@ -138,7 +150,9 @@ const DashboardPage = () => {
 
           <Card className='hover:shadow-lg transition-shadow duration-300'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>Total Anak Asuh</CardTitle>
+              <CardTitle className='text-sm font-medium'>
+                Total Anak Asuh
+              </CardTitle>
               <ShoppingBag className='h-4 w-4 text-green-500' />
             </CardHeader>
             <CardContent>

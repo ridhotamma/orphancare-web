@@ -9,6 +9,7 @@ import { mockBedRooms } from '@/data/mockup/bedroom-mockup';
 import { Profile } from '@/types/profile';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { usePageTitle } from '@/hooks/use-page-title';
 
 const BedRoomPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -17,6 +18,8 @@ const BedRoomPage: React.FC = () => {
     console.log('add bed room');
   };
 
+  usePageTitle('Bed Rooms');
+  
   return (
     <div>
       <div className='mb-6 space-y-4'>

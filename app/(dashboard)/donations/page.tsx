@@ -16,6 +16,7 @@ import { mockDonations } from '@/data/mockup/donations-mockup';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { usePageTitle } from '@/hooks/use-page-title';
 
 const DonationCard: React.FC<{ donation: Donation }> = ({ donation }) => (
   <Card className='h-full'>
@@ -59,6 +60,9 @@ const DonationCard: React.FC<{ donation: Donation }> = ({ donation }) => (
 const DonationsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
+
+  usePageTitle('Donations')
+  
   return (
     <div>
       <div className='mb-8 space-y-4'>

@@ -14,9 +14,11 @@ import {
   ArrowUpDown,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { usePageTitle } from '@/hooks/use-page-title';
 
 const InventoriesPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  usePageTitle('Inventories');
 
   return (
     <div>

@@ -1,29 +1,35 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { Theme } from '@/types/themes';
 import { User } from '@/types/user';
-import ThemeSettingsDialog from '@/components/shared/ThemeSettingsDialog';
+import ThemeSettingsDialog from '@/components/shared/theme-settings-dialog';
 import Header from '@/components/shared/Header';
 import Sidebar from '@/components/shared/Sidebar';
 import menuItems from '@/constants/menu-map';
 import cookieStorage from '@/lib/storage/cookies';
+import { HeaderProvider, useHeader } from '@/context/header-context';
+import { AuthProvider } from '@/context/auth-context';
+import { UnauthorizedDialog } from '@/components/shared/unauthorized-dialog';
 
 type DashboardLayoutProps = {
   children: React.ReactNode;
 };
 
-const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
+const DashboardLayoutContent: React.FC<DashboardLayoutProps> = ({
+  children,
+}) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [themeDialogOpen, setThemeDialogOpen] = useState(false);
-  const pathname = usePathname();
 
   const { theme, setTheme } = useTheme() as {
     theme: Theme | undefined;
     setTheme: (value: string) => void;
   };
+
+  const { headerTitle } = useHeader();
 
   const user: Partial<User> = {
     profile: {
@@ -32,15 +38,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     },
   };
 
-  const currentPageTitle = useMemo(() => {
-    const currentMenuItem = menuItems.find((item) => item.href === pathname);
-    return currentMenuItem ? currentMenuItem.title : 'Dashboard';
-  }, [pathname]);
-
   const router = useRouter();
 
   const handleLogout = () => {
-    console.log('logout');
     cookieStorage.removeItem('authToken');
     router.push('/auth/login');
   };
@@ -82,7 +82,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       {/* Main content */}
       <div className='flex-1 flex flex-col overflow-hidden'>
         <Header
-          currentPageTitle={currentPageTitle}
+          currentPageTitle={headerTitle}
           theme={theme as Theme}
           setTheme={setTheme}
           onOpenSidebar={() => setSidebarOpen(true)}
@@ -94,6 +94,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         </main>
       </div>
 
+      {/* Unauthorized Dialog */}
+      <UnauthorizedDialog />
+      
       {/* Theme Settings Dialog */}
       <ThemeSettingsDialog
         open={themeDialogOpen}
@@ -102,6 +105,16 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         setTheme={setTheme as (theme: Theme) => void}
       />
     </div>
+  );
+};
+
+const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
+  return (
+    <AuthProvider>
+      <HeaderProvider>
+        <DashboardLayoutContent>{children}</DashboardLayoutContent>
+      </HeaderProvider>
+    </AuthProvider>
   );
 };
 

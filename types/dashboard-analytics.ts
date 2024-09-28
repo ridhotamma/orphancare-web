@@ -26,6 +26,9 @@ export const initialDashboardState = (): DashboardAnalytics => ({
     femaleDifference: '0%',
     careTakerCount: 0,
     studentCount: 0,
+    careTakerAdminCount: 0,
+    studentAdminCount: 0,
+    alumniCount: 0,
   },
   topDonors: [],
   inventory: {
@@ -73,6 +76,9 @@ export type ShortProfile = {
   femaleDifference: string;
   careTakerCount: number;
   studentCount: number;
+  careTakerAdminCount: number;
+  studentAdminCount: number,
+  alumniCount: number,
 };
 
 export type TopDonor = {

@@ -31,11 +31,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { usePageTitle } from '@/hooks/use-page-title';
 
 const ChildrenPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [genderFilter, setGenderFilter] = useState('all');
   const [bedRoomFilter, setBedRoomFilter] = useState('all');
+
+  usePageTitle('Childrens');
 
   return (
     <div>

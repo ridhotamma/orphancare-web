@@ -36,7 +36,7 @@ const Sidebar: React.FC<SidebarProps> = ({ menuItems, user, onClose }) => {
               <Link
                 href={item.href}
                 className={`flex items-center py-3 px-4 rounded-lg transition-all duration-200 ${
-                  pathname === item.href
+                  pathname.includes(item.href)
                     ? 'bg-white bg-opacity-20 text-white shadow-md'
                     : 'text-white hover:bg-white hover:bg-opacity-10'
                 }`}

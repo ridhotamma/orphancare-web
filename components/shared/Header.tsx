@@ -56,7 +56,7 @@ const Header: React.FC<HeaderProps> = ({
           >
             <Menu className='h-6 w-6' />
           </Button>
-          <h2 className='text-2xl font-semibold text-text ml-4 lg:ml-0'>
+          <h2 className='text-2xl font-semibold text-text ml-4 lg:ml-0 line-clamp-1'>
             {currentPageTitle}
           </h2>
         </div>

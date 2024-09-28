@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosInstance } from 'axios';
+import axios, { AxiosRequestConfig, AxiosInstance, AxiosError } from 'axios';
 import cookieStorage from './storage/cookies';
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
@@ -46,9 +46,7 @@ export const requests = async ({
     });
     return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message || error.message);
-    }
-    throw error;
+    const errorObject = error as AxiosError
+    throw errorObject.response?.data;
   }
 };
