@@ -1,11 +1,11 @@
 export type Address = {
-  id: string;
+  id?: string;
   street?: string;
   urbanVillage?: string;
   subdistrict?: string;
   city?: string;
   province?: string;
   postalCode?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: string;
+  updatedAt?: string;
 };

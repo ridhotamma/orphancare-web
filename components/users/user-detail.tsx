@@ -11,6 +11,7 @@ import { DetailDocuments } from '@/components/users/detail-documents';
 import { DetailProfile } from '@/components/users/detail-profile';
 import { DetailCredentials } from '@/components/users/detail-credentials';
 import React from 'react';
+import { Profile } from '@/types/profile';
 
 type Credentials = {
   id: string;
@@ -24,7 +25,6 @@ type NewDocument = {
   name: string;
   type: string;
 };
-
 
 const UserDetailPage: React.FC = () => {
   usePageTitle('User Details');
@@ -44,7 +44,8 @@ const UserDetailPage: React.FC = () => {
     active: true,
   });
 
-  const [profile, setProfile] = useState<any>({
+  const [profile, setProfile] = useState<Profile>({
+    id: '52ecb46a-860c-42e0-aa75-a5e77b50b5c2',
     profilePicture: '',
     birthday: '',
     joinDate: '',
@@ -53,8 +54,8 @@ const UserDetailPage: React.FC = () => {
     fullName: 'Agung Raksasa',
     address: {
       id: '',
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: new Date().toLocaleDateString(),
+      updatedAt: new Date().toLocaleDateString(),
       street: '',
       urbanVillage: '',
       subdistrict: '',
@@ -73,6 +74,19 @@ const UserDetailPage: React.FC = () => {
         type: 'BEDROOM_CARETAKER_FEMALE',
         createdAt: new Date(),
         updatedAt: new Date(),
+      },
+    },
+    guardian: {
+      id: '43027a4d-26a5-4ede-a841-c4ec9c4f5baa',
+      fullName: 'Gatot Kaca',
+      phoneNumber: '',
+      address: {
+        street: '',
+        urbanVillage: '',
+        subdistrict: '',
+        city: '',
+        province: '',
+        postalCode: '',
       },
     },
     phoneNumber: '+62123123123',
@@ -205,21 +219,6 @@ const UserDetailPage: React.FC = () => {
 
   const tabItems: TabItem[] = [
     {
-      id: 'credentials',
-      label: 'Credentials',
-      content: (
-        <DetailCredentials
-          credentials={credentials}
-          isEditCredentials={isEditCredentials}
-          setIsEditCredentials={setIsEditCredentials}
-          setCredentials={setCredentials}
-          handleSaveCredentials={handleSaveCredentials}
-          setIsPasswordModalOpen={setIsPasswordModalOpen}
-        />
-      ),
-      icon: <User className='h-5 w-5' />,
-    },
-    {
       id: 'profile',
       label: 'Profile',
       content: (
@@ -244,11 +243,26 @@ const UserDetailPage: React.FC = () => {
       ),
       icon: <File className='h-5 w-5' />,
     },
+    {
+      id: 'credentials',
+      label: 'Credentials',
+      content: (
+        <DetailCredentials
+          credentials={credentials}
+          isEditCredentials={isEditCredentials}
+          setIsEditCredentials={setIsEditCredentials}
+          setCredentials={setCredentials}
+          handleSaveCredentials={handleSaveCredentials}
+          setIsPasswordModalOpen={setIsPasswordModalOpen}
+        />
+      ),
+      icon: <User className='h-5 w-5' />,
+    },
   ];
 
   return (
     <>
-      <TabLayout tabs={tabItems} defaultTab='credentials' urlParamName='tab' />
+      <TabLayout tabs={tabItems} defaultTab='profile' urlParamName='tab' />
       <AddDocumentDialog
         isAddDocumentDialogOpen={isAddDocumentModalOpen}
         setIsAddDocumentDialogOpen={setIsAddDocumentModalOpen}

@@ -9,12 +9,16 @@ import { useToast } from '@/hooks/use-toast';
 
 interface ProfilePictureUploadProps {
   onImageUrlChange: (url: string) => void;
+  disabled?: boolean;
+  currentImageUrl?: string;
 }
 
 const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
   onImageUrlChange,
+  disabled = false,
+  currentImageUrl = '',
 }) => {
-  const [imageUrl, setImageUrl] = useState<string>('');
+  const [imageUrl, setImageUrl] = useState<string>(currentImageUrl);
   const [isUploading, setIsUploading] = useState(false);
   const { register } = useForm();
   const { toast } = useToast();
@@ -31,7 +35,6 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
     const formData = new FormData();
     formData.append('file', file);
 
-    console.log({ file });
     try {
       const data = await requests({
         url: '/public/files/upload',
@@ -54,7 +57,9 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
   };
 
   const handleUploadClick = () => {
-    fileInputRef.current?.click();
+    if (!disabled) {
+      fileInputRef.current?.click();
+    }
   };
 
   return (
@@ -74,11 +79,12 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
           className='hidden'
           id='profilePictureInput'
           ref={fileInputRef}
+          disabled={disabled}
         />
         <Button
           type='button'
           variant='outline'
-          disabled={isUploading}
+          disabled={disabled || isUploading}
           onClick={handleUploadClick}
         >
           {isUploading ? 'Uploading...' : 'Upload Picture'}

@@ -5,10 +5,8 @@ import * as z from 'zod';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { format } from 'date-fns';
-import { ArrowLeft, Calendar as CalendarIcon, Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
 import {
   Form,
   FormControl,
@@ -27,11 +25,6 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ProfilePictureUpload from '@/components/users/profile-picture-upload';
@@ -58,17 +51,20 @@ const formSchema = z.object({
   password: z
     .string({
       message:
-        'Password must contain at least one uppercase letter and one number',
+        'Password is required',
     })
     .min(6)
-    .regex(/^(?=.*[A-Z])(?=.*\d).*$/),
+    .regex(
+      /^(?=.*[A-Z])(?=.*\d).*$/,
+      'Password must contain at least one uppercase letter and one number'
+    ),
   email: z.string().email(),
   fullName: z.string().min(2),
   gender: z.enum(['MALE', 'FEMALE']),
-  birthday: z.date(),
+  birthday: z.string(),
   bedRoomId: z.string().uuid(),
   profilePicture: z.string().url().optional(),
-  joinDate: z.date(),
+  joinDate: z.string(),
   phoneNumber: z.string().optional(),
   bio: z.string().max(500).optional(),
   alumni: z.boolean().optional(),
@@ -76,6 +72,7 @@ const formSchema = z.object({
   admin: z.boolean().optional(),
   guardianFullName: z.string().min(2).optional(),
   guardianTypeId: z.string().uuid().optional(),
+  guardianPhoneNumber: z.string().optional(),
   address: addressSchema.optional(),
   guardianAddress: addressSchema.optional(),
 });
@@ -97,6 +94,12 @@ const UserForm = <T extends Partial<FormValues>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       ...initialData,
+      birthday: initialData?.birthday
+        ? format(new Date(initialData.birthday), 'yyyy-MM-dd')
+        : '',
+      joinDate: initialData?.joinDate
+        ? format(new Date(initialData.joinDate), 'yyyy-MM-dd')
+        : '',
     },
   });
 
@@ -108,6 +111,7 @@ const UserForm = <T extends Partial<FormValues>>({
   const { setUnauthorized } = useAuth();
 
   const router = useRouter();
+  const params = useParams();
 
   const onSubmit = async (data: FormValues) => {
     setSubmitting(true);
@@ -116,7 +120,6 @@ const UserForm = <T extends Partial<FormValues>>({
       let url = '/admin/users';
 
       if (editMode) {
-        const params = useParams();
         url += `/${params.id}`;
       }
 
@@ -128,10 +131,8 @@ const UserForm = <T extends Partial<FormValues>>({
 
       const payloadData = {
         ...data,
-        joinDate: format(data.joinDate, 'yyyy-MM-dd'),
-        birthday: format(data.birthday, 'yyyy-MM-dd'),
         roles: roles,
-        careTaker: careTakerForm
+        careTaker: careTakerForm,
       };
 
       await requests({
@@ -142,7 +143,7 @@ const UserForm = <T extends Partial<FormValues>>({
 
       router.push(`/users${careTakerForm ? '/caretakers' : '/children'}`);
       toast({
-        title: `${careTakerForm ? 'Caretaker' : 'Child'} succesfully added!`,
+        title: `${careTakerForm ? 'Caretaker' : 'Child'} successfully added!`,
       });
     } catch (error: any) {
       if (error.status === 401) {
@@ -206,7 +207,7 @@ const UserForm = <T extends Partial<FormValues>>({
 
     getBedRooms();
     getGuardians();
-  }, []);
+  }, [toast]);
 
   const renderAddressFields = (prefix: 'address' | 'guardianAddress') => (
     <>
@@ -367,7 +368,7 @@ const UserForm = <T extends Partial<FormValues>>({
               <FormField
                 control={form.control}
                 name='profilePicture'
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormLabel>Profile Picture</FormLabel>
                     <FormControl>
@@ -420,39 +421,15 @@ const UserForm = <T extends Partial<FormValues>>({
                 control={form.control}
                 name='birthday'
                 render={({ field }) => (
-                  <FormItem className='flex flex-col'>
+                  <FormItem>
                     <FormLabel>Birthday</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={'outline'}
-                            className={cn(
-                              'pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground'
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, 'PPP')
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className='w-auto p-0' align='start'>
-                        <Calendar
-                          mode='single'
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date('1900-01-01')
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <FormControl>
+                      <Input
+                        type='date'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                        {...field}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -460,7 +437,7 @@ const UserForm = <T extends Partial<FormValues>>({
               <FormField
                 control={form.control}
                 name='phoneNumber'
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormLabel>Phone Number</FormLabel>
                     <FormControl>
@@ -529,39 +506,15 @@ const UserForm = <T extends Partial<FormValues>>({
                 control={form.control}
                 name='joinDate'
                 render={({ field }) => (
-                  <FormItem className='flex flex-col'>
+                  <FormItem>
                     <FormLabel>Join Date</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={'outline'}
-                            className={cn(
-                              'pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground'
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, 'PPP')
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className='w-auto p-0' align='start'>
-                        <Calendar
-                          mode='single'
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date('1900-01-01')
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <FormControl>
+                      <Input
+                        type='date'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                        {...field}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -706,6 +659,32 @@ const UserForm = <T extends Partial<FormValues>>({
                               )}
                             </SelectContent>
                           </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name='guardianPhoneNumber'
+                      render={() => (
+                        <FormItem>
+                          <FormLabel>Guardian Phone Number</FormLabel>
+                          <FormControl>
+                            <Controller
+                              name='guardianPhoneNumber'
+                              control={form.control}
+                              render={({ field }) => (
+                                <PhoneInput
+                                  international
+                                  countryCallingCodeEditable={false}
+                                  defaultCountry='ID'
+                                  placeholder='Enter guardian phone number'
+                                  inputComponent={Input}
+                                  {...field}
+                                />
+                              )}
+                            />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
