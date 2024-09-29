@@ -1,6 +1,4 @@
-'use client';
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   Card,
   CardContent,
@@ -38,7 +36,6 @@ import LoadingContainer from '@/components/container/loading-container';
 import { User } from '@/types/user';
 import { format } from 'date-fns';
 import { RoleType } from '@/types/enums';
-import useDebounce from '@/hooks/use-debounce';
 import { BedRoom } from '@/types/bedroom';
 import EmptyContainer from '../container/empty-container';
 import Image from 'next/image';
@@ -48,7 +45,14 @@ type UserListProps = {
   isCareTaker?: boolean;
 };
 
-const UserList = ({ isCareTaker }: UserListProps) => {
+type PaginationMeta = {
+  currentPage: number;
+  perPage: number;
+  total: number;
+  totalPages: number;
+};
+
+const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [genderFilter, setGenderFilter] = useState('all');
   const [bedRoomFilter, setBedRoomFilter] = useState('all');
@@ -57,65 +61,90 @@ const UserList = ({ isCareTaker }: UserListProps) => {
   const [searching, setSearching] = useState(false);
   const [userData, setUserData] = useState<User[]>([]);
   const [bedRoomData, setBedRoomData] = useState<BedRoom[]>([]);
-  const [page, setPage] = useState(0);
+  const [paginationMeta, setPaginationMeta] = useState<PaginationMeta>({
+    currentPage: 0,
+    perPage: 10,
+    total: 0,
+    totalPages: 0,
+  });
 
   const { toast } = useToast();
   const { setUnauthorized } = useAuth();
 
-  const debounceSearch = useDebounce((query: string) => {
-    getChildrenData(query);
-    setSearching(false);
-  }, 500);
+  const getChildrenData = useCallback(
+    async (query: string = '', page: number = 0, append: boolean = false) => {
+      try {
+        const params: Record<string, any> = {
+          isCareTaker,
+          page,
+          perPage: paginationMeta.perPage,
+          search: query,
+          bedRoomId: bedRoomFilter === 'all' ? undefined : bedRoomFilter,
+          gender: genderFilter === 'all' ? undefined : genderFilter,
+        };
+
+        const response = await requests({
+          url: '/admin/users',
+          params,
+        });
+
+        if (append) {
+          setUserData((prev) => [...prev, ...response.data]);
+        } else {
+          setUserData(response.data);
+        }
+        setPaginationMeta(response.meta);
+      } catch (error: any) {
+        if (error.status === 401) {
+          setUnauthorized(true);
+        } else {
+          toast({
+            title: error.message,
+            variant: 'destructive',
+          });
+        }
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
+        setSearching(false);
+      }
+    },
+    [
+      isCareTaker,
+      bedRoomFilter,
+      genderFilter,
+      paginationMeta.perPage,
+      setUnauthorized,
+      toast,
+    ]
+  );
+
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const debouncedSearch = useCallback(
+    (query: string) => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+
+      debounceTimeoutRef.current = setTimeout(() => {
+        getChildrenData(query, 0);
+        setSearching(false);
+      }, 500);
+    },
+    [getChildrenData]
+  );
 
   const handleSearchUsers = (query: string) => {
     setSearchQuery(query);
     setSearching(true);
-    debounceSearch(query);
+    debouncedSearch(query);
   };
 
   const handleLoadMore = () => {
-    setLoadingMore(true);
-    setPage((prev) => prev + 1);
-    getChildrenData('', true);
-  };
-
-  const getChildrenData = async (
-    query: string = '',
-    append: boolean = false
-  ) => {
-    try {
-      const params: Record<string, any> = {
-        isCareTaker,
-        page,
-        perPage: 2,
-        search: query,
-        bedRoomId: bedRoomFilter === 'all' ? undefined : bedRoomFilter,
-        gender: genderFilter === 'all' ? undefined : genderFilter,
-      };
-
-      const response = await requests({
-        url: '/admin/users',
-        params,
-      });
-
-      if (append) {
-        setUserData((prev) => [...prev, ...response.data]);
-      } else {
-        setUserData(response.data);
-      }
-    } catch (error: any) {
-      if (error.status === 401) {
-        setUnauthorized(true);
-      } else {
-        toast({
-          title: error.message,
-          variant: 'destructive',
-        });
-      }
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
-      setSearching(false);
+    if (paginationMeta.currentPage < paginationMeta.totalPages - 1) {
+      setLoadingMore(true);
+      getChildrenData(searchQuery, paginationMeta.currentPage + 1, true);
     }
   };
 
@@ -144,8 +173,71 @@ const UserList = ({ isCareTaker }: UserListProps) => {
 
   useEffect(() => {
     setSearching(true);
-    getChildrenData();
-  }, [genderFilter, bedRoomFilter]);
+    debouncedSearch(searchQuery);
+  }, [debouncedSearch, searchQuery, genderFilter, bedRoomFilter]);
+
+  const renderUserCard = (user: User) => (
+    <Card
+      key={user.id}
+      className='w-full overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300'
+    >
+      <CardHeader className='bg-gradient-to-r from-blue-500 to-purple-500 dark:from-blue-700 dark:to-purple-700 p-4 text-white'>
+        <div className='flex items-center space-x-4'>
+          <Avatar className='h-16 w-16 border-2 border-white'>
+            <AvatarImage
+              src={user.profile?.profilePicture}
+              alt={user.username}
+            />
+            <AvatarFallback className='text-xl font-bold text-gray-600 dark:text-gray-200'>
+              {user.username.slice(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <CardTitle className='text-xl font-bold'>
+              {user.profile?.fullName || user.username}
+            </CardTitle>
+            <Badge variant='secondary' className='mt-1 bg-white/20 text-white'>
+              {user.roles.includes(RoleType.ADMIN) ? 'Administrator' : 'User'}
+            </Badge>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className='p-4'>
+        <div className='space-y-3'>
+          <div className='flex items-center text-sm text-gray-600 dark:text-gray-200'>
+            <CircleUser className='mr-2 h-4 w-4' />
+            Gender: {user.profile?.gender}
+          </div>
+          <div className='flex items-center text-sm text-gray-600 dark:text-gray-200'>
+            <Bed className='mr-2 h-4 w-4' />
+            Bed Room: {user.profile?.bedRoom?.name}
+          </div>
+          <div className='flex items-center text-sm text-gray-600 dark:text-gray-200'>
+            <Calendar className='mr-2 h-4 w-4' />
+            Joined:{' '}
+            {(user.profile?.joinDate &&
+              format(new Date(user.profile.joinDate), 'dd MMMM yyyy')) ||
+              '-'}
+          </div>
+          <div className='flex items-center'>
+            <div
+              className={`h-2 w-2 rounded-full mr-2 ${
+                user.active ? 'bg-green-500' : 'bg-red-500'
+              }`}
+            />
+            <span className='text-sm font-medium'>
+              {user.active ? 'Active' : 'Inactive'}
+            </span>
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter className='p-4'>
+        <Button variant='outline' className='w-full'>
+          <Eye className='mr-2 h-4 w-4' /> View Details
+        </Button>
+      </CardFooter>
+    </Card>
+  );
 
   return (
     <LoadingContainer loading={loading}>
@@ -201,16 +293,11 @@ const UserList = ({ isCareTaker }: UserListProps) => {
                   onValueChange={setBedRoomFilter}
                 >
                   <DropdownMenuRadioItem value='all'>All</DropdownMenuRadioItem>
-                  {bedRoomData.map((bedRoom) => {
-                    return (
-                      <DropdownMenuRadioItem
-                        key={bedRoom.id}
-                        value={bedRoom.id}
-                      >
-                        {bedRoom.name}
-                      </DropdownMenuRadioItem>
-                    );
-                  })}
+                  {bedRoomData.map((bedRoom) => (
+                    <DropdownMenuRadioItem key={bedRoom.id} value={bedRoom.id}>
+                      {bedRoom.name}
+                    </DropdownMenuRadioItem>
+                  ))}
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -223,85 +310,22 @@ const UserList = ({ isCareTaker }: UserListProps) => {
 
       <LoadingContainer loading={searching} fullScreen={false}>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-          {userData?.map((user) => (
-            <div key={user.id}>
-              <Card className='w-full overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300'>
-                <CardHeader className='bg-gradient-to-r from-blue-500 to-purple-500 dark:from-blue-700 dark:to-purple-700 p-4 text-white'>
-                  <div className='flex items-center space-x-4'>
-                    <Avatar className='h-16 w-16 border-2 border-white'>
-                      <AvatarImage
-                        src={user.profile?.profilePicture}
-                        alt={user.username}
-                      />
-                      <AvatarFallback className='text-xl font-bold text-gray-600 dark:text-gray-200'>
-                        {user.username.slice(0, 2).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <CardTitle className='text-xl font-bold'>
-                        {user.profile?.fullName || user.username}
-                      </CardTitle>
-                      <Badge
-                        variant='secondary'
-                        className='mt-1 bg-white/20 text-white'
-                      >
-                        {user.roles.includes(RoleType.ADMIN)
-                          ? 'Administrator'
-                          : 'User'}
-                      </Badge>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className='p-4'>
-                  <div className='space-y-3'>
-                    <div className='flex items-center text-sm text-gray-600 dark:text-gray-200'>
-                      <CircleUser className='mr-2 h-4 w-4' />
-                      Gender: {user.profile?.gender}
-                    </div>
-                    <div className='flex items-center text-sm text-gray-600 dark:text-gray-200'>
-                      <Bed className='mr-2 h-4 w-4' />
-                      Bed Room: {user.profile?.bedRoom?.name}
-                    </div>
-                    <div className='flex items-center text-sm text-gray-600 dark:text-gray-200'>
-                      <Calendar className='mr-2 h-4 w-4' />
-                      Joined:{' '}
-                      {(user.profile?.joinDate &&
-                        format(user.profile?.joinDate, 'dd MMMM yyyy')) ||
-                        '-'}
-                    </div>
-                    <div className='flex items-center'>
-                      <div
-                        className={`h-2 w-2 rounded-full mr-2 ${
-                          user.active ? 'bg-green-500' : 'bg-red-500'
-                        }`}
-                      />
-                      <span className='text-sm font-medium'>
-                        {user.active ? 'Active' : 'Inactive'}
-                      </span>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className='p-4'>
-                  <Button variant='outline' className='w-full'>
-                    <Eye className='mr-2 h-4 w-4' /> View Details
-                  </Button>
-                </CardFooter>
-              </Card>
-            </div>
-          ))}
+          {userData.map(renderUserCard)}
         </div>
 
-        {userData.length > 0 && (
-          <div className='p-8 w-full flex justify-center items-center'>
-            <Button
-              onClick={handleLoadMore}
-              className='flex items-center gap-2'
-            >
-              {loadingMore && <RefreshCcw className={`w-4 h-4 animate-spin`} />}
-              Load more
-            </Button>
-          </div>
-        )}
+        {userData.length > 0 &&
+          paginationMeta.currentPage < paginationMeta.totalPages - 1 && (
+            <div className='p-8 w-full flex justify-center items-center'>
+              <Button
+                onClick={handleLoadMore}
+                className='flex items-center gap-2'
+                disabled={loadingMore}
+              >
+                {loadingMore && <RefreshCcw className='w-4 h-4 animate-spin' />}
+                Load more
+              </Button>
+            </div>
+          )}
 
         {!userData.length && (
           <EmptyContainer
