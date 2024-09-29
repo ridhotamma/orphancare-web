@@ -5,6 +5,7 @@ export type DocumentType = {
   name: string;
   type: string;
   documents: Set<Document>;
+  mandatory: boolean,
   createdAt: Date;
   updatedAt: Date;
 };

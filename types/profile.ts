@@ -18,6 +18,8 @@ export type Profile = {
   address?: Address;
   bedRoom?: BedRoom;
   guardian?: Guardian;
+  careTaker: boolean,
+  alumni: boolean,
   createdAt: Date;
   updatedAt: Date;
 };

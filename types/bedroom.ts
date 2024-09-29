@@ -5,7 +5,7 @@ export type BedRoom = {
   id: string; 
   name?: string;
   bedRoomType: BedRoomType;
-  profiles: Profile[];
+  profiles?: Profile[];
   createdAt: Date;
   updatedAt: Date;
 };
