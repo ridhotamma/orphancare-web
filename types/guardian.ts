@@ -2,7 +2,7 @@ import { Address } from '@/types/address';
 import { GuardianType } from '@/types/guardian-type';
 
 export type Guardian = {
-  id?: string;
+  id: string;
   fullName?: string;
   phoneNumber?: string;
   address?: Address;

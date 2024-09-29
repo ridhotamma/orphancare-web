@@ -335,7 +335,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                     setProfile({
                       ...profile,
                       guardian: {
-                        ...profile.guardian,
+                        ...profile.guardian!,
                         fullName: e.target.value,
                       },
                     })
@@ -352,7 +352,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                     setProfile({
                       ...profile,
                       guardian: {
-                        ...profile.guardian,
+                        ...profile.guardian!,
                         guardianType: {
                           id: value
                         },
@@ -385,7 +385,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                     setProfile({
                       ...profile,
                       guardian: {
-                        ...profile.guardian,
+                        ...profile.guardian!,
                         phoneNumber: value || '',
                       },
                     })
@@ -407,7 +407,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
               renderEditableAddress(profile.guardian?.address, (newAddress) =>
                 setProfile({
                   ...profile,
-                  guardian: { ...profile.guardian, address: newAddress },
+                  guardian: { ...profile.guardian!, address: newAddress },
                 })
               )
             ) : (

@@ -1,17 +1,14 @@
 import { usePageTitle } from '@/hooks/use-page-title';
-import { useToast } from '@/hooks/use-toast';
 import { Gender } from '@/types/enums';
-import { useRef, useState } from 'react';
-import { AddDocumentDialog } from '@/components/users/add-document-dialog';
-import { PasswordChangeDialog } from '@/components/users/password-change-dialog';
+import { useState } from 'react';
 import TabLayout, { TabItem } from '@/components/layout/tab-layout';
-import { Document } from '@/types/document';
 import { File, User, UserCircle } from 'lucide-react';
 import { DetailDocuments } from '@/components/users/detail-documents';
 import { DetailProfile } from '@/components/users/detail-profile';
 import { DetailCredentials } from '@/components/users/detail-credentials';
 import React from 'react';
 import { Profile } from '@/types/profile';
+import { useToast } from '@/hooks/use-toast';
 
 type Credentials = {
   id: string;
@@ -20,22 +17,11 @@ type Credentials = {
   active: boolean;
 };
 
-type NewDocument = {
-  file: File | null;
-  name: string;
-  type: string;
-};
-
 const UserDetailPage: React.FC = () => {
   usePageTitle('User Details');
   const { toast } = useToast();
 
-  const [isEditCredentials, setIsEditCredentials] = useState<boolean>(false);
   const [isEditProfile, setIsEditProfile] = useState<boolean>(false);
-  const [isPasswordModalOpen, setIsPasswordModalOpen] =
-    useState<boolean>(false);
-  const [newPassword, setNewPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
 
   const [credentials, setCredentials] = useState<Credentials>({
     id: '9f993f52-2835-4d27-97a5-2a39101ef727',
@@ -95,20 +81,7 @@ const UserDetailPage: React.FC = () => {
   });
 
   const [documents, setDocuments] = useState<any>({
-    data: [
-      {
-        id: '091619a0-1d63-4cc8-8542-98e5dd334599',
-        name: 'AKTA KELAHIRAN',
-        url: 'https://akagami-documents.nos.wjv-1.neo.id/a658c962-687a-43a1-baf9-07df57335054-profile-picture.jpeg',
-        documentType: {
-          id: 'df96c60d-59c2-4ed0-bc41-c2f31522485a',
-          name: 'PDF Document',
-          type: 'DOCUMENT_PDF',
-          mandatory: false,
-        },
-        createdAt: new Date(),
-      },
-    ],
+    data: [],
     meta: {
       currentPage: 0,
       perPage: 10,
@@ -117,26 +90,7 @@ const UserDetailPage: React.FC = () => {
     },
   });
 
-  const [isAddDocumentModalOpen, setIsAddDocumentModalOpen] =
-    useState<boolean>(false);
-  const [newDocument, setNewDocument] = useState<NewDocument>({
-    file: null,
-    name: '',
-    type: '',
-  });
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleSaveCredentials = () => {
-    // Implement save logic here
-    setIsEditCredentials(false);
-    toast({
-      title: 'Credentials updated',
-      description: 'Your credentials have been successfully updated.',
-    });
-  };
-
   const handleSaveProfile = () => {
-    // Implement save logic here
     setIsEditProfile(false);
     toast({
       title: 'Profile updated',
@@ -144,77 +98,9 @@ const UserDetailPage: React.FC = () => {
     });
   };
 
-  const handleChangePassword = () => {
-    // Implement password change logic here
-    setIsPasswordModalOpen(false);
-    setNewPassword('');
-    setConfirmPassword('');
-    toast({
-      title: 'Password changed',
-      description: 'Your password has been successfully changed.',
-    });
-  };
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setNewDocument((prev) => ({ ...prev, file }));
-    }
-  };
-
-  const handleAddDocument = async () => {
-    if (!newDocument.file || !newDocument.name || !newDocument.type) {
-      toast({
-        title: 'Error',
-        description: 'Please fill in all fields and select a file.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    try {
-      const url = '';
-
-      const newDoc: Partial<Document> = {
-        id: `doc-${Date.now()}`,
-        name: newDocument.name,
-        url: url,
-        documentType: {
-          id: `type-${Date.now()}`,
-          name: newDocument.type === 'pdf' ? 'PDF Document' : 'Image',
-          type: newDocument.type === 'pdf' ? 'DOCUMENT_PDF' : 'DOCUMENT_IMAGE',
-          mandatory: false,
-        },
-        createdAt: new Date(),
-      };
-
-      // Update the documents state
-      setDocuments((prevDocs: any) => ({
-        ...prevDocs,
-        data: [newDoc, ...prevDocs.data],
-        meta: {
-          ...prevDocs.meta,
-          total: prevDocs.meta.total + 1,
-        },
-      }));
-
-      // Close the modal and reset the form
-      setIsAddDocumentModalOpen(false);
-      setNewDocument({ file: null, name: '', type: '' });
-
-      toast({
-        title: 'Document added',
-        description:
-          'Your new document has been successfully uploaded and added.',
-      });
-    } catch (error: any) {
-      toast({
-        title: error.message,
-        description:
-          'There was an error adding the document. Please try again.',
-        variant: 'destructive',
-      });
-    }
+  const handleDeleteUser = () => {
+    console.log('delete');
+    // Implement user deletion logic here
   };
 
   const tabItems: TabItem[] = [
@@ -236,10 +122,7 @@ const UserDetailPage: React.FC = () => {
       id: 'documents',
       label: 'Documents',
       content: (
-        <DetailDocuments
-          documents={documents}
-          setIsAddDocumentModalOpen={setIsAddDocumentModalOpen}
-        />
+        <DetailDocuments documents={documents} setDocuments={setDocuments} />
       ),
       icon: <File className='h-5 w-5' />,
     },
@@ -249,40 +132,15 @@ const UserDetailPage: React.FC = () => {
       content: (
         <DetailCredentials
           credentials={credentials}
-          isEditCredentials={isEditCredentials}
-          setIsEditCredentials={setIsEditCredentials}
           setCredentials={setCredentials}
-          handleSaveCredentials={handleSaveCredentials}
-          setIsPasswordModalOpen={setIsPasswordModalOpen}
+          handleDeleteUser={handleDeleteUser}
         />
       ),
       icon: <User className='h-5 w-5' />,
     },
   ];
 
-  return (
-    <>
-      <TabLayout tabs={tabItems} defaultTab='profile' urlParamName='tab' />
-      <AddDocumentDialog
-        isAddDocumentDialogOpen={isAddDocumentModalOpen}
-        setIsAddDocumentDialogOpen={setIsAddDocumentModalOpen}
-        newDocument={newDocument}
-        setNewDocument={setNewDocument}
-        handleAddDocument={handleAddDocument}
-        fileInputRef={fileInputRef}
-        handleFileChange={handleFileChange}
-      />
-      <PasswordChangeDialog
-        isPasswordModalOpen={isPasswordModalOpen}
-        setIsPasswordModalOpen={setIsPasswordModalOpen}
-        newPassword={newPassword}
-        setNewPassword={setNewPassword}
-        confirmPassword={confirmPassword}
-        setConfirmPassword={setConfirmPassword}
-        handleChangePassword={handleChangePassword}
-      />
-    </>
-  );
+  return <TabLayout tabs={tabItems} defaultTab='profile' urlParamName='tab' />;
 };
 
 export default UserDetailPage;
