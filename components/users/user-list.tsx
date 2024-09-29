@@ -40,6 +40,7 @@ import { BedRoom } from '@/types/bedroom';
 import EmptyContainer from '../container/empty-container';
 import Image from 'next/image';
 import NotFoundDateImage from '@/images/not-found-data.png';
+import Link from 'next/link';
 
 type UserListProps = {
   isCareTaker?: boolean;
@@ -63,7 +64,7 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
   const [bedRoomData, setBedRoomData] = useState<BedRoom[]>([]);
   const [paginationMeta, setPaginationMeta] = useState<PaginationMeta>({
     currentPage: 0,
-    perPage: 10,
+    perPage: 50,
     total: 0,
     totalPages: 0,
   });
@@ -301,8 +302,16 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button>
-              <Plus className='mr-2 h-4 w-4' /> Add User
+            <Button asChild>
+              <Link
+                href={
+                  isCareTaker
+                    ? '/users/caretakers/create'
+                    : '/users/children/create'
+                }
+              >
+                <Plus className='mr-2 h-4 w-4' /> Add User
+              </Link>
             </Button>
           </div>
         </div>
