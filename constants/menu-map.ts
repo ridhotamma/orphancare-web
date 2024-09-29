@@ -35,8 +35,8 @@ const menuItems: MenuItem[] = [
   },
   {
     id: 'caretakers',
-    label: 'Care Takers',
-    title: 'Care Takers Data',
+    label: 'Caretakers',
+    title: 'Caretakers Data',
     href: '/users/caretakers',
     icon: UserCog,
   },

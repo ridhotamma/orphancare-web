@@ -173,9 +173,11 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
   }, []);
 
   useEffect(() => {
+    setUserData([])
     setSearching(true);
     debouncedSearch(searchQuery);
   }, [debouncedSearch, searchQuery, genderFilter, bedRoomFilter]);
+  
 
   const renderUserCard = (user: User) => (
     <Card
@@ -186,6 +188,7 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
         <div className='flex items-center space-x-4'>
           <Avatar className='h-16 w-16 border-2 border-white'>
             <AvatarImage
+              className='object-cover'
               src={user.profile?.profilePicture}
               alt={user.username}
             />

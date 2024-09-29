@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/provider/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 
 import './globals.css';
+import NProgressProvider from '@/provider/nprogress.provider';
 
 const nunito = Nunito({
   subsets: ['latin'],
@@ -23,15 +24,17 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={`${nunito.className} antialiased overflow-hidden`}>
-        <ThemeProvider
-          attribute='class'
-          defaultTheme='dark'
-          enableSystem
-          disableTransitionOnChange
-        >
-          <main>{children}</main>
-          <Toaster />
-        </ThemeProvider>
+        <NProgressProvider>
+          <ThemeProvider
+            attribute='class'
+            defaultTheme='dark'
+            enableSystem
+            disableTransitionOnChange
+          >
+            <main>{children}</main>
+            <Toaster />
+          </ThemeProvider>
+        </NProgressProvider>
       </body>
     </html>
   );

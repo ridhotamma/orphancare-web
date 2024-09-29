@@ -14,7 +14,7 @@ const DetailChildDataPage = ({ params }: { params: { id: string } }) => {
   const { setUnauthorized } = useAuth();
   const { toast } = useToast();
 
-  usePageTitle('Care Taker Detail');
+  usePageTitle('Caretaker Detail');
 
   const getUserDetail = async () => {
     setLoading(true);

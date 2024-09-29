@@ -39,7 +39,7 @@ import Link from 'next/link';
 import { useAuth } from '@/provider/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { requests } from '@/lib/api';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { GuardianType } from '@/types/guardian-type';
 import { BedRoom } from '@/types/bedroom';
 import { RoleType } from '@/types/enums';
@@ -107,6 +107,8 @@ const UserForm = <T extends Partial<FormValues>>({
   const { toast } = useToast();
   const { setUnauthorized } = useAuth();
 
+  const router = useRouter();
+
   const onSubmit = async (data: FormValues) => {
     setSubmitting(true);
 
@@ -129,12 +131,18 @@ const UserForm = <T extends Partial<FormValues>>({
         joinDate: format(data.joinDate, 'yyyy-MM-dd'),
         birthday: format(data.birthday, 'yyyy-MM-dd'),
         roles: roles,
+        careTaker: careTakerForm
       };
 
       await requests({
         url,
         method: 'POST',
         data: payloadData,
+      });
+
+      router.push(`/users${careTakerForm ? '/caretakers' : '/children'}`);
+      toast({
+        title: `${careTakerForm ? 'Caretaker' : 'Child'} succesfully added!`,
       });
     } catch (error: any) {
       if (error.status === 401) {
@@ -289,7 +297,7 @@ const UserForm = <T extends Partial<FormValues>>({
         <Button variant='link' className='p-0' asChild>
           <Link href={careTakerForm ? '/users/caretakers' : '/users/children'}>
             <ArrowLeft className='h-4 w-4 mr-2' />
-            Back to {careTakerForm ? 'Care Taker' : 'Children'} List
+            Back to {careTakerForm ? 'Caretaker' : 'Children'} List
           </Link>
         </Button>
       </div>
