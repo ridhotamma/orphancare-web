@@ -8,9 +8,9 @@ export type Profile = {
   id: string;
   fullName: string;
   profilePicture?: string;
-  birthday?: Date;
-  joinDate?: Date;
-  leaveDate?: Date;
+  birthday?: string;
+  joinDate?: string;
+  leaveDate?: string;
   bio?: string;
   phoneNumber?: string;
   gender: Gender;

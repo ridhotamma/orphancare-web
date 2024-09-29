@@ -7,7 +7,7 @@ export type User = {
   email: string;
   password: string;
   username: string;
-  roles: Set<RoleType>;
+  roles: RoleType[];
   profile: Partial<Profile> | null;
   active: boolean;
   documents: Set<Document>;

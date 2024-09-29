@@ -1,4 +1,4 @@
-import { useHeader } from '@/context/header-context';
+import { useHeader } from '@/provider/header-provider';
 import { useEffect } from 'react';
 
 
@@ -8,6 +8,6 @@ export const usePageTitle = (title: string) => {
   useEffect(() => {
     setHeaderTitle(title);
 
-    return () => setHeaderTitle('Dashboard')
+    return () => setHeaderTitle('')
   }, [setHeaderTitle, title]);
 };

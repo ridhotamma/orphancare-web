@@ -8,7 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { useAuth } from '@/context/auth-context';
+import { useAuth } from '@/provider/auth-provider';
 
 export const UnauthorizedDialog: React.FC = () => {
   const { isUnauthorized, setUnauthorized, logout } = useAuth();

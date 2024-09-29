@@ -29,6 +29,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { format } from 'date-fns';
 
 interface DocumentIconProps {
   type: string | undefined;
@@ -37,13 +38,13 @@ interface DocumentIconProps {
 const DocumentIcon: React.FC<DocumentIconProps> = ({ type }) => {
   switch (type) {
     case 'application/pdf':
-      return <FileIcon className='h-6 w-6 text-red-500' />;
+      return <FileIcon className='h-8 w-8 text-red-500' />;
     case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-      return <FileTextIcon className='h-6 w-6 text-blue-500' />;
+      return <FileTextIcon className='h-8 w-8 text-blue-500' />;
     case 'image/jpeg':
-      return <ImageIcon className='h-6 w-6 text-green-500' />;
+      return <ImageIcon className='h-8 w-8 text-green-500' />;
     default:
-      return <FileIcon className='h-6 w-6 text-gray-500 dark:text-gray-200' />;
+      return <FileIcon className='h-8 w-8 text-gray-500 dark:text-gray-200' />;
   }
 };
 
@@ -113,9 +114,9 @@ const DocumentList: React.FC = () => {
             key={doc.id}
             className='hover:shadow-lg transition-shadow duration-300'
           >
-            <CardHeader className='flex items-center'>
+            <CardHeader className='flex'>
               <DocumentIcon type={doc.documentType.type} />
-              <CardTitle className='text-lg font-semibold line-clamp-1 max-w-full'>
+              <CardTitle className='text-lg font-semibold line-clamp-2 max-w-full'>
                 {doc.name}
               </CardTitle>
             </CardHeader>
@@ -141,8 +142,7 @@ const DocumentList: React.FC = () => {
                 {doc.documentType.name}
               </Badge>
               <div className='text-sm text-gray-500 dark:text-gray-200 space-y-1'>
-                <p>Created: {doc.createdAt.toLocaleDateString()}</p>
-                <p>Updated: {doc.updatedAt.toLocaleDateString()}</p>
+                <p>Created: {format(doc.createdAt, 'dd MMM yyyy HH:mm')}</p>
               </div>
             </CardContent>
             <CardFooter>

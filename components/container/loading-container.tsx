@@ -16,7 +16,7 @@ const LoadingContainer: React.FC<LoadingContainerProps> = ({
 
   const containerClasses = fullScreen
     ? 'h-screen w-full'
-    : 'h-full w-full min-h-[100px]';
+    : 'h-full w-full min-h-80';
 
   return (
     <div

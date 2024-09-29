@@ -43,7 +43,6 @@ const Header: React.FC<HeaderProps> = ({
   onOpenThemeDialog,
   onLogout,
 }) => {
-
   return (
     <header className='shadow-sm z-10 bg-white dark:bg-slate-900'>
       <div className='flex items-center justify-between h-20 px-6'>

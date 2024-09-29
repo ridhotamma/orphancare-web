@@ -33,7 +33,7 @@ import {
 } from '@/types/dashboard-analytics';
 import LoadingContainer from '@/components/container/loading-container';
 import { usePageTitle } from '@/hooks/use-page-title';
-import { useAuth } from '@/context/auth-context';
+import { useAuth } from '@/provider/auth-provider';
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {

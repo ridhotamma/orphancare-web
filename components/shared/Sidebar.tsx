@@ -53,8 +53,13 @@ const Sidebar: React.FC<SidebarProps> = ({ menuItems, user, onClose }) => {
         <div className='flex justify-between items-center'>
           <div className='flex items-center'>
             <Avatar className='mr-3'>
-              <AvatarImage src={user.profile?.profilePicture} alt='User avatar' />
-              <AvatarFallback>{user.profile?.fullName!.charAt(0)}</AvatarFallback>
+              <AvatarImage
+                src={user.profile?.profilePicture}
+                alt='User avatar'
+              />
+              <AvatarFallback>
+                {user.profile?.fullName!.charAt(0)}
+              </AvatarFallback>
             </Avatar>
             <div>
               <p className='font-semibold text-lg'>{user.profile?.fullName}</p>

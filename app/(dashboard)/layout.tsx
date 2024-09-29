@@ -10,8 +10,8 @@ import Header from '@/components/shared/Header';
 import Sidebar from '@/components/shared/Sidebar';
 import menuItems from '@/constants/menu-map';
 import cookieStorage from '@/lib/storage/cookies';
-import { HeaderProvider, useHeader } from '@/context/header-context';
-import { AuthProvider } from '@/context/auth-context';
+import { HeaderProvider, useHeader } from '@/provider/header-provider';
+import { AuthProvider } from '@/provider/auth-provider';
 import { UnauthorizedDialog } from '@/components/shared/unauthorized-dialog';
 
 type DashboardLayoutProps = {

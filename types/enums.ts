@@ -5,8 +5,8 @@ export enum Gender {
 }
 
 export enum RoleType {
-  ADMIN = 'ROLE_USER',
-  USER = 'ROLE_ADMIN',
+  ADMIN = 'ROLE_ADMIN',
+  USER = 'ROLE_USER',
 }
 
 export enum EventStatus {

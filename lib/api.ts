@@ -7,9 +7,6 @@ const createAxiosInstance = (): AxiosInstance => {
   const instance = axios.create({
     baseURL,
     timeout: 10000,
-    headers: {
-      'Content-Type': 'application/json',
-    },
   });
 
   instance.interceptors.request.use(async (config) => {
@@ -46,7 +43,7 @@ export const requests = async ({
     });
     return response.data;
   } catch (error) {
-    const errorObject = error as AxiosError
+    const errorObject = error as AxiosError;
     throw errorObject.response?.data;
   }
 };

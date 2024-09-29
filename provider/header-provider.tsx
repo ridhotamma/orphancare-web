@@ -7,8 +7,10 @@ type HeaderContextType = {
 
 const HeaderContext = createContext<HeaderContextType | undefined>(undefined);
 
-export const HeaderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [headerTitle, setHeaderTitle] = useState('Dashboard');
+export const HeaderProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [headerTitle, setHeaderTitle] = useState('Loading...');
 
   return (
     <HeaderContext.Provider value={{ headerTitle, setHeaderTitle }}>

@@ -1,18 +1,17 @@
-'use client';
+'use client'
 
-import { notFound } from 'next/navigation'
+import LoadingContainer from '@/components/container/loading-container';
+import UserForm from '@/components/users/user-form';
+import { useState } from 'react';
 
-const UsersPage = ({ params }: { params: { id: string } }) => {
+const DetailChildDataPage = () => {
+  const [loading, setLoading] = useState<boolean>(false);
 
-  notFound()
-  
   return (
-    <div className='bg-primary h-screen w-full grid place-content-center'>
-      <h1 className='text-white text-4xl capitalize mb-4'>
-        user details {params.id}
-      </h1>
-    </div>
+    <LoadingContainer loading={loading}>
+      <UserForm careTakerForm={false} />
+    </LoadingContainer>
   );
 };
 
-export default UsersPage;
+export default DetailChildDataPage;
