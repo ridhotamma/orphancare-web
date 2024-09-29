@@ -5,8 +5,8 @@ export type Document = {
   id: string;
   name?: string;
   url?: string;
-  owner: Partial<User>;
+  owner?: Partial<User>;
   documentType: Partial<DocumentType>;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 };

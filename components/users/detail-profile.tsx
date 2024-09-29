@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Edit2, Save, X } from 'lucide-react';
 import { Profile } from '@/types/profile';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,24 +19,69 @@ import ProfilePictureUpload from '@/components/users/profile-picture-upload';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useToast } from '@/hooks/use-toast';
 
-interface DetailProfileProps {
-  profile: Profile;
-  isEditProfile: boolean;
-  setIsEditProfile: (value: boolean) => void;
-  setProfile: React.Dispatch<React.SetStateAction<Profile>>;
-  handleSaveProfile: () => void;
-  guardianTypes?: Array<any>;
-}
+export const DetailProfile: React.FC = () => {
+  const { toast } = useToast();
+  const [isEditProfile, setIsEditProfile] = useState<boolean>(false);
+  const [profile, setProfile] = useState<Profile>({
+    id: '52ecb46a-860c-42e0-aa75-a5e77b50b5c2',
+    profilePicture: '',
+    birthday: '',
+    joinDate: '',
+    leaveDate: '',
+    bio: '',
+    fullName: 'Agung Raksasa',
+    address: {
+      id: '',
+      createdAt: new Date().toLocaleDateString(),
+      updatedAt: new Date().toLocaleDateString(),
+      street: '',
+      urbanVillage: '',
+      subdistrict: '',
+      city: '',
+      province: '',
+      postalCode: '',
+    },
+    bedRoom: {
+      id: '4dd52fdf-9a0e-4615-8aa3-f15be49f54ea',
+      name: 'FATIMAH',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      bedRoomType: {
+        id: '52ecb46a-860c-42e0-aa75-a5e77b50b5c1',
+        name: 'Kamar Pengasuh Perempuan',
+        type: 'BEDROOM_CARETAKER_FEMALE',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    },
+    guardian: {
+      id: '43027a4d-26a5-4ede-a841-c4ec9c4f5baa',
+      fullName: 'Gatot Kaca',
+      phoneNumber: '',
+      address: {
+        street: '',
+        urbanVillage: '',
+        subdistrict: '',
+        city: '',
+        province: '',
+        postalCode: '',
+      },
+    },
+    phoneNumber: '+62123123123',
+    gender: Gender.MALE,
+    careTaker: true,
+  });
 
-export const DetailProfile: React.FC<DetailProfileProps> = ({
-  profile,
-  isEditProfile,
-  setIsEditProfile,
-  setProfile,
-  handleSaveProfile,
-  guardianTypes,
-}) => {
+  const handleSaveProfile = () => {
+    setIsEditProfile(false);
+    toast({
+      title: 'Profile updated',
+      description: 'Your profile has been successfully updated.',
+    });
+  };
+
   const renderAddress = (address: Address | undefined) => {
     if (!address) return 'Not specified';
     const parts = [
@@ -241,9 +286,12 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
               <Label htmlFor='bedroom'>Bedroom</Label>
               <Select
                 disabled={!isEditProfile}
-                value={profile.bedRoomId}
+                value={profile.bedRoom?.id}
                 onValueChange={(value) =>
-                  setProfile({ ...profile, bedRoomId: value })
+                  setProfile({
+                    ...profile,
+                    bedRoom: { ...profile.bedRoom!, id: value },
+                  })
                 }
               >
                 <SelectTrigger>
@@ -342,35 +390,6 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                   }
                   disabled={!isEditProfile}
                 />
-              </div>
-              <div>
-                <Label htmlFor='guardianType'>Guardian Type</Label>
-                <Select
-                  disabled={!isEditProfile}
-                  value={profile.guardian?.guardianType?.id || ''}
-                  onValueChange={(value) =>
-                    setProfile({
-                      ...profile,
-                      guardian: {
-                        ...profile.guardian!,
-                        guardianType: {
-                          id: value
-                        },
-                      },
-                    })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder='Select guardian type' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {guardianTypes?.map((type) => (
-                      <SelectItem key={type.id} value={type.id}>
-                        {type.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
               </div>
               <div>
                 <Label htmlFor='guardianPhoneNumber'>

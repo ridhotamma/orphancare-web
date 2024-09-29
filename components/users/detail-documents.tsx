@@ -2,13 +2,7 @@ import React, { useState, useRef } from 'react';
 import { File, Eye, Plus } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Document } from '@/types/document';
 import { AddDocumentDialog } from '@/components/users/add-document-dialog';
 import { useToast } from '@/hooks/use-toast';
@@ -26,22 +20,23 @@ type Documents = {
   };
 };
 
-interface DetailDocumentsProps {
-  documents: Documents;
-  setDocuments: React.Dispatch<React.SetStateAction<Documents>>;
-}
-
 type NewDocument = {
   file: File | null;
   name: string;
   type: string;
 };
 
-export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
-  documents,
-  setDocuments,
-}) => {
+export const DetailDocuments: React.FC = () => {
   const { toast } = useToast();
+  const [documents, setDocuments] = useState<Documents>({
+    data: [],
+    meta: {
+      currentPage: 0,
+      perPage: 10,
+      total: 4,
+      totalPages: 1,
+    },
+  });
   const [isAddDocumentModalOpen, setIsAddDocumentModalOpen] = useState(false);
   const [newDocument, setNewDocument] = useState<NewDocument>({
     file: null,
@@ -70,7 +65,7 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
     try {
       const url = '';
 
-      const newDoc: any = {
+      const newDoc: Document = {
         id: `doc-${Date.now()}`,
         name: newDocument.name,
         url: url,
@@ -80,7 +75,8 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
           type: newDocument.type === 'pdf' ? 'DOCUMENT_PDF' : 'DOCUMENT_IMAGE',
           mandatory: false,
         },
-        createdAt: new Date(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
 
       setDocuments((prevDocs) => ({
@@ -97,14 +93,12 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
 
       toast({
         title: 'Document added',
-        description:
-          'Your new document has been successfully uploaded and added.',
+        description: 'Your new document has been successfully uploaded and added.',
       });
     } catch (error: any) {
       toast({
-        title: error.message,
-        description:
-          'There was an error adding the document. Please try again.',
+        title: 'Error',
+        description: error.message,
         variant: 'destructive',
       });
     }

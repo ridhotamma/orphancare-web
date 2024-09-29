@@ -18,24 +18,15 @@ import {
 import { PasswordChangeDialog } from '@/components/users/password-change-dialog';
 import { useToast } from '@/hooks/use-toast';
 
-interface DetailCredentialsProps {
-  credentials: Credentials;
-  setCredentials: React.Dispatch<React.SetStateAction<Credentials>>;
-  handleDeleteUser: () => void;
-}
-
 type Credentials = {
   id: string;
   email: string;
   username: string;
   active: boolean;
+  isAdmin: boolean;
 };
 
-export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
-  credentials,
-  setCredentials,
-  handleDeleteUser,
-}) => {
+export const DetailCredentials: React.FC = () => {
   const { toast } = useToast();
   const [isEditCredentials, setIsEditCredentials] = useState(false);
   const [showInactiveAlert, setShowInactiveAlert] = useState(false);
@@ -44,6 +35,13 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [credentials, setCredentials] = useState<Credentials>({
+    id: '9f993f52-2835-4d27-97a5-2a39101ef727',
+    email: 'fahrulroji@gmail.com',
+    username: 'kakoji',
+    active: true,
+    isAdmin: false,
+  });
 
   const handleSaveCredentials = () => {
     setIsEditCredentials(false);
@@ -78,11 +76,24 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
   };
 
   const handleActiveChange = (checked: boolean) => {
-    if (checked) {
+    if (!checked) {
       setShowInactiveAlert(true);
+    } else {
+      setCredentials({ ...credentials, active: checked });
     }
+  };
 
-    setCredentials({ ...credentials, active: checked });
+  const handleAdminChange = (checked: boolean) => {
+    setCredentials({ ...credentials, isAdmin: checked });
+  };
+
+  const handleDeleteUser = () => {
+    console.log('delete user');
+    // Implement user deletion logic here
+    toast({
+      title: 'User deleted',
+      description: 'The user has been successfully deleted.',
+    });
   };
 
   const renderCredentialsForm = () => (
@@ -113,14 +124,36 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
             disabled={!isEditCredentials}
           />
         </div>
-        <div className='flex items-center space-x-2'>
-          <Switch
-            id='active'
-            checked={credentials.active}
-            onCheckedChange={handleActiveChange}
-            disabled={!isEditCredentials}
-          />
-          <Label htmlFor='active'>Active</Label>
+        <div className='space-y-4'>
+          <div className='flex items-center space-x-4 rounded-md border border-gray-200 p-4'>
+            <Switch
+              id='active'
+              checked={credentials.active}
+              onCheckedChange={handleActiveChange}
+              disabled={!isEditCredentials}
+            />
+            <div>
+              <Label htmlFor='active'>Active</Label>
+              <p className='text-xs text-gray-500'>
+                When active, the user can log in and access the system.
+              </p>
+            </div>
+          </div>
+          <div className='flex items-center space-x-4 rounded-md border border-gray-200 p-4'>
+            <Switch
+              id='admin'
+              checked={credentials.isAdmin}
+              onCheckedChange={handleAdminChange}
+              disabled={!isEditCredentials}
+            />
+            <div>
+              <Label htmlFor='admin'>Admin</Label>
+              <p className='text-xs text-gray-500'>
+                Admins have full access to all features and can manage other
+                users.
+              </p>
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>
@@ -186,6 +219,7 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
+                setCredentials({ ...credentials, active: false });
                 setShowInactiveAlert(false);
               }}
             >
