@@ -5,6 +5,7 @@ import { usePageTitle } from '@/hooks/use-page-title';
 
 const ChildDetailPage = () => {
   usePageTitle('Child Detail')
+  
   return <UserDetailPage />;
 };
 

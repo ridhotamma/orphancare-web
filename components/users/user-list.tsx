@@ -149,35 +149,34 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
     }
   };
 
-  const getBedRooms = async () => {
-    try {
-      const response = await requests({
-        url: '/admin/bedrooms',
-        method: 'GET',
-      });
-      setBedRoomData(response.data);
-    } catch (error: any) {
-      if (error.status === 401) {
-        setUnauthorized(true);
-      } else {
-        toast({
-          title: error.message,
-          variant: 'destructive',
+  useEffect(() => {
+    const getBedRooms = async () => {
+      try {
+        const response = await requests({
+          url: '/admin/bedrooms',
+          method: 'GET',
         });
+        setBedRoomData(response.data);
+      } catch (error: any) {
+        if (error.status === 401) {
+          setUnauthorized(true);
+        } else {
+          toast({
+            title: error.message,
+            variant: 'destructive',
+          });
+        }
       }
-    }
-  };
+    };
 
-  useEffect(() => {
     getBedRooms();
-  }, []);
+  }, [setUnauthorized, toast]);
 
   useEffect(() => {
-    setUserData([])
+    setUserData([]);
     setSearching(true);
     debouncedSearch(searchQuery);
   }, [debouncedSearch, searchQuery, genderFilter, bedRoomFilter]);
-  
 
   const renderUserCard = (user: User) => (
     <Card
@@ -236,8 +235,10 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
         </div>
       </CardContent>
       <CardFooter className='p-4'>
-        <Button variant='outline' className='w-full'>
-          <Eye className='mr-2 h-4 w-4' /> View Details
+        <Button variant='outline' className='w-full' asChild>
+          <Link href={isCareTaker ? `/users/caretakers/${user.id}` : `/users/children/${user.id}`}>
+            <Eye className='mr-2 h-4 w-4' /> View Details
+          </Link>
         </Button>
       </CardFooter>
     </Card>
