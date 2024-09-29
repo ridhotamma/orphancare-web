@@ -63,7 +63,7 @@ const DocumentList: React.FC = () => {
   });
 
   return (
-    <div className='container mx-auto px-4 py-8'>
+    <div>
       <div className='mb-8 space-y-4'>
         <div className='flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4'>
           <div className='relative flex-grow'>
@@ -124,18 +124,18 @@ const DocumentList: React.FC = () => {
               <div className='flex items-center space-x-2 mb-4'>
                 <Avatar className='h-8 w-8'>
                   <AvatarImage
-                    src={doc.owner.profile?.profilePicture}
-                    alt={doc.owner.profile?.fullName}
+                    src={doc.owner?.profile?.profilePicture}
+                    alt={doc.owner?.profile?.fullName}
                   />
                   <AvatarFallback>
-                    {doc.owner.profile
+                    {doc.owner?.profile
                       ?.fullName!.split(' ')
                       .map((n) => n[0])
                       .join('')}
                   </AvatarFallback>
                 </Avatar>
                 <span className='text-sm text-gray-600 dark:text-gray-200'>
-                  {doc.owner.profile?.fullName}
+                  {doc.owner?.profile?.fullName}
                 </span>
               </div>
               <Badge variant='secondary' className='mb-2'>

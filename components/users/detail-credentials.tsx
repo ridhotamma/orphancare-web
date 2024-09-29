@@ -125,7 +125,7 @@ export const DetailCredentials: React.FC = () => {
           />
         </div>
         <div className='space-y-4'>
-          <div className='flex items-center space-x-4 rounded-md border border-gray-200 p-4'>
+          <div className='flex items-center space-x-4 rounded-md border border-gray-200 dark:border-gray-800 p-4'>
             <Switch
               id='active'
               checked={credentials.active}
@@ -139,7 +139,7 @@ export const DetailCredentials: React.FC = () => {
               </p>
             </div>
           </div>
-          <div className='flex items-center space-x-4 rounded-md border border-gray-200 p-4'>
+          <div className='flex items-center space-x-4 rounded-md border border-gray-200 dark:border-gray-800 p-4'>
             <Switch
               id='admin'
               checked={credentials.isAdmin}

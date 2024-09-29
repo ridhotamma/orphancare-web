@@ -39,7 +39,7 @@ import { RoleType } from '@/types/enums';
 import { BedRoom } from '@/types/bedroom';
 import EmptyContainer from '../container/empty-container';
 import Image from 'next/image';
-import NotFoundDateImage from '@/images/not-found-data.png';
+import NotFoundImage from '@/images/not-found-common.png';
 import Link from 'next/link';
 
 type UserListProps = {
@@ -173,7 +173,6 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
   }, [setUnauthorized, toast]);
 
   useEffect(() => {
-    setUserData([]);
     setSearching(true);
     debouncedSearch(searchQuery);
   }, [debouncedSearch, searchQuery, genderFilter, bedRoomFilter]);
@@ -344,13 +343,13 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
           <EmptyContainer
             image={
               <Image
-                width={200}
-                height={200}
-                src={NotFoundDateImage}
+                width={300}
+                height={300}
+                src={NotFoundImage}
                 alt='not found users'
               />
             }
-            text='No users found'
+            text='User not found'
           />
         )}
       </LoadingContainer>

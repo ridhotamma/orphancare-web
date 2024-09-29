@@ -18,8 +18,8 @@ export const mockDocuments: Document[] = [
       name: 'PDF',
       type: 'application/pdf',
     },
-    createdAt: new Date('2024-09-20T10:00:00Z'),
-    updatedAt: new Date('2024-09-21T14:30:00Z'),
+    createdAt: new Date('2024-09-20T10:00:00Z').toLocaleDateString(),
+    updatedAt: new Date('2024-09-21T14:30:00Z').toLocaleDateString(),
   },
   {
     id: '2',
@@ -38,8 +38,8 @@ export const mockDocuments: Document[] = [
       name: 'Word Document',
       type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     },
-    createdAt: new Date('2024-09-22T09:15:00Z'),
-    updatedAt: new Date('2024-09-22T09:15:00Z'),
+    createdAt: new Date('2024-09-22T09:15:00Z').toLocaleDateString(),
+    updatedAt: new Date('2024-09-22T09:15:00Z').toLocaleDateString(),
   },
   {
     id: '3',
@@ -58,7 +58,7 @@ export const mockDocuments: Document[] = [
       name: 'JPEG Image',
       type: 'image/jpeg',
     },
-    createdAt: new Date('2024-09-23T11:45:00Z'),
-    updatedAt: new Date('2024-09-24T08:20:00Z'),
+    createdAt: new Date('2024-09-23T11:45:00Z').toLocaleDateString(),
+    updatedAt: new Date('2024-09-24T08:20:00Z').toLocaleDateString(),
   },
 ];

@@ -1,24 +1,27 @@
 import React, { useState, useRef } from 'react';
-import { File, Eye, Plus } from 'lucide-react';
+import { File, Eye, Plus, Download, MoreVertical, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from '@/components/ui/card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
 import { Document } from '@/types/document';
 import { AddDocumentDialog } from '@/components/users/add-document-dialog';
 import { useToast } from '@/hooks/use-toast';
 import EmptyContainer from '@/components/container/empty-container';
 import EmptyImage from '@/images/not-found-document.png';
 import Image from 'next/image';
-
-type Documents = {
-  data: Document[];
-  meta: {
-    currentPage: number;
-    perPage: number;
-    total: number;
-    totalPages: number;
-  };
-};
+import { mockDocuments } from '@/data/mockup/document-mockup';
 
 type NewDocument = {
   file: File | null;
@@ -28,15 +31,7 @@ type NewDocument = {
 
 export const DetailDocuments: React.FC = () => {
   const { toast } = useToast();
-  const [documents, setDocuments] = useState<Documents>({
-    data: [],
-    meta: {
-      currentPage: 0,
-      perPage: 10,
-      total: 4,
-      totalPages: 1,
-    },
-  });
+  const [documents, setDocuments] = useState<Document[]>(mockDocuments);
   const [isAddDocumentModalOpen, setIsAddDocumentModalOpen] = useState(false);
   const [newDocument, setNewDocument] = useState<NewDocument>({
     file: null,
@@ -77,23 +72,25 @@ export const DetailDocuments: React.FC = () => {
         },
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
+        owner: {
+          id: 'current-user',
+          email: 'current@example.com',
+          profile: {
+            fullName: 'Current User',
+            profilePicture: 'https://i.pravatar.cc/150?u=current-user',
+          },
+        },
       };
 
-      setDocuments((prevDocs) => ({
-        ...prevDocs,
-        data: [newDoc, ...prevDocs.data],
-        meta: {
-          ...prevDocs.meta,
-          total: prevDocs.meta.total + 1,
-        },
-      }));
+      setDocuments((prevDocs) => [newDoc, ...prevDocs]);
 
       setIsAddDocumentModalOpen(false);
       setNewDocument({ file: null, name: '', type: '' });
 
       toast({
         title: 'Document added',
-        description: 'Your new document has been successfully uploaded and added.',
+        description:
+          'Your new document has been successfully uploaded and added.',
       });
     } catch (error: any) {
       toast({
@@ -104,8 +101,30 @@ export const DetailDocuments: React.FC = () => {
     }
   };
 
+  const getFileIcon = (type: string) => {
+    switch (type) {
+      case 'DOCUMENT_PDF':
+        return <File className='h-20 w-20 text-red-500' />;
+      case 'DOCUMENT_IMAGE':
+        return <File className='h-20 w-20 text-green-500' />;
+      default:
+        return <File className='h-20 w-20 text-gray-500' />;
+    }
+  };
+
+  const getTypeBadgeColor = (type: string) => {
+    switch (type) {
+      case 'DOCUMENT_PDF':
+        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+      case 'DOCUMENT_IMAGE':
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+    }
+  };
+
   return (
-    <div className='container mx-auto px-0 lg:px-20'>
+    <div className='container mx-auto px-4 py-8'>
       <div className='flex justify-end items-center mb-8'>
         <Button
           onClick={() => setIsAddDocumentModalOpen(true)}
@@ -114,7 +133,7 @@ export const DetailDocuments: React.FC = () => {
           <Plus className='mr-2 h-4 w-4' /> Add Document
         </Button>
       </div>
-      {documents.data.length === 0 ? (
+      {documents.length === 0 ? (
         <EmptyContainer
           image={
             <Image
@@ -128,31 +147,50 @@ export const DetailDocuments: React.FC = () => {
         />
       ) : (
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
-          {documents.data.map((doc) => (
+          {documents.map((doc) => (
             <Card
               key={doc.id}
               className='overflow-hidden transition-all duration-300 hover:shadow-lg'
             >
-              <CardHeader className='bg-gray-100 dark:bg-gray-800 p-4'>
-                <CardTitle className='text-lg font-semibold truncate'>
-                  {doc.name}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className='p-4'>
-                <div className='flex items-center justify-center h-32 bg-gray-200 dark:bg-gray-800 rounded-md mb-4'>
-                  <File className='h-16 w-16 text-gray-400 dark:text-white' />
+              <CardHeader className='p-4 flex flex-col items-center'>
+                <div className='flex items-center justify-center h-40 w-full bg-gray-100 dark:bg-gray-800 rounded-t-lg'>
+                  {getFileIcon(doc.documentType.type!)}
                 </div>
-                <p className='text-sm text-gray-600 dark:text-gray-50 mb-1'>
-                  Type: {doc.documentType.name}
-                </p>
-                <p className='text-sm text-gray-600 dark:text-gray-50'>
+              </CardHeader>
+              <CardContent className='px-4 flex flex-col items-center'>
+                <Badge
+                  className={`mb-2 ${getTypeBadgeColor(
+                    doc.documentType.type!
+                  )}`}
+                >
+                  {doc.documentType.name}
+                </Badge>
+                <h2 className='text-lg font-semibold text-center mb-2 line-clamp-2'>
+                  {doc.name}
+                </h2>
+                <p className='text-sm text-gray-600 dark:text-gray-300'>
                   Created: {format(new Date(doc.createdAt), 'PP')}
                 </p>
               </CardContent>
-              <CardFooter className='bg-gray-50 dark:bg-gray-800 p-4'>
-                <Button variant={'secondary'} className='w-full'>
+              <CardFooter className='bg-gray-50 dark:bg-gray-800 p-4 flex justify-between'>
+                <Button variant='outline' size='sm'>
                   <Eye className='mr-2 h-4 w-4' /> Preview
                 </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant='ghost' size='sm'>
+                      <MoreVertical className='h-4 w-4' />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>
+                      <Download className='mr-2 h-4 w-4' /> Download
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Trash2 className='mr-2 h-4 w-4' /> Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </CardFooter>
             </Card>
           ))}
