@@ -31,6 +31,7 @@ import EmptyImage from '@/images/not-found-document.png';
 import Image from 'next/image';
 import { mockDocuments } from '@/data/mockup/document-mockup';
 import { Input } from '@/components/ui/input';
+import FullscreenDocumentPreview from '../documents/document-preview';
 
 type NewDocument = {
   file: File | null;
@@ -48,6 +49,9 @@ export const DetailDocuments: React.FC = () => {
     name: '',
     type: '',
   });
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(
+    null
+  );
 
   const handleSearchDocuments = (value: string) => {
     setSearchQuery(value);
@@ -139,7 +143,7 @@ export const DetailDocuments: React.FC = () => {
   };
 
   return (
-    <div className='container mx-auto px-0 lg:px-20'>
+    <div>
       <div className='flex justify-between items-center mb-8'>
         <div className='relative'>
           <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400' />
@@ -171,34 +175,38 @@ export const DetailDocuments: React.FC = () => {
           text="You haven't added any documents yet. Click 'Add Document' to get started."
         />
       ) : (
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
           {documents.map((doc) => (
             <Card
               key={doc.id}
-              className='overflow-hidden transition-all duration-300 hover:shadow-lg'
+              className='overflow-hidden transition-all duration-300 hover:shadow-lg flex flex-col'
             >
               <CardHeader className='p-4 flex flex-col items-center'>
                 <div className='flex items-center justify-center h-40 w-full bg-gray-100 dark:bg-gray-800 rounded-t-lg'>
                   {getFileIcon(doc.documentType.type!)}
                 </div>
               </CardHeader>
-              <CardContent className='px-4 flex flex-col items-center'>
+              <CardContent className='px-4 flex flex-col items-center flex-grow'>
                 <Badge
-                  className={`mb-2 ${getTypeBadgeColor(
+                  className={`mb-2 flex-grow-0 ${getTypeBadgeColor(
                     doc.documentType.type!
                   )}`}
                 >
                   {doc.documentType.name}
                 </Badge>
-                <h2 className='text-lg font-semibold text-center mb-2 line-clamp-2'>
+                <h2 className='flex-grow ext-lg font-semibold text-center mb-2 line-clamp-2'>
                   {doc.name}
                 </h2>
-                <p className='text-sm text-gray-600 dark:text-gray-300'>
+                <p className='flex-grow-0 text-sm text-gray-600 dark:text-gray-300'>
                   Created: {format(new Date(doc.createdAt), 'PP')}
                 </p>
               </CardContent>
               <CardFooter className='bg-gray-50 dark:bg-gray-800 p-4 flex justify-between'>
-                <Button variant='outline' size='sm'>
+                <Button
+                  onClick={() => setSelectedDocument(doc)}
+                  variant='outline'
+                  size='sm'
+                >
                   <Eye className='mr-2 h-4 w-4' /> Preview
                 </Button>
                 <DropdownMenu>
@@ -230,6 +238,16 @@ export const DetailDocuments: React.FC = () => {
         fileInputRef={fileInputRef}
         onFileChange={handleFileChange}
       />
+
+      {selectedDocument && (
+        <FullscreenDocumentPreview
+          document={selectedDocument}
+          onClose={() => {
+            setSelectedDocument(null);
+          }}
+          onDelete={() => {}}
+        />
+      )}
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Trash2, Upload, FileText } from 'lucide-react';
+import { Trash2, Upload, FileText, Check, ChevronsUpDown } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,12 +11,40 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Command,
+  CommandEmpty,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
 import Image from 'next/image';
+
+interface User {
+  id: string;
+  name: string;
+  avatar: string;
+}
 
 interface HorizontalAddDocumentDialogProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+const users: User[] = [
+  { id: '1', name: 'John Doe', avatar: 'https://github.com/shadcn.png' },
+  { id: '2', name: 'Jane Smith', avatar: 'https://github.com/shadcn.png' },
+  { id: '3', name: 'Alice Johnson', avatar: 'https://github.com/shadcn.png' },
+  { id: '4', name: 'Bob Williams', avatar: 'https://github.com/shadcn.png' },
+  { id: '5', name: 'Charlie Brown', avatar: 'https://github.com/shadcn.png' },
+];
 
 const HorizontalAddDocumentDialog = ({
   isOpen,
@@ -27,6 +55,8 @@ const HorizontalAddDocumentDialog = ({
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [fileName, setFileName] = useState('');
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [open, setOpen] = useState(false);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -54,7 +84,7 @@ const HorizontalAddDocumentDialog = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ name, documentType, file });
+    console.log({ name, documentType, file, selectedUser });
     onClose();
   };
 
@@ -64,6 +94,7 @@ const HorizontalAddDocumentDialog = ({
     setFile(null);
     setPreview(null);
     setDocumentType('');
+    setSelectedUser(null);
     onClose();
   };
 
@@ -102,10 +133,10 @@ const HorizontalAddDocumentDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='sm:max-w-[800px] h-[600px] flex flex-col p-0'>
-        <div className='flex h-full'>
+      <DialogContent className='sm:max-w-[800px] max-h-[100vh] overflow-auto flex flex-col p-0'>
+        <div className='flex flex-col md:flex-row h-full'>
           {/* Left side - File preview */}
-          <div className='w-1/2 bg-gray-100 dark:bg-gray-800 flex flex-col items-center justify-center p-6 relative'>
+          <div className='w-full h-[400px] md:h-auto md:w-1/2 bg-gray-100 dark:bg-gray-800 flex flex-col items-center justify-center p-6 relative'>
             {renderPreview()}
             {file && (
               <Button
@@ -120,7 +151,7 @@ const HorizontalAddDocumentDialog = ({
           </div>
 
           {/* Right side - Form */}
-          <div className='w-1/2 p-6 flex flex-col'>
+          <div className='w-full md:w-1/2 p-6 flex flex-col overflow-y-auto'>
             <h2 className='text-2xl font-bold mb-6'>Add New Document</h2>
             <form onSubmit={handleSubmit} className='space-y-6 flex-grow'>
               <div className='space-y-2'>
@@ -152,6 +183,64 @@ const HorizontalAddDocumentDialog = ({
                 </Select>
               </div>
               <div className='space-y-2'>
+                <Label htmlFor='user'>Assign User</Label>
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant='outline'
+                      role='combobox'
+                      aria-expanded={open}
+                      className='w-full justify-between'
+                    >
+                      {selectedUser ? (
+                        <div className='flex items-center'>
+                          <Avatar className='h-6 w-6 mr-2'>
+                            <AvatarImage src={selectedUser.avatar} alt={selectedUser.name} />
+                            <AvatarFallback>{selectedUser.name[0]}</AvatarFallback>
+                          </Avatar>
+                          {selectedUser.name}
+                        </div>
+                      ) : (
+                        'Select user...'
+                      )}
+                      <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className='w-[300px] p-0'>
+                    <Command>
+                      <CommandInput placeholder='Search users...' />
+                      <CommandEmpty>No user found.</CommandEmpty>
+                      <CommandList>
+                        {users.map((user) => (
+                          <CommandItem
+                            key={user.id}
+                            onSelect={() => {
+                              setSelectedUser(user);
+                              setOpen(false);
+                            }}
+                            className='flex items-center'
+                          >
+                            <Avatar className='h-8 w-8 mr-2'>
+                              <AvatarImage src={user.avatar} alt={user.name} />
+                              <AvatarFallback>{user.name[0]}</AvatarFallback>
+                            </Avatar>
+                            {user.name}
+                            <Check
+                              className={cn(
+                                'ml-auto h-4 w-4',
+                                selectedUser?.id === user.id
+                                  ? 'opacity-100'
+                                  : 'opacity-0'
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div className='space-y-2'>
                 <Label htmlFor='file'>Upload File</Label>
                 <div className='flex items-center space-x-2'>
                   <Button
@@ -163,7 +252,7 @@ const HorizontalAddDocumentDialog = ({
                   >
                     Choose file
                   </Button>
-                  <span className='text-sm text-gray-500 dark:text-gray-400'>
+                  <span className='text-sm text-gray-500 dark:text-gray-400 truncate'>
                     {fileName || 'No file chosen'}
                   </span>
                   <input
