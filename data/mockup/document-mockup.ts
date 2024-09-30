@@ -3,7 +3,7 @@ import { Document } from '@/types/document';
 export const mockDocuments: Document[] = [
   {
     id: '1',
-    name: 'Meeting Notes Lorem Ipsum Doler Sit Amet Lorem Ipsum Doler Sit Amet Lorem Ipsum Doler Sit Amet',
+    name: 'Billing Biznet VPS',
     url: 'https://pdfobject.com/pdf/sample.pdf',
     owner: {
       id: 'user1',
@@ -23,7 +23,7 @@ export const mockDocuments: Document[] = [
   },
   {
     id: '2',
-    name: 'Meeting Notes Lorem Ipsum Doler Sit Amet Lorem Ipsum Doler Sit Amet Lorem Ipsum Doler Sit Amet',
+    name: 'Ijazah Tsanawiyah',
     url: 'https://pdfobject.com/pdf/sample.pdf',
     owner: {
       id: 'user2',
@@ -43,7 +43,7 @@ export const mockDocuments: Document[] = [
   },
   {
     id: '3',
-    name: 'Product Image Lorem Ipsum Doler Sit Amet',
+    name: 'Foto Keluarga',
     url: 'https://pdfobject.com/pdf/sample.pdf',
     owner: {
       id: 'user3',

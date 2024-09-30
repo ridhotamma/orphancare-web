@@ -32,6 +32,7 @@ import {
 import { format } from 'date-fns';
 import FullscreenDocumentPreview from './document-preview';
 import { Document } from '@/types/document';
+import FullScreenAddDocumentDialog from './fullscreen-add-dialog';
 
 interface DocumentIconProps {
   type: string | undefined;
@@ -40,7 +41,7 @@ interface DocumentIconProps {
 const DocumentIcon: React.FC<DocumentIconProps> = ({ type }) => {
   switch (type) {
     case 'application/pdf':
-      return <FileIcon className='h-8 w-8 text-red-500' />;
+      return <FileTextIcon className='h-8 w-8 text-red-500' />;
     case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
       return <FileTextIcon className='h-8 w-8 text-blue-500' />;
     case 'image/jpeg':
@@ -56,6 +57,7 @@ const DocumentList: React.FC = () => {
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(
     null
   );
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const filteredDocuments = mockDocuments.filter((doc) => {
     const matchesSearch = doc
@@ -107,7 +109,7 @@ const DocumentList: React.FC = () => {
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button>
+            <Button onClick={() => setIsAddDialogOpen(true)}>
               <Plus className='mr-2 h-4 w-4' /> Add Documents
             </Button>
           </div>
@@ -169,6 +171,11 @@ const DocumentList: React.FC = () => {
           onClose={() => setSelectedDocument(null)}
         />
       )}
+
+      <FullScreenAddDocumentDialog
+        isOpen={isAddDialogOpen}
+        onClose={() => setIsAddDialogOpen(false)}
+      />
     </div>
   );
 };
