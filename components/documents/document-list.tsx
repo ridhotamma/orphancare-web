@@ -4,11 +4,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   FileIcon,
   FileTextIcon,
-  Filter,
   ImageIcon,
   Plus,
   Search,
   Eye,
+  Settings,
 } from 'lucide-react';
 import { mockDocuments } from '@/data/mockup/document-mockup';
 import { Input } from '@/components/ui/input';
@@ -87,7 +87,7 @@ const DocumentList: React.FC = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant='outline'>
-                  <Filter className='mr-2 h-4 w-4' />
+                  <Settings className='mr-2 h-4 w-4' />
                   Category
                 </Button>
               </DropdownMenuTrigger>

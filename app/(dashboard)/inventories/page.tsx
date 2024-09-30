@@ -30,7 +30,6 @@ const InventoriesPage = () => {
   );
   const [sortField, setSortField] = useState<'name' | 'quantity'>('name');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-  
 
   const handleSort = useCallback(
     (field: 'name' | 'quantity') => {
@@ -87,11 +86,11 @@ const InventoriesPage = () => {
   };
 
   return (
-    <div>
+    <div className='container mx-auto px-4 py-8'>
       <div className='mb-8 flex flex-col sm:flex-row gap-4'>
         <div className='relative flex-grow'>
           <Search
-            className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-100'
+            className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'
             size={18}
           />
           <Input
@@ -108,23 +107,20 @@ const InventoriesPage = () => {
         </Button>
       </div>
 
-      <div className='mb-4 flex justify-end'>
+      <div className='mb-4 flex justify-end space-x-2'>
         <Button
-          variant={sortField === 'name' ? 'default' : 'outline'}
+          variant={sortField === 'name' ? 'secondary' : 'outline'}
           size='sm'
-          className='mr-2'
           onClick={() => handleSort('name')}
         >
-          Sort by Name
-          {getSortIcon('name')}
+          Name {getSortIcon('name')}
         </Button>
         <Button
-          variant={sortField === 'quantity' ? 'default' : 'outline'}
+          variant={sortField === 'quantity' ? 'secondary' : 'outline'}
           size='sm'
           onClick={() => handleSort('quantity')}
         >
-          Sort by Quantity
-          {getSortIcon('quantity')}
+          Quantity {getSortIcon('quantity')}
         </Button>
       </div>
 
@@ -132,47 +128,39 @@ const InventoriesPage = () => {
         {sortedInventories.map((item) => (
           <Card
             key={item.id}
-            className='overflow-hidden transition-all duration-300 hover:shadow-lg'
+            className='overflow-hidden transition-all duration-300 hover:shadow-lg flex flex-col'
           >
-            <CardContent className='p-6'>
-              <div className='flex items-center justify-between mb-4'>
-                <div className='flex items-center'>
-                  <Package className='mr-2 text-blue-500' size={24} />
-                  <h3 className='font-semibold text-lg text-gray-800 dark:text-gray-200'>
-                    {item.name}
-                  </h3>
-                </div>
-                <Badge variant='secondary' className='text-xs'>
+            <CardContent className='p-4 flex-grow'>
+              <div className='flex items-center justify-between gap-4 mb-3'>
+                <Badge variant='secondary' className='text-xs line-clamp-2'>
                   {item.inventoryType.name}
                 </Badge>
+                <Package className='text-blue-500' size={25} />
               </div>
-              <div className='space-y-3'>
-                <p className='text-sm text-gray-600 dark:text-gray-400'>
-                  Quantity:{' '}
-                  <span className='font-medium text-gray-800 dark:text-gray-200'>
-                    {item.quantity}
-                  </span>
+              <h3 className='font-semibold text-lg text-gray-800 dark:text-gray-200 line-clamp-2 mb-2'>
+                {item.name}
+              </h3>
+              <div className='space-y-2 text-sm'>
+                <p className='text-gray-600 dark:text-gray-400'>
+                  Quantity: <span className='font-medium'>{item.quantity}</span>
                 </p>
-                <p className='text-sm text-gray-600 dark:text-gray-400'>
+                <p className='text-gray-600 dark:text-gray-400'>
                   Unit:{' '}
-                  <span className='font-medium text-gray-800 dark:text-gray-200'>
+                  <span className='font-medium'>
                     {item.unit?.name || 'N/A'}
                   </span>
                 </p>
-                <div className='flex items-center text-xs text-gray-500 dark:text-gray-200'>
-                  <Calendar
-                    className='mr-2 text-gray-400 dark:text-gray-100'
-                    size={14}
-                  />
-                  Last updated: {item.updatedAt.toLocaleDateString()}
+                <div className='flex items-center text-xs text-gray-500 dark:text-gray-400'>
+                  <Calendar className='mr-1' size={12} />
+                  {item.updatedAt.toLocaleDateString()}
                 </div>
               </div>
             </CardContent>
             <CardFooter className='p-4'>
               <Button
+                onClick={() => handleViewDetails(item)}
                 variant='outline'
                 className='w-full'
-                onClick={() => handleViewDetails(item)}
               >
                 <Eye className='mr-2 h-4 w-4' /> View Details
               </Button>

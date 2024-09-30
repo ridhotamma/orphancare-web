@@ -3,11 +3,11 @@ import { Inventory } from '@/types/inventory';
 export const mockInventories: Inventory[] = [
   {
     id: '1',
-    name: 'Item 1',
+    name: 'Sapu Lorem Ipsum Doler Sit Amet',
     quantity: 10,
     inventoryType: {
       id: '1',
-      name: 'Type 1',
+      name: 'Kendaraan Bermotor',
       type: 'consumable',
       createdAt: new Date(),
       updatedAt: new Date(),

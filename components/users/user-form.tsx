@@ -426,7 +426,7 @@ const UserForm = <T extends Partial<FormValues>>({
                     <FormControl>
                       <Input
                         type='date'
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                        className='w-full px-3 py-2 rounded-md focus:outline-none'
                         {...field}
                       />
                     </FormControl>
@@ -511,7 +511,7 @@ const UserForm = <T extends Partial<FormValues>>({
                     <FormControl>
                       <Input
                         type='date'
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                        className='w-full px-3 py-2 rounded-md focus:outline-none'
                         {...field}
                       />
                     </FormControl>
