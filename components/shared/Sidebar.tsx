@@ -1,11 +1,19 @@
+'use client'
+
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { X, Settings2 } from 'lucide-react';
+import { X, Settings2, Sliders, UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MenuItem } from '@/constants/menu-map';
 import { User } from '@/types/user';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface SidebarProps {
   menuItems: MenuItem[];
@@ -49,6 +57,7 @@ const Sidebar: React.FC<SidebarProps> = ({ menuItems, user, onClose }) => {
           ))}
         </ul>
       </nav>
+
       <div className='p-4 bg-white bg-opacity-10 backdrop-blur-sm rounded-t-3xl mt-auto'>
         <div className='flex justify-between items-center'>
           <div className='flex items-center'>
@@ -66,9 +75,27 @@ const Sidebar: React.FC<SidebarProps> = ({ menuItems, user, onClose }) => {
               <p className='text-sm text-blue-100'>Administrator</p>
             </div>
           </div>
-          <Button variant='ghost' size='icon' className='text-white'>
-            <Settings2 className='h-5 w-5' />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant='ghost' size='icon' className='text-white'>
+                <Settings2 className='h-5 w-5' />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end' className='w-56'>
+              <DropdownMenuItem asChild>
+                <Link href={'/my-profile'}>
+                  <UserIcon className='mr-2 h-4 w-4' />
+                  <span>My Profile</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href={'/settings'}>
+                  <Sliders className='mr-2 h-4 w-4' />
+                  <span>App Settings</span>
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </div>
