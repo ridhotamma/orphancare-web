@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -10,9 +10,25 @@ import { Profile } from '@/types/profile';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { usePageTitle } from '@/hooks/use-page-title';
+import Link from 'next/link';
+import mockUsers from '@/data/mockup/users-mockup';
+import { MultiSelectItem } from '@/types/bedroom-type';
+import BedroomFormDialog from '@/components/bedrooms/bedroom-form-dialog';
 
 const BedRoomPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const userDropdownList: MultiSelectItem[] = useMemo(() => {
+    return mockUsers
+      .map((user) => ({
+        id: user.id as string,
+        label: user.profile?.fullName as string,
+        value: user.profile?.id as string,
+        avatarUrl: user.profile?.profilePicture as string,
+      }))
+      .filter((user) => user.label);
+  }, []);
 
   const handleAddBedroom = () => {
     console.log('add bed room');
@@ -34,7 +50,7 @@ const BedRoomPage: React.FC = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button className='w-full' onClick={handleAddBedroom}>
+          <Button onClick={() => setIsDialogOpen(true)}>
             <Plus className='mr-2 h-4 w-4' /> Add Bedroom
           </Button>
         </div>
@@ -92,13 +108,23 @@ const BedRoomPage: React.FC = () => {
                   </span>
                 </div>
               </div>
-              <Button variant='outline' className='w-full mt-8'>
-                <Eye className='mr-2 h-4 w-4' /> View Details
+              <Button variant='outline' className='w-full mt-8' asChild>
+                <Link href={`/bedrooms/${bedroom.id}`}>
+                  <Eye className='mr-2 h-4 w-4' /> View Details
+                </Link>
               </Button>
             </CardContent>
           </Card>
         ))}
       </div>
+
+      <BedroomFormDialog
+        isOpen={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        onSubmit={handleAddBedroom}
+        bedRoomTypes={[]}
+        users={userDropdownList}
+      />
     </div>
   );
 };

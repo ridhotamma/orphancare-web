@@ -31,7 +31,7 @@ import EmptyImage from '@/images/not-found-document.png';
 import Image from 'next/image';
 import { mockDocuments } from '@/data/mockup/document-mockup';
 import { Input } from '@/components/ui/input';
-import FullscreenDocumentPreview from '../documents/document-preview';
+import FullscreenDocumentPreview from '@/components/documents/document-preview';
 
 type NewDocument = {
   file: File | null;
