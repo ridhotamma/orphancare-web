@@ -1,5 +1,13 @@
 import React, { useState, useRef } from 'react';
-import { File, Eye, Plus, Download, MoreVertical, Trash2 } from 'lucide-react';
+import {
+  File,
+  Eye,
+  Plus,
+  Download,
+  MoreVertical,
+  Trash2,
+  Search,
+} from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,6 +30,7 @@ import EmptyContainer from '@/components/container/empty-container';
 import EmptyImage from '@/images/not-found-document.png';
 import Image from 'next/image';
 import { mockDocuments } from '@/data/mockup/document-mockup';
+import { Input } from '../ui/input';
 
 type NewDocument = {
   file: File | null;
@@ -33,11 +42,17 @@ export const DetailDocuments: React.FC = () => {
   const { toast } = useToast();
   const [documents, setDocuments] = useState<Document[]>(mockDocuments);
   const [isAddDocumentModalOpen, setIsAddDocumentModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [newDocument, setNewDocument] = useState<NewDocument>({
     file: null,
     name: '',
     type: '',
   });
+
+  const handleSearchDocuments = (value: string) => {
+    setSearchQuery(value);
+  };
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -124,8 +139,18 @@ export const DetailDocuments: React.FC = () => {
   };
 
   return (
-    <div className='container mx-auto px-4 py-8'>
-      <div className='flex justify-end items-center mb-8'>
+    <div className='container mx-auto px-0 lg:px-20'>
+      <div className='flex justify-between items-center mb-8'>
+        <div className='relative'>
+          <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400' />
+          <Input
+            type='text'
+            placeholder='Search Documents'
+            className='pl-10'
+            value={searchQuery}
+            onChange={(e) => handleSearchDocuments(e.target.value)}
+          />
+        </div>
         <Button
           onClick={() => setIsAddDocumentModalOpen(true)}
           className='bg-blue-600 hover:bg-blue-700'
@@ -146,7 +171,7 @@ export const DetailDocuments: React.FC = () => {
           text="You haven't added any documents yet. Click 'Add Document' to get started."
         />
       ) : (
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6'>
           {documents.map((doc) => (
             <Card
               key={doc.id}
