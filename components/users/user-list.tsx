@@ -257,10 +257,10 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
               onChange={(e) => handleSearchUsers(e.target.value)}
             />
           </div>
-          <div className='flex items-center gap-2 lg:gap-4'>
+          <div className='flex items-center flex-wrap md:flex-nowrap gap-2 lg:gap-4'>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant='outline'>
+                <Button variant='outline' className='w-full'>
                   <UserSearch className='mr-2 h-4 w-4' />
                   Gender
                 </Button>
@@ -284,7 +284,7 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
             </DropdownMenu>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant='outline'>
+                <Button variant='outline' className='w-full'>
                   <Bed className='mr-2 h-4 w-4' />
                   Bed Room
                 </Button>
@@ -305,7 +305,7 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button asChild>
+            <Button className='w-full' asChild>
               <Link
                 href={
                   isCareTaker

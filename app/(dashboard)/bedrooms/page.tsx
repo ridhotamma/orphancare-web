@@ -19,12 +19,12 @@ const BedRoomPage: React.FC = () => {
   };
 
   usePageTitle('Bed Rooms');
-  
+
   return (
     <div>
       <div className='mb-6 space-y-4'>
-        <div className='flex space-x-4'>
-          <div className='relative flex-grow'>
+        <div className='flex flex-wrap md:flex-nowrap gap-4'>
+          <div className='relative w-full flex-grow'>
             <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400' />
             <Input
               type='text'
@@ -34,7 +34,7 @@ const BedRoomPage: React.FC = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button onClick={handleAddBedroom}>
+          <Button className='w-full' onClick={handleAddBedroom}>
             <Plus className='mr-2 h-4 w-4' /> Add Bedroom
           </Button>
         </div>
@@ -58,7 +58,7 @@ const BedRoomPage: React.FC = () => {
               </div>
               <div className='mt-4 flex items-center justify-between'>
                 <div className='flex -space-x-4 hover:-space-x-1'>
-                  {bedroom.profiles.map((profile: Profile, index: number) => (
+                  {bedroom.profiles?.map((profile: Profile, index: number) => (
                     <>
                       {index < 5 && (
                         <Avatar
@@ -70,14 +70,14 @@ const BedRoomPage: React.FC = () => {
                             alt={profile.fullName}
                           />
                           <AvatarFallback>
-                            {profile.fullName.charAt(0)}
+                            {profile.fullName?.charAt(0)}
                           </AvatarFallback>
                         </Avatar>
                       )}
                     </>
                   ))}
 
-                  {bedroom.profiles.length > 5 && (
+                  {bedroom.profiles && bedroom.profiles?.length > 5 && (
                     <Avatar className='border-2 border-background'>
                       <AvatarFallback className='bg-blue-400 text-white font-bold'>
                         {bedroom.profiles.length - 5}+
@@ -88,7 +88,7 @@ const BedRoomPage: React.FC = () => {
                 <div className='flex items-center space-x-1'>
                   <Users className='h-4 w-4 text-muted-foreground' />
                   <span className='text-sm text-muted-foreground'>
-                    {bedroom.profiles.length}
+                    {bedroom.profiles?.length}
                   </span>
                 </div>
               </div>
