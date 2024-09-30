@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -12,12 +12,15 @@ import { Input } from '@/components/ui/input';
 import { usePageTitle } from '@/hooks/use-page-title';
 import Link from 'next/link';
 import mockUsers from '@/data/mockup/users-mockup';
-import { MultiSelectItem } from '@/types/bedroom-type';
+import { BedRoomType, MultiSelectItem } from '@/types/bedroom-type';
 import BedroomFormDialog from '@/components/bedrooms/bedroom-form-dialog';
+import { useToast } from '@/hooks/use-toast';
+import { requests } from '@/lib/api';
 
 const BedRoomPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [bedRoomTypes, setBedRoomTypes] = useState<BedRoomType[]>([]);
 
   const userDropdownList: MultiSelectItem[] = useMemo(() => {
     return mockUsers
@@ -33,6 +36,29 @@ const BedRoomPage: React.FC = () => {
   const handleAddBedroom = () => {
     console.log('add bed room');
   };
+
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const getBedRoomTypes = async () => {
+      try {
+        const data = await requests({
+          url: '/admin/bedroom-types',
+          method: 'GET',
+        });
+
+        setBedRoomTypes(data);
+      } catch (error: any) {
+        toast({
+          title: error.error,
+          content: error.message,
+          variant: 'destructive',
+        });
+      }
+    };
+
+    getBedRoomTypes();
+  }, []);
 
   usePageTitle('Bed Rooms');
 
@@ -122,7 +148,7 @@ const BedRoomPage: React.FC = () => {
         isOpen={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         onSubmit={handleAddBedroom}
-        bedRoomTypes={[]}
+        bedRoomTypes={bedRoomTypes}
         users={userDropdownList}
       />
     </div>
