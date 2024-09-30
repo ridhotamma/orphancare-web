@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React, { useState } from 'react';
 import { Donation } from '@/types/donation';
@@ -11,12 +11,29 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { GiftIcon, CalendarIcon, UserIcon, Eye, Search, Filter, Plus } from 'lucide-react';
+import {
+  GiftIcon,
+  CalendarIcon,
+  UserIcon,
+  Eye,
+  Search,
+  Filter,
+  Plus,
+} from 'lucide-react';
 import { mockDonations } from '@/data/mockup/donations-mockup';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { usePageTitle } from '@/hooks/use-page-title';
+import Link from 'next/link';
 
 const DonationCard: React.FC<{ donation: Donation }> = ({ donation }) => (
   <Card className='h-full'>
@@ -50,8 +67,10 @@ const DonationCard: React.FC<{ donation: Donation }> = ({ donation }) => (
       </div>
     </CardContent>
     <CardFooter className='p-4'>
-      <Button variant='outline' className='w-full'>
-        <Eye className='mr-2 h-4 w-4' /> View Details
+      <Button variant='outline' className='w-full' asChild>
+        <Link href={`/donations/${donation.id}`}>
+          <Eye className='mr-2 h-4 w-4' /> View Details
+        </Link>
       </Button>
     </CardFooter>
   </Card>
@@ -61,8 +80,8 @@ const DonationsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
 
-  usePageTitle('Donations')
-  
+  usePageTitle('Donations');
+
   return (
     <div>
       <div className='mb-8 space-y-4'>
@@ -103,8 +122,10 @@ const DonationsPage: React.FC = () => {
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button>
-              <Plus className='mr-2 h-4 w-4' /> Add Donation
+            <Button asChild>
+              <Link href={'/donations/create'}>
+                <Plus className='mr-2 h-4 w-4' /> Add Donation
+              </Link>
             </Button>
           </div>
         </div>

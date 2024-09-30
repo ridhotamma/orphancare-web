@@ -27,6 +27,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { usePageTitle } from '@/hooks/use-page-title';
+import Link from 'next/link';
 
 const statusColors = {
   [EventStatus.FINISHED]: 'bg-gray-500',
@@ -63,8 +64,10 @@ const EventCard: React.FC<{ event: Event }> = ({ event }) => (
       </div>
     </CardContent>
     <CardFooter className='p-4'>
-      <Button variant='outline' className='w-full'>
-        <Eye className='mr-2 h-4 w-4' /> View Details
+      <Button variant='outline' className='w-full' asChild>
+        <Link href={`/events/${event.id}`}>
+          <Eye className='mr-2 h-4 w-4' /> View Details
+        </Link>
       </Button>
     </CardFooter>
   </Card>
@@ -74,8 +77,8 @@ const EventsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
 
-  usePageTitle('Events')
-  
+  usePageTitle('Events');
+
   return (
     <div>
       <div className='mb-8 space-y-4'>
@@ -116,8 +119,10 @@ const EventsPage: React.FC = () => {
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button>
-              <Plus className='mr-2 h-4 w-4' /> Add Event
+            <Button asChild>
+              <Link href='/events/create'>
+                <Plus className='mr-2 h-4 w-4' /> Add Event
+              </Link>
             </Button>
           </div>
         </div>

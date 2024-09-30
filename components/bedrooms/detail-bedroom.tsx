@@ -105,7 +105,7 @@ const BedRoomDetail = ({ bedRoom }: BedRoomDetailProps) => {
         </CardContent>
       </Card>
 
-      <h2 className='text-xl font-semibold mb-4 text-gray-800'>Occupants</h2>
+      <h2 className='text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200'>Occupants</h2>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         {bedRoom?.profiles?.map((profile, index) => (
           <Card
