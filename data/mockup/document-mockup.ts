@@ -3,7 +3,7 @@ import { Document } from '@/types/document';
 export const mockDocuments: Document[] = [
   {
     id: '1',
-    name: 'Billing Biznet VPS',
+    name: 'Billing Biznet VPS Lorem Ipsum Doler Sit Amet',
     url: 'https://pdfobject.com/pdf/sample.pdf',
     owner: {
       id: 'user1',

@@ -32,7 +32,7 @@ import {
 import { format } from 'date-fns';
 import FullscreenDocumentPreview from './document-preview';
 import { Document } from '@/types/document';
-import FullScreenAddDocumentDialog from './fullscreen-add-dialog';
+import HorizontalAddDocumentDialog from './horizontal-add-dialog';
 
 interface DocumentIconProps {
   type: string | undefined;
@@ -172,7 +172,7 @@ const DocumentList: React.FC = () => {
         />
       )}
 
-      <FullScreenAddDocumentDialog
+      <HorizontalAddDocumentDialog
         isOpen={isAddDialogOpen}
         onClose={() => setIsAddDialogOpen(false)}
       />

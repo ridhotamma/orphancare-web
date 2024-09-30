@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Trash2, Upload } from 'lucide-react';
+import { Trash2, Upload, FileText } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,79 +13,105 @@ import {
 } from '@/components/ui/select';
 import Image from 'next/image';
 
-interface FullscreenDocumentPreviewProps {
+interface HorizontalAddDocumentDialogProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const FullScreenAddDocumentDialog = ({
+const HorizontalAddDocumentDialog = ({
   isOpen,
   onClose,
-}: FullscreenDocumentPreviewProps) => {
+}: HorizontalAddDocumentDialogProps) => {
   const [name, setName] = useState('');
   const [documentType, setDocumentType] = useState('');
-  const [image, setImage] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const [fileName, setFileName] = useState('');
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e: ProgressEvent<FileReader>) => {
-        setImage(e.target?.result as string);
-        setFileName(file.name);
-      };
-      reader.readAsDataURL(file);
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setFileName(selectedFile.name);
+
+      if (selectedFile.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+          setPreview(e.target?.result as string);
+        };
+        reader.readAsDataURL(selectedFile);
+      } else {
+        setPreview(null);
+      }
     }
   };
 
-  const handleRemoveImage = () => {
-    setImage(null);
+  const handleRemoveFile = () => {
+    setFile(null);
     setFileName('');
+    setPreview(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ name, documentType, image });
+    console.log({ name, documentType, file });
     onClose();
   };
 
   const handleBeforeClose = () => {
     setName('');
     setFileName('');
-    setImage(null);
+    setFile(null);
+    setPreview(null);
     setDocumentType('');
     onClose();
   };
-  
+
+  const renderPreview = () => {
+    if (preview) {
+      return (
+        <div className='relative w-full h-full flex items-center justify-center'>
+          <Image
+            src={preview}
+            alt='Document preview'
+            className='max-w-full max-h-full object-contain'
+            layout='fill'
+          />
+        </div>
+      );
+    } else if (file) {
+      return (
+        <div className='flex flex-col items-center justify-center'>
+          <FileText className='h-24 w-24 text-gray-400' />
+          <p className='mt-2 text-sm text-gray-500 dark:text-gray-400'>
+            {file.name}
+          </p>
+        </div>
+      );
+    } else {
+      return (
+        <div className='text-center'>
+          <Upload className='mx-auto h-12 w-12 text-gray-400' />
+          <p className='mt-2 text-sm text-gray-500 dark:text-gray-400'>
+            Upload a document to preview
+          </p>
+        </div>
+      );
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className='sm:max-w-[800px] h-[600px] flex flex-col p-0'>
         <div className='flex h-full'>
-          {/* Left side - Image preview */}
+          {/* Left side - File preview */}
           <div className='w-1/2 bg-gray-100 dark:bg-gray-800 flex flex-col items-center justify-center p-6 relative'>
-            {image ? (
-              <div className='relative w-full h-full flex items-center justify-center'>
-                <Image
-                  src={image}
-                  alt='Document preview'
-                  className='max-w-full max-h-full object-contain'
-                  layout='fill'
-                />
-              </div>
-            ) : (
-              <div className='text-center'>
-                <Upload className='mx-auto h-12 w-12 text-gray-400' />
-                <p className='mt-2 text-sm text-gray-500 dark:text-gray-400'>
-                  Upload an image to preview
-                </p>
-              </div>
-            )}
-            {image && (
+            {renderPreview()}
+            {file && (
               <Button
                 variant='destructive'
                 className='absolute bottom-6 left-6 right-6'
-                onClick={handleRemoveImage}
+                onClick={handleRemoveFile}
               >
                 <Trash2 className='h-4 w-4 mr-2' />
                 Remove
@@ -120,12 +146,13 @@ const FullScreenAddDocumentDialog = ({
                   <SelectContent>
                     <SelectItem value='pdf'>PDF</SelectItem>
                     <SelectItem value='image'>Image</SelectItem>
-                    <SelectItem value='video'>Video</SelectItem>
+                    <SelectItem value='document'>Document</SelectItem>
+                    <SelectItem value='other'>Other</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className='space-y-2'>
-                <Label htmlFor='image'>Upload Image</Label>
+                <Label htmlFor='file'>Upload File</Label>
                 <div className='flex items-center space-x-2'>
                   <Button
                     type='button'
@@ -143,9 +170,9 @@ const FullScreenAddDocumentDialog = ({
                     id='file-upload'
                     name='file-upload'
                     type='file'
-                    accept='image/*'
+                    accept='.pdf,.doc,.docx,.txt,image/*'
                     className='hidden'
-                    onChange={handleImageUpload}
+                    onChange={handleFileUpload}
                   />
                 </div>
               </div>
@@ -169,4 +196,4 @@ const FullScreenAddDocumentDialog = ({
   );
 };
 
-export default FullScreenAddDocumentDialog;
+export default HorizontalAddDocumentDialog;

@@ -117,21 +117,28 @@ const FullscreenDocumentPreview = ({
   return (
     <div className='fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50'>
       <div className='relative bg-white dark:bg-gray-900 w-full h-full flex flex-col md:flex-row rounded-lg overflow-hidden shadow-2xl'>
-        {/* Close Preview Button */}
-        {!isInfoVisible && (
+        {/* Document Preview Header */}
+        <div className='absolute top-0 left-0 right-0 bg-white dark:bg-gray-900 z-20 p-4 md:p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between'>
+          <div className='flex items-center space-x-3'>
+            {getDocumentIcon()}
+            <h2 className='text-xl font-semibold text-gray-900 dark:text-gray-100 truncate'>
+              {document.name}
+            </h2>
+            <Badge variant='secondary'>{document.documentType.name}</Badge>
+          </div>
           <Button
             variant='ghost'
             size='icon'
             onClick={onClose}
-            className='absolute top-4 right-4 z-20 bg-white hover:bg-gray-200 dark:hover:bg-gray-800 rounded-full'
+            className='hover:bg-gray-200 dark:hover:bg-gray-800 rounded-full'
           >
             <X className='h-6 w-6' />
           </Button>
-        )}
+        </div>
 
         {/* Document Preview */}
         <div
-          className={`relative flex-1 p-4 md:p-6 overflow-auto ${
+          className={`relative flex-1 pt-20 md:pt-24 p-4 md:p-6 overflow-auto ${
             isInfoVisible ? 'hidden md:block' : 'block'
           }`}
         >
@@ -162,12 +169,9 @@ const FullscreenDocumentPreview = ({
         >
           <div className='sticky top-0 bg-white dark:bg-gray-900 z-10 p-4 md:p-6 border-b border-gray-200 dark:border-gray-700'>
             <div className='flex items-center justify-between'>
-              <div className='flex items-center space-x-3'>
-                {getDocumentIcon()}
-                <h2 className='text-xl font-semibold text-gray-900 dark:text-gray-100'>
-                  {document.name}
-                </h2>
-              </div>
+              <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
+                Document Details
+              </h3>
               <Button
                 variant='ghost'
                 size='icon'
@@ -177,9 +181,6 @@ const FullscreenDocumentPreview = ({
                 <X className='h-6 w-6' />
               </Button>
             </div>
-            <Badge variant='secondary' className='mt-2'>
-              {document.documentType.name}
-            </Badge>
           </div>
 
           <div className='p-4 md:p-6 space-y-6'>
@@ -268,8 +269,8 @@ const FullscreenDocumentPreview = ({
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              document &quot;{document.name}&quot; and remove it from our
-              servers.
+              document &quot;
+              {document.name}&quot; and remove it from our servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
