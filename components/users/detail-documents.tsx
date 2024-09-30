@@ -24,13 +24,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
 import { Document } from '@/types/document';
-import { AddDocumentDialog } from '@/components/users/add-document-dialog';
+import { AddDocumentDialog } from '@/components/documents/add-document-dialog';
 import { useToast } from '@/hooks/use-toast';
 import EmptyContainer from '@/components/container/empty-container';
 import EmptyImage from '@/images/not-found-document.png';
 import Image from 'next/image';
 import { mockDocuments } from '@/data/mockup/document-mockup';
-import { Input } from '../ui/input';
+import { Input } from '@/components/ui/input';
 
 type NewDocument = {
   file: File | null;
@@ -222,13 +222,13 @@ export const DetailDocuments: React.FC = () => {
         </div>
       )}
       <AddDocumentDialog
-        isAddDocumentDialogOpen={isAddDocumentModalOpen}
-        setIsAddDocumentDialogOpen={setIsAddDocumentModalOpen}
+        isOpen={isAddDocumentModalOpen}
+        onClose={() => setIsAddDocumentModalOpen(false)}
         newDocument={newDocument}
         setNewDocument={setNewDocument}
-        handleAddDocument={handleAddDocument}
+        onAddDocument={handleAddDocument}
         fileInputRef={fileInputRef}
-        handleFileChange={handleFileChange}
+        onFileChange={handleFileChange}
       />
     </div>
   );

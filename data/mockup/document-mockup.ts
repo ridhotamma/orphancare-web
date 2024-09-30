@@ -3,8 +3,8 @@ import { Document } from '@/types/document';
 export const mockDocuments: Document[] = [
   {
     id: '1',
-    name: 'Project Proposal Lorem Ipsum Doler Sit Amet',
-    url: 'https://example.com/project-proposal.pdf',
+    name: 'Meeting Notes Lorem Ipsum Doler Sit Amet Lorem Ipsum Doler Sit Amet Lorem Ipsum Doler Sit Amet',
+    url: 'https://pdfobject.com/pdf/sample.pdf',
     owner: {
       id: 'user1',
       email: 'john@example.com',
@@ -23,8 +23,8 @@ export const mockDocuments: Document[] = [
   },
   {
     id: '2',
-    name: 'Meeting Notes Lorem Ipsum Doler Sit Amet',
-    url: 'https://example.com/meeting-notes.docx',
+    name: 'Meeting Notes Lorem Ipsum Doler Sit Amet Lorem Ipsum Doler Sit Amet Lorem Ipsum Doler Sit Amet',
+    url: 'https://pdfobject.com/pdf/sample.pdf',
     owner: {
       id: 'user2',
       email: 'jane@example.com',
@@ -36,7 +36,7 @@ export const mockDocuments: Document[] = [
     documentType: {
       id: 'docx',
       name: 'Word Document',
-      type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      type: 'application/pdf',
     },
     createdAt: new Date('2024-09-22T09:15:00Z').toLocaleDateString(),
     updatedAt: new Date('2024-09-22T09:15:00Z').toLocaleDateString(),
@@ -44,7 +44,7 @@ export const mockDocuments: Document[] = [
   {
     id: '3',
     name: 'Product Image Lorem Ipsum Doler Sit Amet',
-    url: 'https://example.com/product-image.jpg',
+    url: 'https://pdfobject.com/pdf/sample.pdf',
     owner: {
       id: 'user3',
       email: 'alice@example.com',
@@ -56,7 +56,7 @@ export const mockDocuments: Document[] = [
     documentType: {
       id: 'jpg',
       name: 'JPEG Image',
-      type: 'image/jpeg',
+      type: 'application/pdf',
     },
     createdAt: new Date('2024-09-23T11:45:00Z').toLocaleDateString(),
     updatedAt: new Date('2024-09-24T08:20:00Z').toLocaleDateString(),

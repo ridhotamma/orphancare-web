@@ -30,6 +30,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { format } from 'date-fns';
+import FullscreenDocumentPreview from './document-preview';
+import { Document } from '@/types/document';
 
 interface DocumentIconProps {
   type: string | undefined;
@@ -51,6 +53,9 @@ const DocumentIcon: React.FC<DocumentIconProps> = ({ type }) => {
 const DocumentList: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(
+    null
+  );
 
   const filteredDocuments = mockDocuments.filter((doc) => {
     const matchesSearch = doc
@@ -112,7 +117,7 @@ const DocumentList: React.FC = () => {
         {filteredDocuments.map((doc) => (
           <Card
             key={doc.id}
-            className='hover:shadow-lg transition-shadow duration-300'
+            className='hover:shadow-lg transition-shadow duration-300 flex flex-col'
           >
             <CardHeader className='flex'>
               <DocumentIcon type={doc.documentType.type} />
@@ -120,7 +125,7 @@ const DocumentList: React.FC = () => {
                 {doc.name}
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className='flex-grow flex flex-col items-start justify-end'>
               <div className='flex items-center space-x-2 mb-4'>
                 <Avatar className='h-8 w-8'>
                   <AvatarImage
@@ -146,13 +151,24 @@ const DocumentList: React.FC = () => {
               </div>
             </CardContent>
             <CardFooter>
-              <Button variant='outline' className='w-full'>
+              <Button
+                onClick={() => setSelectedDocument(doc as Document)}
+                variant='outline'
+                className='w-full'
+              >
                 <Eye className='mr-2 h-4 w-4' /> View Details
               </Button>
             </CardFooter>
           </Card>
         ))}
       </div>
+      {selectedDocument && (
+        <FullscreenDocumentPreview
+          document={selectedDocument}
+          onDelete={() => {}}
+          onClose={() => setSelectedDocument(null)}
+        />
+      )}
     </div>
   );
 };

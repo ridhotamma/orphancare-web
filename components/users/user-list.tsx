@@ -37,7 +37,7 @@ import { User } from '@/types/user';
 import { format } from 'date-fns';
 import { RoleType } from '@/types/enums';
 import { BedRoom } from '@/types/bedroom';
-import EmptyContainer from '../container/empty-container';
+import EmptyContainer from '@/components/container/empty-container';
 import Image from 'next/image';
 import NotFoundImage from '@/images/not-found-common.png';
 import Link from 'next/link';
