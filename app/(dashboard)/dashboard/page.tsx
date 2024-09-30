@@ -95,7 +95,7 @@ const DashboardPage = () => {
     };
 
     getDashboardAnalyticsData();
-  }, [toast]);
+  }, [toast, setUnauthorized]);
 
   return (
     <LoadingContainer loading={loading}>

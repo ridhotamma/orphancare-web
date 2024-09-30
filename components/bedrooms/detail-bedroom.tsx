@@ -20,24 +20,20 @@ const BedRoomDetail = ({ bedRoom }: BedRoomDetailProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [bedRoomTypes, setBedRoomTypes] = useState<BedRoomType[]>([]);
 
-  const userDropdownList: MultiSelectItem[] = useMemo(() => {
-    return mockUsers
-      .map((user) => ({
-        id: user.id as string,
-        label: user.profile?.fullName as string,
-        value: user.profile?.id as string,
-        avatarUrl: user.profile?.profilePicture as string,
-      }))
-      .filter((user) => user.label);
-  }, []);
+  const userDropdownList: MultiSelectItem[] = mockUsers
+    .map((user) => ({
+      id: user.id as string,
+      label: user.profile?.fullName as string,
+      value: user.profile?.id as string,
+      avatarUrl: user.profile?.profilePicture as string,
+    }))
+    .filter((user) => user.label);
 
-  const initialBedroom = useMemo(() => {
-    return {
-      occupants: bedRoom?.profiles?.map((profile) => profile.id) as string[],
-      name: bedRoom.name as string,
-      bedRoomTypeId: bedRoom.bedRoomType.id,
-    };
-  }, []);
+  const initialBedroom = {
+    occupants: bedRoom?.profiles?.map((profile) => profile.id) as string[],
+    name: bedRoom.name as string,
+    bedRoomTypeId: bedRoom.bedRoomType.id,
+  };
 
   const handleAddBedroom = () => {
     console.log('add bed room');
@@ -64,7 +60,7 @@ const BedRoomDetail = ({ bedRoom }: BedRoomDetailProps) => {
     };
 
     getBedRoomTypes();
-  }, []);
+  }, [toast]);
 
   return (
     <div>
@@ -105,7 +101,9 @@ const BedRoomDetail = ({ bedRoom }: BedRoomDetailProps) => {
         </CardContent>
       </Card>
 
-      <h2 className='text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200'>Occupants</h2>
+      <h2 className='text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200'>
+        Occupants
+      </h2>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         {bedRoom?.profiles?.map((profile, index) => (
           <Card

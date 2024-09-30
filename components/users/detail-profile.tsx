@@ -46,14 +46,14 @@ export const DetailProfile: React.FC = () => {
     bedRoom: {
       id: '4dd52fdf-9a0e-4615-8aa3-f15be49f54ea',
       name: 'FATIMAH',
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: new Date().toLocaleDateString(),
+      updatedAt: new Date().toLocaleDateString(),
       bedRoomType: {
         id: '52ecb46a-860c-42e0-aa75-a5e77b50b5c1',
         name: 'Kamar Pengasuh Perempuan',
         type: 'BEDROOM_CARETAKER_FEMALE',
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: new Date().toLocaleDateString(),
+        updatedAt: new Date().toLocaleDateString(),
       },
     },
     guardian: {

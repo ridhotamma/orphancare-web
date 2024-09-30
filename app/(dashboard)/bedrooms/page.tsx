@@ -22,16 +22,14 @@ const BedRoomPage: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [bedRoomTypes, setBedRoomTypes] = useState<BedRoomType[]>([]);
 
-  const userDropdownList: MultiSelectItem[] = useMemo(() => {
-    return mockUsers
-      .map((user) => ({
-        id: user.id as string,
-        label: user.profile?.fullName as string,
-        value: user.profile?.id as string,
-        avatarUrl: user.profile?.profilePicture as string,
-      }))
-      .filter((user) => user.label);
-  }, []);
+  const userDropdownList: MultiSelectItem[] = mockUsers
+    .map((user) => ({
+      id: user.id as string,
+      label: user.profile?.fullName as string,
+      value: user.profile?.id as string,
+      avatarUrl: user.profile?.profilePicture as string,
+    }))
+    .filter((user) => user.label);
 
   const handleAddBedroom = () => {
     console.log('add bed room');
@@ -58,7 +56,7 @@ const BedRoomPage: React.FC = () => {
     };
 
     getBedRoomTypes();
-  }, []);
+  }, [toast]);
 
   usePageTitle('Bed Rooms');
 
