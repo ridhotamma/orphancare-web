@@ -99,8 +99,8 @@ const BedroomFormDialog: React.FC<BedroomFormDialogProps> = ({
                 <SelectValue placeholder='Select bedroom type' />
               </SelectTrigger>
               <SelectContent>
-                {bedRoomTypes.map((type) => (
-                  <SelectItem key={type.id} value={type.id}>
+                {bedRoomTypes.map((type, index) => (
+                  <SelectItem key={index} value={type.id}>
                     {type.name}
                   </SelectItem>
                 ))}
