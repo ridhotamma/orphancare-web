@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import {
   FileIcon,
   FileTextIcon,
   ImageIcon,
+  FileSpreadsheetIcon,
+  FileTypeIcon,
   X,
   Download,
   ChevronLeft,
@@ -35,11 +37,34 @@ interface FullscreenDocumentPreviewProps {
   onDelete: () => void;
 }
 
-const FullscreenDocumentPreview = ({
+const getFileTypeFromUrl = (url: string): string => {
+  const extension = url.split('.').pop()?.toLowerCase();
+  switch (extension) {
+    case 'pdf':
+      return 'application/pdf';
+    case 'jpg':
+    case 'jpeg':
+    case 'png':
+    case 'gif':
+    case 'bmp':
+    case 'webp':
+      return `image/${extension}`;
+    case 'xls':
+    case 'xlsx':
+      return 'application/vnd.ms-excel';
+    case 'doc':
+    case 'docx':
+      return 'application/msword';
+    default:
+      return 'unknown';
+  }
+};
+
+const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
   document,
   onClose,
   onDelete,
-}: FullscreenDocumentPreviewProps) => {
+}) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDownloadErrorDialogOpen, setIsDownloadErrorDialogOpen] =
@@ -48,9 +73,39 @@ const FullscreenDocumentPreview = ({
   const [isDownloadSuccessDialogOpen, setIsDownloadSuccessDialogOpen] =
     useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [fileType, setFileType] = useState<string>('unknown');
+
+  useEffect(() => {
+    setFileType(getFileTypeFromUrl(document.url as string));
+  }, [document.url]);
 
   const renderDocumentPreview = () => {
-    switch (document.documentType.type) {
+    switch (fileType) {
+      case 'image/gif':
+        return (
+          <div className='relative w-full h-full'>
+            <img
+              src={document.url}
+              alt={document.name}
+              className='object-contain rounded-lg'
+              style={{ width: '100%', height: '100%' }}
+            />
+          </div>
+        );
+      case 'image/jpeg':
+      case 'image/png':
+      case 'image/bmp':
+      case 'image/webp':
+        return (
+          <div className='relative w-full h-full'>
+            <Image
+              src={document.url as string}
+              alt={document.name as string}
+              className='object-contain rounded-lg'
+              fill={true}
+            />
+          </div>
+        );
       case 'application/pdf':
         return (
           <iframe
@@ -59,16 +114,19 @@ const FullscreenDocumentPreview = ({
             className='w-full h-full border-0'
           />
         );
-      case 'image/jpeg':
-      case 'image/png':
+      case 'application/vnd.ms-excel':
+      case 'application/msword':
         return (
-          <div className='relative w-full h-full'>
-            <Image
-              src={document.url!}
-              alt={document.name!}
-              className='object-contain rounded-lg'
-              fill={true}
-            />
+          <div className='flex flex-col items-center justify-center h-full'>
+            <FileIcon className='h-24 w-24 text-gray-400' />
+            <p className='mt-4 text-lg text-gray-600'>
+              Preview not available for{' '}
+              {fileType === 'application/vnd.ms-excel' ? 'Excel' : 'Word'}{' '}
+              documents
+            </p>
+            <p className='mt-2 text-sm text-gray-500'>
+              Please download the file to view its contents
+            </p>
           </div>
         );
       default:
@@ -82,12 +140,19 @@ const FullscreenDocumentPreview = ({
   };
 
   const getDocumentIcon = () => {
-    switch (document.documentType.type) {
-      case 'application/pdf':
-        return <FileTextIcon className='h-6 min-w-6 text-red-500' />;
+    switch (fileType) {
+      case 'image/gif':
       case 'image/jpeg':
       case 'image/png':
+      case 'image/bmp':
+      case 'image/webp':
         return <ImageIcon className='h-6 min-w-6 text-green-500' />;
+      case 'application/pdf':
+        return <FileTextIcon className='h-6 min-w-6 text-red-500' />;
+      case 'application/vnd.ms-excel':
+        return <FileSpreadsheetIcon className='h-6 min-w-6 text-green-700' />;
+      case 'application/msword':
+        return <FileTypeIcon className='h-6 min-w-6 text-blue-600' />;
       default:
         return <FileIcon className='h-6 min-w-6 text-gray-500' />;
     }
@@ -101,6 +166,7 @@ const FullscreenDocumentPreview = ({
   const handleDownload = async () => {
     setIsDownloading(true);
     try {
+      // Simulating download process
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setIsDownloadSuccessDialogOpen(true);
     } catch (error) {
@@ -195,11 +261,10 @@ const FullscreenDocumentPreview = ({
                     alt={document?.owner?.profile?.fullName}
                   />
                   <AvatarFallback className='text-base md:text-lg'>
-                    {document?.owner?.profile?.fullName ??
-                      ''
-                        .split(' ')
-                        .map((n) => n[0])
-                        .join('')}
+                    {document?.owner?.profile?.fullName
+                      ?.split(' ')
+                      .map((n) => n[0])
+                      .join('')}
                   </AvatarFallback>
                 </Avatar>
                 <div>
@@ -269,18 +334,13 @@ const FullscreenDocumentPreview = ({
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              document &quot;
-              {document.name}&quot; and remove it from our servers.
+              document &quot;{document.name}&quot; and remove it from our
+              servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className='bg-red-600 hover:bg-red-700'
-            >
-              Delete
-            </AlertDialogAction>
+            <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

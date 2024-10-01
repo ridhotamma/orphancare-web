@@ -44,7 +44,7 @@ export const mockDocuments: Document[] = [
   {
     id: '3',
     name: 'Foto Keluarga',
-    url: 'https://pdfobject.com/pdf/sample.pdf',
+    url: 'https://file-upload-bucket.nos.jkt-1.neo.id/a927ba41-56d1-49b5-b2a9-2a989f20f560-Color%20Hunt%20Palette%2007195208839537b7c3ebf4f6.png',
     owner: {
       id: 'user3',
       email: 'alice@example.com',

@@ -33,6 +33,44 @@ import { mockDocuments } from '@/data/mockup/document-mockup';
 import { Input } from '@/components/ui/input';
 import FullscreenDocumentPreview from '@/components/documents/document-preview';
 
+// Utility function to check document type based on URL
+const getDocumentType = (url: string): string => {
+  const extension = url.split('.').pop()?.toLowerCase();
+  if (['jpg', 'jpeg', 'png', 'webp'].includes(extension!)) return 'image';
+  if (extension === 'gif') return 'gif';
+  if (extension === 'pdf') return 'pdf';
+  return 'unknown';
+};
+
+// File preview component
+const FilePreview: React.FC<{ url: string }> = ({ url }) => {
+  const type = getDocumentType(url);
+
+  if (!url) return <div className='text-center p-4'>Preview not available</div>;
+
+  switch (type) {
+    case 'image':
+    case 'gif':
+      return (
+        <Image
+          src={url}
+          alt='Document preview'
+          width={200}
+          height={200}
+          className='object-cover w-full h-40'
+        />
+      );
+    case 'pdf':
+      return (
+        <object data={url} type='application/pdf' width='100%' height='160'>
+          <p>PDF preview not available</p>
+        </object>
+      );
+    default:
+      return <div className='text-center p-4'>Preview not available</div>;
+  }
+};
+
 type NewDocument = {
   file: File | null;
   name: string;
@@ -77,7 +115,7 @@ export const DetailDocuments: React.FC = () => {
     }
 
     try {
-      const url = '';
+      const url = URL.createObjectURL(newDocument.file);
 
       const newDoc: Document = {
         id: `doc-${Date.now()}`,
@@ -183,7 +221,7 @@ export const DetailDocuments: React.FC = () => {
             >
               <CardHeader className='p-4 flex flex-col items-center'>
                 <div className='flex items-center justify-center h-40 w-full bg-gray-100 dark:bg-gray-800 rounded-t-lg'>
-                  {getFileIcon(doc.documentType.type!)}
+                  <FilePreview url={doc.url as string} />
                 </div>
               </CardHeader>
               <CardContent className='px-4 flex flex-col items-center flex-grow'>
