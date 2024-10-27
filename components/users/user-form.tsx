@@ -36,6 +36,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { GuardianType } from '@/types/guardian-type';
 import { BedRoom } from '@/types/bedroom';
 import { RoleType } from '@/types/enums';
+import AutocompleteSelect from '../ui/autocomplete-select';
 
 const addressSchema = z.object({
   street: z.string().optional(),
@@ -50,8 +51,7 @@ const formSchema = z.object({
   username: z.string().min(3).max(20),
   password: z
     .string({
-      message:
-        'Password is required',
+      message: 'Password is required',
     })
     .min(6)
     .regex(
@@ -144,6 +144,7 @@ const UserForm = <T extends Partial<FormValues>>({
       router.push(`/users${careTakerForm ? '/caretakers' : '/children'}`);
       toast({
         title: `${careTakerForm ? 'Caretaker' : 'Child'} successfully added!`,
+        variant: 'success'
       });
     } catch (error: any) {
       if (error.status === 401) {
@@ -226,12 +227,20 @@ const UserForm = <T extends Partial<FormValues>>({
       />
       <FormField
         control={form.control}
-        name={`${prefix}.urbanVillage`}
-        render={({ field }) => (
+        name={`${prefix}.province`}
+        render={() => (
           <FormItem>
-            <FormLabel>Urban Village</FormLabel>
+            <FormLabel>Provinsi</FormLabel>
             <FormControl>
-              <Input placeholder='Urban Village' {...field} />
+              <AutocompleteSelect
+                items={[
+                  { label: 'Jakarta', value: '1' },
+                  { label: 'Bandung', value: '2' },
+                ]}
+                searchPlaceholder='Pilih Provinsi...'
+                placeholder='Pilih Provinsi'
+                className='w-full'
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -240,11 +249,19 @@ const UserForm = <T extends Partial<FormValues>>({
       <FormField
         control={form.control}
         name={`${prefix}.subdistrict`}
-        render={({ field }) => (
+        render={() => (
           <FormItem>
-            <FormLabel>Subdistrict</FormLabel>
+            <FormLabel>Kota/Kabupaten</FormLabel>
             <FormControl>
-              <Input placeholder='Subdistrict' {...field} />
+            <AutocompleteSelect
+                items={[
+                  { label: 'Jakarta', value: '1' },
+                  { label: 'Bandung', value: '2' },
+                ]}
+                searchPlaceholder='Pilih Kota...'
+                placeholder='Pilih Kota'
+                className='w-full'
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -253,11 +270,19 @@ const UserForm = <T extends Partial<FormValues>>({
       <FormField
         control={form.control}
         name={`${prefix}.city`}
-        render={({ field }) => (
+        render={() => (
           <FormItem>
-            <FormLabel>City</FormLabel>
+            <FormLabel>Kecamatan</FormLabel>
             <FormControl>
-              <Input placeholder='City' {...field} />
+            <AutocompleteSelect
+                items={[
+                  { label: 'Jakarta', value: '1' },
+                  { label: 'Bandung', value: '2' },
+                ]}
+                searchPlaceholder='Pilih Kecamatan...'
+                placeholder='Pilih Kecamatan'
+                className='w-full'
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -265,12 +290,20 @@ const UserForm = <T extends Partial<FormValues>>({
       />
       <FormField
         control={form.control}
-        name={`${prefix}.province`}
-        render={({ field }) => (
+        name={`${prefix}.urbanVillage`}
+        render={() => (
           <FormItem>
-            <FormLabel>Province</FormLabel>
+            <FormLabel>Kelurahan</FormLabel>
             <FormControl>
-              <Input placeholder='Province' {...field} />
+            <AutocompleteSelect
+                items={[
+                  { label: 'Jakarta', value: '1' },
+                  { label: 'Bandung', value: '2' },
+                ]}
+                searchPlaceholder='Pilih Kelurahan...'
+                placeholder='Pilih Kelurahan'
+                className='w-full'
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

@@ -143,7 +143,7 @@ const DashboardPage = () => {
             <CardContent>
               <div className='text-3xl font-bold'>{profile.adminCount}</div>
               <p className='text-xs text-gray-500 mt-1'>
-                Sebagai Administrator
+                {profile.careTakerAdminCount} Orang Sebagai Administrator
               </p>
             </CardContent>
           </Card>
@@ -157,7 +157,9 @@ const DashboardPage = () => {
             </CardHeader>
             <CardContent>
               <div className='text-3xl font-bold'>{profile.userCount}</div>
-              <p className='text-xs text-gray-500 mt-1'>Sebagai Siswa</p>
+              <p className='text-xs text-gray-500 mt-1'>
+                {profile.studentAdminCount} Orang Sebagai Administrator
+              </p>
             </CardContent>
           </Card>
         </div>
