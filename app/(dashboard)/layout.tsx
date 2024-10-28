@@ -58,6 +58,7 @@ const DashboardLayoutContent: React.FC<DashboardLayoutProps> = ({
       } catch (error: any) {
         if (error.status === 401) {
           setUnauthorized(true);
+          setCurrentUser({} as any)
         } else {
           toast({
             title: error.message,

@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import 'react-phone-number-input/style.css';
+import ProfilePictureUpload from '@/components/users/profile-picture-upload';
+import PhoneInput from 'react-phone-number-input';
+import AutocompleteSelect from '@/components/ui/autocomplete-select';
 import { Edit2, Save, X } from 'lucide-react';
 import { Profile } from '@/types/profile';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,14 +19,11 @@ import {
 } from '@/components/ui/select';
 import { Address } from '@/types/address';
 import { Gender } from '@/types/enums';
-import ProfilePictureUpload from '@/components/users/profile-picture-upload';
-import PhoneInput from 'react-phone-number-input';
-import 'react-phone-number-input/style.css';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import AutocompleteSelect from '../ui/autocomplete-select';
 import { requests } from '@/lib/api';
 import { BedRoom } from '@/types/bedroom';
+import { User } from '@/types/user';
 
 type AutocompleteItem = {
   value: string;
@@ -38,14 +39,17 @@ type AddressState = {
 
 type DetailProfileProps = {
   data?: Profile;
+  credentials: Omit<User, 'profile'>;
 };
 
 export const DetailProfile: React.FC<DetailProfileProps> = ({
   data,
+  credentials,
 }: DetailProfileProps) => {
   const { toast } = useToast();
   const [isEditProfile, setIsEditProfile] = useState<boolean>(false);
   const [loadingAddress, setLoadingAddress] = useState(false);
+  const [loadingSave, setLoadingSave] = useState(false);
   const [provinces, setProvinces] = useState<AutocompleteItem[]>([]);
   const [regencies, setRegencies] = useState<AutocompleteItem[]>([]);
   const [districts, setDistricts] = useState<AutocompleteItem[]>([]);
@@ -70,10 +74,67 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
 
   const handleSaveProfile = async () => {
     try {
+      setLoadingSave(true);
+      await requests({
+        url: `/public/profiles/${credentials.id}`,
+        method: 'PUT',
+        data: {
+          ...profile,
+          bedRoomId: profile?.bedRoom?.id,
+          bedRoom: {
+            ...profile?.bedRoom,
+            bedroomTypeId: profile?.bedRoom?.bedRoomType.id,
+          },
+          address: {
+            ...profile?.address,
+            provinceDetail: {
+              id: userAddress.province?.value,
+              name: userAddress.province?.label,
+            },
+            districtDetail: {
+              id: userAddress.district?.value,
+              name: userAddress.district?.label,
+            },
+            regencyDetail: {
+              id: userAddress.regency?.value,
+              name: userAddress.regency?.label,
+            },
+            villageDetail: {
+              id: userAddress.village?.value,
+              name: userAddress.village?.label,
+            },
+          },
+          guardian: !profile?.careTaker
+            ? {
+                ...profile?.guardian,
+                address: {
+                  ...profile?.guardian?.address,
+                  provinceDetail: {
+                    id: guardianAddress.province?.value,
+                    name: guardianAddress.province?.label,
+                  },
+                  districtDetail: {
+                    id: guardianAddress.district?.value,
+                    name: guardianAddress.district?.label,
+                  },
+                  regencyDetail: {
+                    id: guardianAddress.regency?.value,
+                    name: guardianAddress.regency?.label,
+                  },
+                  villageDetail: {
+                    id: guardianAddress.village?.value,
+                    name: guardianAddress.village?.label,
+                  },
+                },
+              }
+            : null,
+        } as Profile,
+      });
       setIsEditProfile(false);
       toast({
         title: 'Profile updated',
         description: 'Your profile has been successfully updated.',
+        variant: 'success',
       });
     } catch (error: any) {
       toast({
@@ -81,6 +142,8 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
         description: error.message,
         variant: 'destructive',
       });
+    } finally {
+      setLoadingSave(false);
     }
   };
 
@@ -227,8 +290,6 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
         value: data?.guardian?.address?.villageDetail?.id || '',
       },
     }));
-
-    console.log({ userAddress, guardianAddress })
   }, [data]);
 
   const handleAddressChange = (
@@ -268,9 +329,9 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
     if (!address) return 'Not specified';
     const parts = [
       address.street,
-      address.urbanVillage,
-      address.subdistrict,
-      address.city,
+      address.village,
+      address.district,
+      address.regency,
       address.province,
       address.postalCode,
     ].filter(Boolean);
@@ -424,7 +485,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
             <Button variant='outline' onClick={() => setIsEditProfile(false)}>
               <X className='h-4 w-4 mr-2' /> Cancel
             </Button>
-            <Button onClick={handleSaveProfile}>
+            <Button onClick={handleSaveProfile} disabled={loadingSave}>
               <Save className='h-4 w-4 mr-2' /> Save
             </Button>
           </div>
@@ -491,6 +552,18 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                 value={profile?.joinDate || ''}
                 onChange={(e) =>
                   setProfile({ ...profile!, joinDate: e.target.value })
+                }
+                disabled={!isEditProfile}
+              />
+            </div>
+            <div>
+              <Label htmlFor='joinDate'>Leave Date</Label>
+              <Input
+                id='leaveDate'
+                type='date'
+                value={profile?.leaveDate || ''}
+                onChange={(e) =>
+                  setProfile({ ...profile!, leaveDate: e.target.value })
                 }
                 disabled={!isEditProfile}
               />
@@ -612,70 +685,74 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className='text-xl'>Guardian Information</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-              <div>
-                <Label htmlFor='guardianFullName'>Guardian Full Name</Label>
-                <Input
-                  id='guardianFullName'
-                  value={profile?.guardian?.fullName || ''}
-                  onChange={(e) =>
-                    setProfile({
-                      ...profile!,
-                      guardian: {
-                        ...profile?.guardian!,
-                        fullName: e.target.value,
-                      },
-                    })
-                  }
-                  disabled={!isEditProfile}
-                />
+        {!data?.careTaker && (
+          <Card>
+            <CardHeader>
+              <CardTitle className='text-xl'>Guardian Information</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <div>
+                  <Label htmlFor='guardianFullName'>Guardian Full Name</Label>
+                  <Input
+                    id='guardianFullName'
+                    value={profile?.guardian?.fullName || ''}
+                    onChange={(e) =>
+                      setProfile({
+                        ...profile!,
+                        guardian: {
+                          ...profile?.guardian!,
+                          fullName: e.target.value,
+                        },
+                      })
+                    }
+                    disabled={!isEditProfile}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor='guardianPhoneNumber'>
+                    Guardian Phone Number
+                  </Label>
+                  <PhoneInput
+                    international
+                    countryCallingCodeEditable={false}
+                    defaultCountry='ID'
+                    value={profile?.guardian?.phoneNumber || ''}
+                    onChange={(value) =>
+                      setProfile({
+                        ...profile!,
+                        guardian: {
+                          ...profile?.guardian!,
+                          phoneNumber: value || '',
+                        },
+                      })
+                    }
+                    inputComponent={Input}
+                    disabled={!isEditProfile}
+                  />
+                </div>
               </div>
-              <div>
-                <Label htmlFor='guardianPhoneNumber'>
-                  Guardian Phone Number
-                </Label>
-                <PhoneInput
-                  international
-                  countryCallingCodeEditable={false}
-                  defaultCountry='ID'
-                  value={profile?.guardian?.phoneNumber || ''}
-                  onChange={(value) =>
-                    setProfile({
-                      ...profile!,
-                      guardian: {
-                        ...profile?.guardian!,
-                        phoneNumber: value || '',
-                      },
-                    })
-                  }
-                  inputComponent={Input}
-                  disabled={!isEditProfile}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
 
-        <Card>
-          <CardHeader>
-            <CardTitle className='text-xl'>Guardian Address</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {isEditProfile ? (
-              renderEditableAddress('guardian', guardianAddress)
-            ) : (
-              <div>
-                <Label>Address</Label>
-                <p>{renderAddress(profile?.guardian?.address)}</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        {!data?.careTaker && (
+          <Card>
+            <CardHeader>
+              <CardTitle className='text-xl'>Guardian Address</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isEditProfile ? (
+                renderEditableAddress('guardian', guardianAddress)
+              ) : (
+                <div>
+                  <Label>Address</Label>
+                  <p>{renderAddress(profile?.guardian?.address)}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
       </form>
     </div>
   );

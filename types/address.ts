@@ -6,9 +6,9 @@ export type AddressDetail = {
 export type Address = {
   id?: string;
   street?: string;
-  urbanVillage?: string;
-  subdistrict?: string;
-  city?: string;
+  village?: string;
+  district?: string;
+  regency?: string;
   province?: string;
   postalCode?: string;
   createdAt?: string;

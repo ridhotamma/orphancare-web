@@ -1,5 +1,10 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -12,6 +17,7 @@ interface PasswordChangeDialogProps {
   confirmPassword: string;
   setConfirmPassword: (value: string) => void;
   handleChangePassword: () => void;
+  isLoading: boolean;
 }
 
 export const PasswordChangeDialog: React.FC<PasswordChangeDialogProps> = ({
@@ -22,6 +28,7 @@ export const PasswordChangeDialog: React.FC<PasswordChangeDialogProps> = ({
   confirmPassword,
   setConfirmPassword,
   handleChangePassword,
+  isLoading,
 }) => (
   <Dialog open={isPasswordModalOpen} onOpenChange={setIsPasswordModalOpen}>
     <DialogContent>
@@ -47,7 +54,9 @@ export const PasswordChangeDialog: React.FC<PasswordChangeDialogProps> = ({
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </div>
-        <Button onClick={handleChangePassword}>Change Password</Button>
+        <Button onClick={handleChangePassword} disabled={isLoading}>
+          Change Password
+        </Button>
       </div>
     </DialogContent>
   </Dialog>

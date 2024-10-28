@@ -54,7 +54,7 @@ const TabLayout: React.FC<TabLayoutProps> = ({
         <div className='lg:hidden mb-4'>
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className='flex items-center px-3 py-2 border rounded text-gray-500 border-gray-500 hover:text-gray-900 hover:border-gray-900'
+            className='flex items-center px-3 py-2 border rounded text-gray-500 border-gray-500 hover:text-gray-900 dark:hover:text-gray-400 hover:border-gray-900 dark:hover:border-gray-400'
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             <span className='ml-2'>Menu</span>
@@ -85,7 +85,7 @@ const TabLayout: React.FC<TabLayoutProps> = ({
                 className={`flex items-center px-4 py-2 rounded-md ${
                   currentTab === tab.id
                     ? 'bg-primary text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-100 hover:bg-gray-200'
                 }`}
               >
                 {tab.icon && <span className='mr-2'>{tab.icon}</span>}

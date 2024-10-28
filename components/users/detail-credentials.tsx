@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Edit2, Save, X, Trash2, KeyRound } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -19,6 +19,8 @@ import { PasswordChangeDialog } from '@/components/users/password-change-dialog'
 import { useToast } from '@/hooks/use-toast';
 import { User } from '@/types/user';
 import { RoleType } from '@/types/enums';
+import { requests } from '@/lib/api';
+import { useRouter } from 'next/navigation';
 
 type Credentials = {
   id: string;
@@ -30,10 +32,12 @@ type Credentials = {
 
 type DetailCredentialsProps = {
   data: Omit<User, 'profile'>;
+  isCareTaker: boolean;
 };
 
 export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
   data,
+  isCareTaker,
 }: DetailCredentialsProps) => {
   const { toast } = useToast();
   const [isEditCredentials, setIsEditCredentials] = useState(false);
@@ -43,16 +47,41 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [loadingAction, setLoadingAction] = useState(false);
   const [credentials, setCredentials] = useState<
     Credentials & Omit<User, 'profile'>
-  >(data as Credentials & Omit<User, 'profile'>);
+  >({ ...data, isAdmin: data.roles.includes(RoleType.ADMIN) } as Credentials &
+    Omit<User, 'profile'>);
 
-  const handleSaveCredentials = () => {
-    setIsEditCredentials(false);
-    toast({
-      title: 'Credentials updated',
-      description: 'Your credentials have been successfully updated.',
-    });
+  const router = useRouter();
+
+  const handleSaveCredentials = async () => {
+    try {
+      setLoadingAction(true);
+      const roles = [RoleType.USER];
+      if (credentials.isAdmin) {
+        roles.push(RoleType.ADMIN);
+      }
+      await requests({
+        url: `/admin/users/${credentials.id}`,
+        method: 'PUT',
+        data: { ...credentials, roles },
+      });
+      setIsEditCredentials(false);
+      toast({
+        title: 'Credentials updated',
+        description: 'Your credentials have been successfully updated.',
+        variant: 'success',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Something went wrong',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoadingAction(false);
+    }
   };
 
   const handleDeleteConfirmation = () => {
@@ -68,15 +97,32 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
     }
   };
 
-  const handleChangePassword = () => {
-    // Implement password change logic here
-    setIsPasswordModalOpen(false);
-    setNewPassword('');
-    setConfirmPassword('');
-    toast({
-      title: 'Password changed',
-      description: 'Your password has been successfully changed.',
-    });
+  const handleChangePassword = async () => {
+    try {
+      setLoadingAction(true);
+      await requests({
+        url: `/admin/users/change-password`,
+        method: 'PUT',
+        data: {
+          userId: credentials.id,
+          newPassword: newPassword,
+        },
+      });
+      setIsPasswordModalOpen(false);
+      setNewPassword('');
+      setConfirmPassword('');
+      toast({
+        title: 'Password changed',
+        description: 'Your password has been successfully changed.',
+        variant: 'success',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Something went wrong',
+        description: error?.message,
+        variant: 'destructive',
+      });
+    }
   };
 
   const handleActiveChange = (checked: boolean) => {
@@ -91,20 +137,29 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
     setCredentials({ ...credentials, isAdmin: checked });
   };
 
-  const handleDeleteUser = () => {
-    console.log('delete user');
-    toast({
-      title: 'User deleted',
-      description: 'The user has been successfully deleted.',
-    });
+  const handleDeleteUser = async () => {
+    try {
+      setLoadingAction(true);
+      await requests({
+        url: `/admin/users/${credentials.id}`,
+        method: 'DELETE',
+      });
+      toast({
+        title: 'User deleted',
+        description: 'The user has been successfully deleted.',
+        variant: 'success',
+      });
+      router.push(isCareTaker ? '/users/caretakers' : '/users/children');
+    } catch (error: any) {
+      toast({
+        title: 'Something went wrong',
+        description: error?.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoadingAction(false);
+    }
   };
-
-  useEffect(() => {
-    setCredentials((prev) => ({
-      ...prev,
-      isAdmin: data.roles.includes(RoleType.ADMIN),
-    }));
-  }, [data]);
 
   const renderCredentialsForm = () => (
     <Card>
@@ -196,10 +251,11 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
             <Button
               variant='outline'
               onClick={() => setIsEditCredentials(false)}
+              disabled={loadingAction}
             >
               <X className='h-4 w-4 mr-2' /> Cancel
             </Button>
-            <Button onClick={handleSaveCredentials}>
+            <Button onClick={handleSaveCredentials} disabled={loadingAction}>
               <Save className='h-4 w-4 mr-2' /> Save
             </Button>
           </div>
@@ -250,7 +306,9 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
                   be undone. Please type the user&apos;s email address to
                   confirm deletion.
                 </p>
-
+                <p>
+                  <b>{credentials.email}</b>
+                </p>
                 <Input
                   placeholder="Enter user's email address"
                   value={deleteConfirmEmail}
@@ -264,6 +322,9 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
             <AlertDialogAction
               onClick={handleDeleteConfirmation}
               className='bg-red-600 hover:bg-red-700'
+              disabled={
+                deleteConfirmEmail !== credentials.email || loadingAction
+              }
             >
               Yes, delete user
             </AlertDialogAction>
@@ -279,6 +340,7 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
         confirmPassword={confirmPassword}
         setConfirmPassword={setConfirmPassword}
         handleChangePassword={handleChangePassword}
+        isLoading={loadingAction}
       />
     </div>
   );

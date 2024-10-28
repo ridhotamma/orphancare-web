@@ -73,7 +73,12 @@ const UserDetailPage: React.FC<UserDetailProps> = ({
     {
       id: 'profile',
       label: 'Profile',
-      content: <DetailProfile data={userProfile as Profile} />,
+      content: (
+        <DetailProfile
+          data={userProfile as Profile}
+          credentials={userCredential as Omit<User, 'profile'>}
+        />
+      ),
       icon: <UserCircle className='h-5 w-5' />,
     },
     {
@@ -86,7 +91,10 @@ const UserDetailPage: React.FC<UserDetailProps> = ({
       id: 'credentials',
       label: 'Credentials',
       content: (
-        <DetailCredentials data={userCredential as Omit<User, 'profile'>} />
+        <DetailCredentials
+          data={userCredential as Omit<User, 'profile'>}
+          isCareTaker={isCareTaker}
+        />
       ),
       icon: <UserIcon className='h-5 w-5' />,
     },
