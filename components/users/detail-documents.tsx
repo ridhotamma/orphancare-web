@@ -77,7 +77,13 @@ type NewDocument = {
   type: string;
 };
 
-export const DetailDocuments: React.FC = () => {
+type DetailDocumentsProps = {
+  data?: Document[] | null;
+};
+
+export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
+  data,
+}: DetailDocumentsProps) => {
   const { toast } = useToast();
   const [documents, setDocuments] = useState<Document[]>(mockDocuments);
   const [isAddDocumentModalOpen, setIsAddDocumentModalOpen] = useState(false);

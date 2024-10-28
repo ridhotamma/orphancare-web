@@ -1,4 +1,3 @@
-import { User } from '@/types/user';
 import { Address } from '@/types/address';
 import { BedRoom } from '@/types/bedroom';
 import { Guardian } from '@/types/guardian';
@@ -14,7 +13,6 @@ export type Profile = {
   bio?: string;
   phoneNumber?: string;
   gender?: Gender;
-  user?: Partial<User>;
   address?: Address;
   bedRoom?: BedRoom;
   guardian?: Guardian;

@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { PasswordChangeDialog } from '@/components/users/password-change-dialog';
 import { useToast } from '@/hooks/use-toast';
+import { User } from '@/types/user';
 
 type Credentials = {
   id: string;
@@ -26,7 +27,13 @@ type Credentials = {
   isAdmin: boolean;
 };
 
-export const DetailCredentials: React.FC = () => {
+type DetailCredentialsProps = {
+  data: Omit<User, 'profile'>;
+};
+
+export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
+  data,
+}: DetailCredentialsProps) => {
   const { toast } = useToast();
   const [isEditCredentials, setIsEditCredentials] = useState(false);
   const [showInactiveAlert, setShowInactiveAlert] = useState(false);

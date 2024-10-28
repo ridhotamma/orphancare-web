@@ -320,20 +320,38 @@ const UserForm = <T extends Partial<FormValues>>({
           },
           regencyDetail: {
             id: userAddress.regency?.value,
-            name: userAddress.regency?.label
+            name: userAddress.regency?.label,
           },
           districtDetail: {
             id: userAddress.district?.value,
-            name: userAddress.district?.label
+            name: userAddress.district?.label,
           },
           villageDetail: {
             id: userAddress.village?.value,
-            name: userAddress.village?.label
+            name: userAddress.village?.label,
           },
         },
-        guardian: {
+        guardian: data.guardianFullName && {
           fullName: data.guardianFullName,
-          address: data.guardianAddress,
+          address: {
+            ...data.guardianAddress,
+            provinceDetail: {
+              id: guardianAddress.province?.value,
+              name: guardianAddress.province?.label,
+            },
+            regencyDetail: {
+              id: guardianAddress.regency?.value,
+              name: guardianAddress.regency?.label,
+            },
+            districtDetail: {
+              id: guardianAddress.district?.value,
+              name: guardianAddress.district?.label,
+            },
+            villageDetail: {
+              id: guardianAddress.village?.value,
+              name: guardianAddress.village?.label,
+            },
+          },
           phoneNumber: data.guardianPhoneNumber,
           guardianTypeId: data.guardianTypeId,
         },

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Edit2, Save, X } from 'lucide-react';
 import { Profile } from '@/types/profile';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,66 +20,184 @@ import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
+import AutocompleteSelect from '../ui/autocomplete-select';
+import { requests } from '@/lib/api';
 
-export const DetailProfile: React.FC = () => {
+type AutocompleteItem = {
+  value: string;
+  label: string;
+};
+
+type AddressState = {
+  province: AutocompleteItem | null;
+  regency: AutocompleteItem | null;
+  district: AutocompleteItem | null;
+  village: AutocompleteItem | null;
+};
+
+type DetailProfileProps = {
+  data?: Profile;
+};
+
+export const DetailProfile: React.FC<DetailProfileProps> = ({
+  data,
+}: DetailProfileProps) => {
   const { toast } = useToast();
   const [isEditProfile, setIsEditProfile] = useState<boolean>(false);
-  const [profile, setProfile] = useState<Profile>({
-    id: '52ecb46a-860c-42e0-aa75-a5e77b50b5c2',
-    profilePicture: '',
-    birthday: '',
-    joinDate: '',
-    leaveDate: '',
-    bio: '',
-    fullName: 'Agung Raksasa',
-    address: {
-      id: '',
-      createdAt: new Date().toLocaleDateString(),
-      updatedAt: new Date().toLocaleDateString(),
-      street: '',
-      urbanVillage: '',
-      subdistrict: '',
-      city: '',
-      province: '',
-      postalCode: '',
-    },
-    bedRoom: {
-      id: '4dd52fdf-9a0e-4615-8aa3-f15be49f54ea',
-      name: 'FATIMAH',
-      createdAt: new Date().toLocaleDateString(),
-      updatedAt: new Date().toLocaleDateString(),
-      bedRoomType: {
-        id: '52ecb46a-860c-42e0-aa75-a5e77b50b5c1',
-        name: 'Kamar Pengasuh Perempuan',
-        type: 'BEDROOM_CARETAKER_FEMALE',
-        createdAt: new Date().toLocaleDateString(),
-        updatedAt: new Date().toLocaleDateString(),
-      },
-    },
-    guardian: {
-      id: '43027a4d-26a5-4ede-a841-c4ec9c4f5baa',
-      fullName: 'Gatot Kaca',
-      phoneNumber: '',
-      address: {
-        street: '',
-        urbanVillage: '',
-        subdistrict: '',
-        city: '',
-        province: '',
-        postalCode: '',
-      },
-    },
-    phoneNumber: '+62123123123',
-    gender: Gender.MALE,
-    careTaker: true,
+  const [loadingAddress, setLoadingAddress] = useState(false);
+  const [provinces, setProvinces] = useState<AutocompleteItem[]>([]);
+  const [regencies, setRegencies] = useState<AutocompleteItem[]>([]);
+  const [districts, setDistricts] = useState<AutocompleteItem[]>([]);
+  const [villages, setVillages] = useState<AutocompleteItem[]>([]);
+
+  const [userAddress, setUserAddress] = useState<AddressState>({
+    province: null,
+    regency: null,
+    district: null,
+    village: null,
   });
 
-  const handleSaveProfile = () => {
-    setIsEditProfile(false);
-    toast({
-      title: 'Profile updated',
-      description: 'Your profile has been successfully updated.',
-    });
+  const [guardianAddress, setGuardianAddress] = useState<AddressState>({
+    province: null,
+    regency: null,
+    district: null,
+    village: null,
+  });
+
+  const [profile, setProfile] = useState<Profile | null>(data as Profile);
+
+  const handleSaveProfile = async () => {
+    try {
+      setIsEditProfile(false);
+      toast({
+        title: 'Profile updated',
+        description: 'Your profile has been successfully updated.',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Error updating profile',
+        description: error.message,
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const getRegencies = async (provinceId: string) => {
+    setLoadingAddress(true);
+    try {
+      const data = await requests({
+        url: `/address/provinces/${provinceId}/regencies`,
+      });
+      const result = data.map((item: Record<string, any>) => ({
+        value: item.id,
+        label: item.name,
+      }));
+      setRegencies(result);
+    } catch (error: any) {
+      toast({
+        title: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoadingAddress(false);
+    }
+  };
+
+  const getDistricts = async (regencyId: string) => {
+    setLoadingAddress(true);
+    try {
+      const data = await requests({
+        url: `/address/regencies/${regencyId}/districts`,
+      });
+      const result = data.map((item: Record<string, any>) => ({
+        value: item.id,
+        label: item.name,
+      }));
+      setDistricts(result);
+    } catch (error: any) {
+      toast({
+        title: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoadingAddress(false);
+    }
+  };
+
+  const getVillages = async (districtId: string) => {
+    setLoadingAddress(true);
+    try {
+      const data = await requests({
+        url: `/address/districts/${districtId}/villages`,
+      });
+      const result = data.map((item: Record<string, any>) => ({
+        value: item.id,
+        label: item.name,
+      }));
+      setVillages(result);
+    } catch (error: any) {
+      toast({
+        title: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoadingAddress(false);
+    }
+  };
+
+  useEffect(() => {
+    const getProvinces = async () => {
+      try {
+        const data = await requests({
+          url: '/address/provinces',
+        });
+        const result = data.map((item: Record<string, any>) => ({
+          value: item.id,
+          label: item.name,
+        }));
+        setProvinces(result);
+      } catch (error: any) {
+        toast({
+          title: error.message,
+          variant: 'destructive',
+        });
+      }
+    };
+
+    getProvinces();
+  }, [toast]);
+
+  const handleAddressChange = (
+    addressType: 'user' | 'guardian',
+    field: keyof AddressState,
+    value: AutocompleteItem | null
+  ) => {
+    if (addressType === 'user') {
+      setUserAddress((prev) => ({ ...prev, [field]: value }));
+      setProfile((prev) => ({
+        ...prev!,
+        address: {
+          ...prev?.address,
+          [field]: value?.label || '',
+        },
+      }));
+    } else {
+      setGuardianAddress((prev) => ({ ...prev, [field]: value }));
+      setProfile((prev) => ({
+        ...prev!,
+        guardian: {
+          ...prev?.guardian!,
+          address: {
+            ...prev?.guardian!.address,
+            [field]: value?.label || '',
+          },
+        },
+      }));
+    }
+  };
+
+  const handleProfilePictureChange = (url: string) => {
+    setProfile({ ...profile!, profilePicture: url });
   };
 
   const renderAddress = (address: Address | undefined) => {
@@ -95,65 +213,108 @@ export const DetailProfile: React.FC = () => {
     return parts.length > 0 ? parts.join(', ') : 'Not specified';
   };
 
-  const handleProfilePictureChange = (url: string) => {
-    setProfile({ ...profile, profilePicture: url });
-  };
-
   const renderEditableAddress = (
-    address: Address | undefined,
-    updateFunction: (newAddress: Address) => void
+    addressType: 'user' | 'guardian',
+    addressState: AddressState
   ) => (
     <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
       <div>
         <Label htmlFor='street'>Street</Label>
         <Input
           id='street'
-          value={address?.street || ''}
-          onChange={(e) =>
-            updateFunction({ ...address, street: e.target.value })
+          value={
+            addressType === 'user'
+              ? profile?.address?.street
+              : profile?.guardian?.address?.street
           }
+          onChange={(e) => {
+            if (addressType === 'user') {
+              setProfile((prev) => ({
+                ...prev!,
+                address: { ...prev?.address, street: e.target.value },
+              }));
+            } else {
+              setProfile((prev) => ({
+                ...prev!,
+                guardian: {
+                  ...prev?.guardian!,
+                  address: {
+                    ...prev?.guardian!.address,
+                    street: e.target.value,
+                  },
+                },
+              }));
+            }
+          }}
           disabled={!isEditProfile}
         />
       </div>
       <div>
-        <Label htmlFor='urbanVillage'>Urban Village</Label>
-        <Input
-          id='urbanVillage'
-          value={address?.urbanVillage || ''}
-          onChange={(e) =>
-            updateFunction({ ...address, urbanVillage: e.target.value })
-          }
+        <Label>Province</Label>
+        <AutocompleteSelect
+          items={provinces}
+          value={addressState.province}
+          onChange={(item) => {
+            handleAddressChange(addressType, 'province', item);
+            if (item?.value) {
+              getRegencies(item.value);
+            }
+          }}
+          isLoading={loadingAddress}
+          searchPlaceholder='Select Province...'
+          placeholder='Select Province'
+          className='w-full'
           disabled={!isEditProfile}
         />
       </div>
       <div>
-        <Label htmlFor='subdistrict'>Subdistrict</Label>
-        <Input
-          id='subdistrict'
-          value={address?.subdistrict || ''}
-          onChange={(e) =>
-            updateFunction({ ...address, subdistrict: e.target.value })
-          }
+        <Label>Regency</Label>
+        <AutocompleteSelect
+          items={regencies}
+          value={addressState.regency}
+          onChange={(item) => {
+            handleAddressChange(addressType, 'regency', item);
+            if (item?.value) {
+              getDistricts(item.value);
+            }
+          }}
+          isLoading={loadingAddress}
+          searchPlaceholder='Select Regency...'
+          placeholder='Select Regency'
+          className='w-full'
           disabled={!isEditProfile}
         />
       </div>
       <div>
-        <Label htmlFor='city'>City</Label>
-        <Input
-          id='city'
-          value={address?.city || ''}
-          onChange={(e) => updateFunction({ ...address, city: e.target.value })}
+        <Label>District</Label>
+        <AutocompleteSelect
+          items={districts}
+          value={addressState.district}
+          onChange={(item) => {
+            handleAddressChange(addressType, 'district', item);
+            if (item?.value) {
+              getVillages(item.value);
+            }
+          }}
+          isLoading={loadingAddress}
+          searchPlaceholder='Select District...'
+          placeholder='Select District'
+          className='w-full'
           disabled={!isEditProfile}
         />
       </div>
       <div>
-        <Label htmlFor='province'>Province</Label>
-        <Input
-          id='province'
-          value={address?.province || ''}
-          onChange={(e) =>
-            updateFunction({ ...address, province: e.target.value })
-          }
+        <Label>Village</Label>
+        <AutocompleteSelect
+          items={villages}
+          value={addressState.village}
+          onChange={(item) => {
+            handleAddressChange(addressType, 'village', item);
+          }}
+          isLoading={loadingAddress}
+          searchPlaceholder='Select Village...'
+          placeholder='Select Village'
+          className='w-full'
           disabled={!isEditProfile}
         />
       </div>
@@ -161,10 +322,30 @@ export const DetailProfile: React.FC = () => {
         <Label htmlFor='postalCode'>Postal Code</Label>
         <Input
           id='postalCode'
-          value={address?.postalCode || ''}
-          onChange={(e) =>
-            updateFunction({ ...address, postalCode: e.target.value })
+          value={
+            addressType === 'user'
+              ? profile?.address?.postalCode
+              : profile?.guardian?.address?.postalCode
           }
+          onChange={(e) => {
+            if (addressType === 'user') {
+              setProfile((prev) => ({
+                ...prev!,
+                address: { ...prev?.address, postalCode: e.target.value },
+              }));
+            } else {
+              setProfile((prev) => ({
+                ...prev!,
+                guardian: {
+                  ...prev?.guardian!,
+                  address: {
+                    ...prev?.guardian!.address,
+                    postalCode: e.target.value,
+                  },
+                },
+              }));
+            }
+          }}
           disabled={!isEditProfile}
         />
       </div>
@@ -201,16 +382,16 @@ export const DetailProfile: React.FC = () => {
               <ProfilePictureUpload
                 onImageUrlChange={handleProfilePictureChange}
                 disabled={!isEditProfile}
-                currentImageUrl={profile.profilePicture}
+                currentImageUrl={profile?.profilePicture}
               />
             </div>
             <div>
               <Label htmlFor='fullName'>Full Name</Label>
               <Input
                 id='fullName'
-                value={profile.fullName || ''}
+                value={profile?.fullName || ''}
                 onChange={(e) =>
-                  setProfile({ ...profile, fullName: e.target.value })
+                  setProfile({ ...profile!, fullName: e.target.value })
                 }
                 disabled={!isEditProfile}
               />
@@ -220,9 +401,9 @@ export const DetailProfile: React.FC = () => {
               <Input
                 id='birthday'
                 type='date'
-                value={profile.birthday || ''}
+                value={profile?.birthday || ''}
                 onChange={(e) =>
-                  setProfile({ ...profile, birthday: e.target.value })
+                  setProfile({ ...profile!, birthday: e.target.value })
                 }
                 disabled={!isEditProfile}
               />
@@ -231,9 +412,9 @@ export const DetailProfile: React.FC = () => {
               <Label htmlFor='bio'>Bio</Label>
               <Textarea
                 id='bio'
-                value={profile.bio || ''}
+                value={profile?.bio || ''}
                 onChange={(e) =>
-                  setProfile({ ...profile, bio: e.target.value })
+                  setProfile({ ...profile!, bio: e.target.value })
                 }
                 disabled={!isEditProfile}
               />
@@ -243,9 +424,9 @@ export const DetailProfile: React.FC = () => {
               <Input
                 id='joinDate'
                 type='date'
-                value={profile.joinDate || ''}
+                value={profile?.joinDate || ''}
                 onChange={(e) =>
-                  setProfile({ ...profile, joinDate: e.target.value })
+                  setProfile({ ...profile!, joinDate: e.target.value })
                 }
                 disabled={!isEditProfile}
               />
@@ -256,9 +437,9 @@ export const DetailProfile: React.FC = () => {
                 international
                 countryCallingCodeEditable={false}
                 defaultCountry='ID'
-                value={profile.phoneNumber || ''}
+                value={profile?.phoneNumber || ''}
                 onChange={(value) =>
-                  setProfile({ ...profile, phoneNumber: value || '' })
+                  setProfile({ ...profile!, phoneNumber: value || '' })
                 }
                 inputComponent={Input}
                 disabled={!isEditProfile}
@@ -268,9 +449,9 @@ export const DetailProfile: React.FC = () => {
               <Label htmlFor='gender'>Gender</Label>
               <Select
                 disabled={!isEditProfile}
-                value={profile.gender}
+                value={profile?.gender}
                 onValueChange={(value) =>
-                  setProfile({ ...profile, gender: value as Gender })
+                  setProfile({ ...profile!, gender: value as Gender })
                 }
               >
                 <SelectTrigger>
@@ -286,11 +467,11 @@ export const DetailProfile: React.FC = () => {
               <Label htmlFor='bedroom'>Bedroom</Label>
               <Select
                 disabled={!isEditProfile}
-                value={profile.bedRoom?.id}
+                value={profile?.bedRoom?.id}
                 onValueChange={(value) =>
                   setProfile({
-                    ...profile,
-                    bedRoom: { ...profile.bedRoom!, id: value },
+                    ...profile!,
+                    bedRoom: { ...profile?.bedRoom!, id: value },
                   })
                 }
               >
@@ -298,10 +479,7 @@ export const DetailProfile: React.FC = () => {
                   <SelectValue placeholder='Select bedroom' />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={profile.bedRoom?.id || ''}>
-                    {profile.bedRoom?.name}
-                  </SelectItem>
-                  {/* Add more bedrooms here */}
+                  <SelectItem value='1'>Test Bedroom</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -317,9 +495,9 @@ export const DetailProfile: React.FC = () => {
               <div className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
                 <Checkbox
                   id='caretaker'
-                  checked={profile.careTaker || false}
+                  checked={profile?.careTaker || false}
                   onCheckedChange={(checked) =>
-                    setProfile({ ...profile, careTaker: checked as boolean })
+                    setProfile({ ...profile!, careTaker: checked as boolean })
                   }
                   disabled={!isEditProfile}
                 />
@@ -333,9 +511,9 @@ export const DetailProfile: React.FC = () => {
               <div className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
                 <Checkbox
                   id='alumni'
-                  checked={profile.alumni || false}
+                  checked={profile?.alumni || false}
                   onCheckedChange={(checked) =>
-                    setProfile({ ...profile, alumni: checked as boolean })
+                    setProfile({ ...profile!, alumni: checked as boolean })
                   }
                   disabled={!isEditProfile}
                 />
@@ -356,13 +534,11 @@ export const DetailProfile: React.FC = () => {
           </CardHeader>
           <CardContent>
             {isEditProfile ? (
-              renderEditableAddress(profile.address, (newAddress) =>
-                setProfile({ ...profile, address: newAddress })
-              )
+              renderEditableAddress('user', userAddress)
             ) : (
               <div>
                 <Label>Address</Label>
-                <p>{renderAddress(profile.address)}</p>
+                <p>{renderAddress(profile?.address)}</p>
               </div>
             )}
           </CardContent>
@@ -378,12 +554,12 @@ export const DetailProfile: React.FC = () => {
                 <Label htmlFor='guardianFullName'>Guardian Full Name</Label>
                 <Input
                   id='guardianFullName'
-                  value={profile.guardian?.fullName || ''}
+                  value={profile?.guardian?.fullName || ''}
                   onChange={(e) =>
                     setProfile({
-                      ...profile,
+                      ...profile!,
                       guardian: {
-                        ...profile.guardian!,
+                        ...profile?.guardian!,
                         fullName: e.target.value,
                       },
                     })
@@ -399,12 +575,12 @@ export const DetailProfile: React.FC = () => {
                   international
                   countryCallingCodeEditable={false}
                   defaultCountry='ID'
-                  value={profile.guardian?.phoneNumber || ''}
+                  value={profile?.guardian?.phoneNumber || ''}
                   onChange={(value) =>
                     setProfile({
-                      ...profile,
+                      ...profile!,
                       guardian: {
-                        ...profile.guardian!,
+                        ...profile?.guardian!,
                         phoneNumber: value || '',
                       },
                     })
@@ -423,16 +599,11 @@ export const DetailProfile: React.FC = () => {
           </CardHeader>
           <CardContent>
             {isEditProfile ? (
-              renderEditableAddress(profile.guardian?.address, (newAddress) =>
-                setProfile({
-                  ...profile,
-                  guardian: { ...profile.guardian!, address: newAddress },
-                })
-              )
+              renderEditableAddress('guardian', guardianAddress)
             ) : (
               <div>
                 <Label>Address</Label>
-                <p>{renderAddress(profile.guardian?.address)}</p>
+                <p>{renderAddress(profile?.guardian?.address)}</p>
               </div>
             )}
           </CardContent>
@@ -441,3 +612,5 @@ export const DetailProfile: React.FC = () => {
     </div>
   );
 };
+
+export default DetailProfile;
