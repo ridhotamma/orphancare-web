@@ -71,13 +71,13 @@ const Sidebar: React.FC<SidebarProps> = ({ menuItems, user, onClose }) => {
               </AvatarFallback>
             </Avatar>
             <div>
-              <p className='font-semibold text-lg'>{user.profile?.fullName}</p>
+              <p className='font-semibold text-lg line-clamp-1'>{user.profile?.fullName} Lorem ipsum dolor sit amet consectetur, adipisicing elit. Exercitationem aliquam sit saepe obcaecati numquam accusamus, ut eum alias doloribus sequi aliquid corrupti dolorum consectetur consequatur amet animi doloremque voluptate vel.</p>
               <p className='text-sm text-blue-100'>Administrator</p>
             </div>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant='ghost' size='icon' className='text-white'>
+              <Button variant='ghost' size='icon' className='text-white min-w-8'>
                 <Settings2 className='h-5 w-5' />
               </Button>
             </DropdownMenuTrigger>
