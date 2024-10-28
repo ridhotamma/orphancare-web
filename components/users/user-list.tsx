@@ -74,6 +74,7 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
 
   const getChildrenData = useCallback(
     async (query: string = '', page: number = 0, append: boolean = false) => {
+      setUserData([])
       try {
         const params: Record<string, any> = {
           isCareTaker,

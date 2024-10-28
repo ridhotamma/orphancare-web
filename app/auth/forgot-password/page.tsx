@@ -34,7 +34,7 @@ ${email}`);
   };
 
   return (
-    <div className='flex min-h-screen bg-background'>
+    <>
       <div className='hidden lg:block lg:w-1/2 relative'>
         <Image
           src={BackgroundImage}
@@ -87,7 +87,7 @@ ${email}`);
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

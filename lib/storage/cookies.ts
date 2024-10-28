@@ -1,17 +1,14 @@
 import Cookies from 'js-cookie';
 
 const cookieStorage = {
-  getItem: (key: string) => {
-    const item = Cookies.get(key);
-    return item ? Promise.resolve(item) : Promise.resolve(null);
+  getItem: (key: string): string | null => {
+    return Cookies.get(key) || null;
   },
-  setItem: (key: string, value: string) => {
-    Cookies.set(key, value, { expires: 365 });
-    return Promise.resolve(true);
+  setItem: (key: string, value: string, options?: Cookies.CookieAttributes): void => {
+    Cookies.set(key, value, { expires: 365, ...options });
   },
-  removeItem: (key: string) => {
-    Cookies.remove(key);
-    return Promise.resolve();
+  removeItem: (key: string, options?: Cookies.CookieAttributes): void => {
+    Cookies.remove(key, options);
   },
 };
 

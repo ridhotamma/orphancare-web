@@ -27,6 +27,7 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
 import ProfilePictureUpload from '@/components/users/profile-picture-upload';
 import Link from 'next/link';
 import { useAuth } from '@/provider/auth-provider';
@@ -40,9 +41,9 @@ import AutocompleteSelect from '../ui/autocomplete-select';
 
 const addressSchema = z.object({
   street: z.string().optional(),
-  urbanVillage: z.string().optional(),
-  subdistrict: z.string().optional(),
-  city: z.string().optional(),
+  village: z.string().optional(),
+  regency: z.string().optional(),
+  district: z.string().optional(),
   province: z.string().optional(),
   postalCode: z.string().optional(),
 });
@@ -79,6 +80,18 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+type AutocompleteItem = {
+  value: string;
+  label: string;
+};
+
+type AddressState = {
+  province: AutocompleteItem | null;
+  regency: AutocompleteItem | null;
+  district: AutocompleteItem | null;
+  village: AutocompleteItem | null;
+};
+
 type UserFormProps<T extends Partial<FormValues>> = {
   initialData?: T;
   careTakerForm: boolean;
@@ -106,72 +119,121 @@ const UserForm = <T extends Partial<FormValues>>({
   const [submitting, setSubmitting] = useState(false);
   const [bedRooms, setBedrooms] = useState([]);
   const [guardianTypes, setGuardianTypes] = useState([]);
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [regencies, setRegencies] = useState([]);
+  const [villages, setVillages] = useState([]);
+  const [loadingAddress, setLoadingAddress] = useState(false);
+  const [useChildAddress, setUseChildAddress] = useState(false);
+
+  const [userAddress, setUserAddress] = useState<AddressState>({
+    province: null,
+    regency: null,
+    district: null,
+    village: null,
+  });
+
+  const [guardianAddress, setGuardianAddress] = useState<AddressState>({
+    province: null,
+    regency: null,
+    district: null,
+    village: null,
+  });
 
   const { toast } = useToast();
   const { setUnauthorized } = useAuth();
-
   const router = useRouter();
   const params = useParams();
 
-  const onSubmit = async (data: FormValues) => {
-    setSubmitting(true);
+  const handleProfilePictureChange = (url: string) => {
+    form.setValue('profilePicture', url);
+  };
 
-    try {
-      let url = '/admin/users';
-
-      if (editMode) {
-        url += `/${params.id}`;
+  const handleAddressChange = (
+    addressType: 'user' | 'guardian',
+    field: keyof AddressState,
+    value: AutocompleteItem | null
+  ) => {
+    if (addressType === 'user') {
+      setUserAddress((prev) => ({ ...prev, [field]: value }));
+      if (useChildAddress) {
+        setGuardianAddress((prev) => ({ ...prev, [field]: value }));
       }
-
-      const roles = [RoleType.USER];
-
-      if (data.admin) {
-        roles.push(RoleType.ADMIN);
-      }
-
-      const payloadData = {
-        ...data,
-        roles: roles,
-        careTaker: careTakerForm,
-      };
-
-      await requests({
-        url,
-        method: 'POST',
-        data: payloadData,
-      });
-
-      router.push(`/users${careTakerForm ? '/caretakers' : '/children'}`);
-      toast({
-        title: `${careTakerForm ? 'Caretaker' : 'Child'} successfully added!`,
-        variant: 'success'
-      });
-    } catch (error: any) {
-      if (error.status === 401) {
-        setUnauthorized(true);
-      } else {
-        const errorMessage =
-          error.message ||
-          Object.entries(error)
-            .map((entry) => {
-              const [key, value] = entry;
-              const message = `${key} ${value}`;
-
-              return message;
-            })
-            .join(', ');
-        toast({
-          variant: 'destructive',
-          title: errorMessage,
-        });
-      }
-    } finally {
-      setSubmitting(false);
+    } else {
+      setGuardianAddress((prev) => ({ ...prev, [field]: value }));
     }
   };
 
-  const handleProfilePictureChange = (url: string) => {
-    form.setValue('profilePicture', url);
+  const handleUseChildAddressChange = (checked: boolean) => {
+    setUseChildAddress(checked);
+    if (checked) {
+      setGuardianAddress(userAddress);
+      const userAddressValues = form.getValues('address');
+      form.setValue('guardianAddress', userAddressValues);
+    }
+  };
+
+  const getRegencies = async (provinceId: string) => {
+    setLoadingAddress(true);
+    try {
+      const data = await requests({
+        url: `/address/provinces/${provinceId}/regencies`,
+      });
+      const result = data.map((item: Record<string, any>) => ({
+        value: item.id,
+        label: item.name,
+      }));
+      setRegencies(result);
+    } catch (error: any) {
+      toast({
+        title: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoadingAddress(false);
+    }
+  };
+
+  const getDistricts = async (regencyId: string) => {
+    setLoadingAddress(true);
+    try {
+      const data = await requests({
+        url: `/address/regencies/${regencyId}/districts`,
+      });
+      const result = data.map((item: Record<string, any>) => ({
+        value: item.id,
+        label: item.name,
+      }));
+      setDistricts(result);
+    } catch (error: any) {
+      toast({
+        title: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoadingAddress(false);
+    }
+  };
+
+  const getVillages = async (districtId: string) => {
+    setLoadingAddress(true);
+    try {
+      const data = await requests({
+        url: `/address/districts/${districtId}/villages`,
+      });
+      const result = data.map((item: Record<string, any>) => ({
+        value: item.id,
+        label: item.name,
+      }));
+      setVillages(result);
+    } catch (error: any) {
+      toast({
+        title: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoadingAddress(false);
+    }
   };
 
   useEffect(() => {
@@ -191,13 +253,31 @@ const UserForm = <T extends Partial<FormValues>>({
 
     const getBedRooms = async () => {
       try {
-        const response = await requests({
-          url: '/admin/bedrooms',
+        const data = await requests({
+          url: '/admin/bedrooms/dropdown',
           params: {
             perPage: 50,
           },
         });
-        setBedrooms(response.data);
+        setBedrooms(data);
+      } catch (error: any) {
+        toast({
+          title: error.message,
+          variant: 'destructive',
+        });
+      }
+    };
+
+    const getProvinces = async () => {
+      try {
+        const data = await requests({
+          url: '/address/provinces',
+        });
+        const result = data.map((item: Record<string, any>) => ({
+          value: item.id,
+          label: item.name,
+        }));
+        setProvinces(result);
       } catch (error: any) {
         toast({
           title: error.message,
@@ -208,9 +288,96 @@ const UserForm = <T extends Partial<FormValues>>({
 
     getBedRooms();
     getGuardians();
+    getProvinces();
   }, [toast]);
 
-  const renderAddressFields = (prefix: 'address' | 'guardianAddress') => (
+  const onSubmit = async (data: FormValues) => {
+    console.log('on submit');
+    setSubmitting(true);
+
+    try {
+      let url = '/admin/users';
+
+      if (editMode) {
+        url += `/${params.id}`;
+      }
+
+      const roles = [RoleType.USER];
+
+      if (data.admin) {
+        roles.push(RoleType.ADMIN);
+      }
+
+      const payloadData = {
+        ...data,
+        roles: roles,
+        careTaker: careTakerForm,
+        address: {
+          ...data.address,
+          provinceDetail: {
+            id: userAddress.province?.value,
+            name: userAddress.province?.label,
+          },
+          regencyDetail: {
+            id: userAddress.regency?.value,
+            name: userAddress.regency?.label
+          },
+          districtDetail: {
+            id: userAddress.district?.value,
+            name: userAddress.district?.label
+          },
+          villageDetail: {
+            id: userAddress.village?.value,
+            name: userAddress.village?.label
+          },
+        },
+        guardian: {
+          fullName: data.guardianFullName,
+          address: data.guardianAddress,
+          phoneNumber: data.guardianPhoneNumber,
+          guardianTypeId: data.guardianTypeId,
+        },
+      };
+
+      await requests({
+        url,
+        method: 'POST',
+        data: payloadData,
+      });
+
+      router.push(`/users${careTakerForm ? '/caretakers' : '/children'}`);
+      toast({
+        title: `${careTakerForm ? 'Caretaker' : 'Child'} successfully added!`,
+        variant: 'success',
+      });
+    } catch (error: any) {
+      if (error.status === 401) {
+        setUnauthorized(true);
+      } else {
+        const errorMessage =
+          error.message ||
+          Object.entries(error)
+            .map((entry) => {
+              const [key, value] = entry;
+              const message = `${key} ${value}`;
+              return message;
+            })
+            .join(', ');
+        toast({
+          variant: 'destructive',
+          title: errorMessage,
+        });
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const renderAddressFields = (
+    prefix: 'address' | 'guardianAddress',
+    addressState: AddressState,
+    addressType: 'user' | 'guardian'
+  ) => (
     <>
       <FormField
         control={form.control}
@@ -219,7 +386,17 @@ const UserForm = <T extends Partial<FormValues>>({
           <FormItem>
             <FormLabel>Street</FormLabel>
             <FormControl>
-              <Input placeholder='Street' {...field} />
+              <Input
+                placeholder='Street'
+                {...field}
+                onChange={(e) => {
+                  field.onChange(e);
+                  if (useChildAddress && addressType === 'user') {
+                    form.setValue('guardianAddress.street', e.target.value);
+                  }
+                }}
+                disabled={addressType === 'guardian' && useChildAddress}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -230,16 +407,22 @@ const UserForm = <T extends Partial<FormValues>>({
         name={`${prefix}.province`}
         render={() => (
           <FormItem>
-            <FormLabel>Provinsi</FormLabel>
+            <FormLabel>Province</FormLabel>
             <FormControl>
               <AutocompleteSelect
-                items={[
-                  { label: 'Jakarta', value: '1' },
-                  { label: 'Bandung', value: '2' },
-                ]}
-                searchPlaceholder='Pilih Provinsi...'
-                placeholder='Pilih Provinsi'
+                items={provinces}
+                value={addressState.province}
+                onChange={(item) => {
+                  handleAddressChange(addressType, 'province', item);
+                  if (item?.value) {
+                    getRegencies(item.value);
+                  }
+                }}
+                isLoading={loadingAddress}
+                searchPlaceholder='Select Province...'
+                placeholder='Select Province'
                 className='w-full'
+                disabled={addressType === 'guardian' && useChildAddress}
               />
             </FormControl>
             <FormMessage />
@@ -248,19 +431,25 @@ const UserForm = <T extends Partial<FormValues>>({
       />
       <FormField
         control={form.control}
-        name={`${prefix}.subdistrict`}
+        name={`${prefix}.regency`}
         render={() => (
           <FormItem>
-            <FormLabel>Kota/Kabupaten</FormLabel>
+            <FormLabel>Regency</FormLabel>
             <FormControl>
-            <AutocompleteSelect
-                items={[
-                  { label: 'Jakarta', value: '1' },
-                  { label: 'Bandung', value: '2' },
-                ]}
-                searchPlaceholder='Pilih Kota...'
-                placeholder='Pilih Kota'
+              <AutocompleteSelect
+                items={regencies}
+                value={addressState.regency}
+                onChange={(item) => {
+                  handleAddressChange(addressType, 'regency', item);
+                  if (item?.value) {
+                    getDistricts(item.value);
+                  }
+                }}
+                isLoading={loadingAddress}
+                searchPlaceholder='Select Regency...'
+                placeholder='Select Regency'
                 className='w-full'
+                disabled={addressType === 'guardian' && useChildAddress}
               />
             </FormControl>
             <FormMessage />
@@ -269,19 +458,25 @@ const UserForm = <T extends Partial<FormValues>>({
       />
       <FormField
         control={form.control}
-        name={`${prefix}.city`}
+        name={`${prefix}.district`}
         render={() => (
           <FormItem>
-            <FormLabel>Kecamatan</FormLabel>
+            <FormLabel>District</FormLabel>
             <FormControl>
-            <AutocompleteSelect
-                items={[
-                  { label: 'Jakarta', value: '1' },
-                  { label: 'Bandung', value: '2' },
-                ]}
-                searchPlaceholder='Pilih Kecamatan...'
-                placeholder='Pilih Kecamatan'
+              <AutocompleteSelect
+                items={districts}
+                value={addressState.district}
+                onChange={(item) => {
+                  handleAddressChange(addressType, 'district', item);
+                  if (item?.value) {
+                    getVillages(item.value);
+                  }
+                }}
+                isLoading={loadingAddress}
+                searchPlaceholder='Select District...'
+                placeholder='Select District'
                 className='w-full'
+                disabled={addressType === 'guardian' && useChildAddress}
               />
             </FormControl>
             <FormMessage />
@@ -290,19 +485,22 @@ const UserForm = <T extends Partial<FormValues>>({
       />
       <FormField
         control={form.control}
-        name={`${prefix}.urbanVillage`}
+        name={`${prefix}.village`}
         render={() => (
           <FormItem>
-            <FormLabel>Kelurahan</FormLabel>
+            <FormLabel>Village</FormLabel>
             <FormControl>
-            <AutocompleteSelect
-                items={[
-                  { label: 'Jakarta', value: '1' },
-                  { label: 'Bandung', value: '2' },
-                ]}
-                searchPlaceholder='Pilih Kelurahan...'
-                placeholder='Pilih Kelurahan'
+              <AutocompleteSelect
+                items={villages}
+                value={addressState.village}
+                onChange={(item) => {
+                  handleAddressChange(addressType, 'village', item);
+                }}
+                isLoading={loadingAddress}
+                searchPlaceholder='Select Village...'
+                placeholder='Select Village'
                 className='w-full'
+                disabled={addressType === 'guardian' && useChildAddress}
               />
             </FormControl>
             <FormMessage />
@@ -316,7 +514,17 @@ const UserForm = <T extends Partial<FormValues>>({
           <FormItem>
             <FormLabel>Postal Code</FormLabel>
             <FormControl>
-              <Input placeholder='Postal Code' {...field} />
+              <Input
+                placeholder='Postal Code'
+                {...field}
+                onChange={(e) => {
+                  field.onChange(e);
+                  if (useChildAddress && addressType === 'user') {
+                    form.setValue('guardianAddress.postalCode', e.target.value);
+                  }
+                }}
+                disabled={addressType === 'guardian' && useChildAddress}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -522,13 +730,11 @@ const UserForm = <T extends Partial<FormValues>>({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {bedRooms?.map((bedRoom: BedRoom) => {
-                          return (
-                            <SelectItem key={bedRoom.id} value={bedRoom.id}>
-                              {bedRoom.name}
-                            </SelectItem>
-                          );
-                        })}
+                        {bedRooms?.map((bedRoom: BedRoom) => (
+                          <SelectItem key={bedRoom.id} value={bedRoom.id}>
+                            {bedRoom.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -631,7 +837,7 @@ const UserForm = <T extends Partial<FormValues>>({
             </CardHeader>
             <CardContent>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                {renderAddressFields('address')}
+                {renderAddressFields('address', userAddress, 'user')}
               </div>
             </CardContent>
           </Card>
@@ -679,16 +885,14 @@ const UserForm = <T extends Partial<FormValues>>({
                             </FormControl>
                             <SelectContent>
                               {guardianTypes?.map(
-                                (guardianType: GuardianType) => {
-                                  return (
-                                    <SelectItem
-                                      key={guardianType.id}
-                                      value={guardianType.id}
-                                    >
-                                      {guardianType.name}
-                                    </SelectItem>
-                                  );
-                                }
+                                (guardianType: GuardianType) => (
+                                  <SelectItem
+                                    key={guardianType.id}
+                                    value={guardianType.id}
+                                  >
+                                    {guardianType.name}
+                                  </SelectItem>
+                                )
                               )}
                             </SelectContent>
                           </Select>
@@ -731,8 +935,21 @@ const UserForm = <T extends Partial<FormValues>>({
                   <CardTitle className='text-xl'>Guardian Address</CardTitle>
                 </CardHeader>
                 <CardContent>
+                  <div className='mb-6 flex items-center space-x-2'>
+                    <Switch
+                      checked={useChildAddress}
+                      onCheckedChange={handleUseChildAddressChange}
+                    />
+                    <FormLabel className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
+                      Use same address as child
+                    </FormLabel>
+                  </div>
                   <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                    {renderAddressFields('guardianAddress')}
+                    {renderAddressFields(
+                      'guardianAddress',
+                      guardianAddress,
+                      'guardian'
+                    )}
                   </div>
                 </CardContent>
               </Card>

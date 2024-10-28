@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, FormEvent, ChangeEvent } from 'react';
+import React, { useState, FormEvent, ChangeEvent, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -11,19 +11,8 @@ import { useToast } from '@/hooks/use-toast';
 
 import BackgroundImage from '@/images/background-image-1.webp';
 import cookieStorage from '@/lib/storage/cookies';
-import { Loader2, Moon, Sun } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Theme } from '@/types/themes';
-import { useTheme } from 'next-themes';
 
 interface LoginFormData {
   username: string;
@@ -31,13 +20,11 @@ interface LoginFormData {
   rememberMe: boolean;
 }
 
+const REMEMBERED_USERNAME_KEY = 'rememberedUsername';
+
 const LoginPage: React.FC = () => {
   const { toast } = useToast();
   const router = useRouter();
-  const { theme, setTheme } = useTheme() as {
-    theme: Theme | undefined;
-    setTheme: (value: string) => void;
-  };
 
   const [formData, setFormData] = useState<LoginFormData>({
     username: '',
@@ -46,6 +33,17 @@ const LoginPage: React.FC = () => {
   });
 
   const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    const rememberedUsername = cookieStorage.getItem(REMEMBERED_USERNAME_KEY);
+    if (rememberedUsername) {
+      setFormData((prev) => ({
+        ...prev,
+        username: rememberedUsername,
+        rememberMe: true,
+      }));
+    }
+  }, []);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -66,8 +64,25 @@ const LoginPage: React.FC = () => {
         method: 'POST',
         data: formData,
       });
+
       const authToken = response.jwt;
-      cookieStorage.setItem('authToken', authToken);
+
+      cookieStorage.setItem('authToken', authToken, {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+      });
+
+      if (formData.rememberMe) {
+        cookieStorage.setItem(REMEMBERED_USERNAME_KEY, formData.username, {
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          expires: 30,
+        });
+      } else {
+        cookieStorage.removeItem(REMEMBERED_USERNAME_KEY);
+      }
+
       router.push('/dashboard');
 
       toast({
@@ -85,30 +100,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className='flex min-h-screen bg-background relative'>
-      <div className='absolute top-4 right-4'>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant='outline' size='icon'>
-              <Sun className='h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0' />
-              <Moon className='absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100' />
-              <span className='sr-only'>Toggle theme</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className='w-56'>
-            <DropdownMenuLabel>Theme Settings</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
-              <DropdownMenuRadioItem value='light'>Light</DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value='dark'>Dark</DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value='system'>
-                System
-              </DropdownMenuRadioItem>
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-
+    <>
       <div className='hidden lg:block lg:w-1/2 relative'>
         <Image
           src={BackgroundImage}
@@ -134,6 +126,7 @@ const LoginPage: React.FC = () => {
                 required
                 value={formData.username}
                 onChange={handleInputChange}
+                autoComplete='username'
               />
             </div>
             <div className='space-y-2'>
@@ -146,6 +139,7 @@ const LoginPage: React.FC = () => {
                 required
                 value={formData.password}
                 onChange={handleInputChange}
+                autoComplete='current-password'
               />
             </div>
             <div className='flex items-center justify-between'>
@@ -178,7 +172,7 @@ const LoginPage: React.FC = () => {
           </form>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
