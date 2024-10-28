@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Edit2, Save, X, Trash2, KeyRound } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -18,6 +18,7 @@ import {
 import { PasswordChangeDialog } from '@/components/users/password-change-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { User } from '@/types/user';
+import { RoleType } from '@/types/enums';
 
 type Credentials = {
   id: string;
@@ -42,13 +43,9 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [credentials, setCredentials] = useState<Credentials>({
-    id: '9f993f52-2835-4d27-97a5-2a39101ef727',
-    email: 'fahrulroji@gmail.com',
-    username: 'kakoji',
-    active: true,
-    isAdmin: false,
-  });
+  const [credentials, setCredentials] = useState<
+    Credentials & Omit<User, 'profile'>
+  >(data as Credentials & Omit<User, 'profile'>);
 
   const handleSaveCredentials = () => {
     setIsEditCredentials(false);
@@ -96,12 +93,18 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
 
   const handleDeleteUser = () => {
     console.log('delete user');
-    // Implement user deletion logic here
     toast({
       title: 'User deleted',
       description: 'The user has been successfully deleted.',
     });
   };
+
+  useEffect(() => {
+    setCredentials((prev) => ({
+      ...prev,
+      isAdmin: data.roles.includes(RoleType.ADMIN),
+    }));
+  }, [data]);
 
   const renderCredentialsForm = () => (
     <Card>

@@ -60,6 +60,22 @@ const getFileTypeFromUrl = (url: string): string => {
   }
 };
 
+const FallbackPreview: React.FC<{
+  icon: React.ReactNode;
+  message: string;
+  subMessage?: string;
+}> = ({ icon, message, subMessage }) => (
+  <div className='flex flex-col items-center justify-center h-full p-6 text-center'>
+    <div className='mb-4 text-gray-400'>{icon}</div>
+    <p className='text-lg font-medium text-gray-700 dark:text-gray-300 mb-2'>
+      {message}
+    </p>
+    {subMessage && (
+      <p className='text-sm text-gray-500 dark:text-gray-400'>{subMessage}</p>
+    )}
+  </div>
+);
+
 const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
   document,
   onClose,
@@ -74,12 +90,24 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
     useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [fileType, setFileType] = useState<string>('unknown');
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     setFileType(getFileTypeFromUrl(document.url as string));
+    setHasError(false);
   }, [document.url]);
 
   const renderDocumentPreview = () => {
+    if (!document.url || hasError) {
+      return (
+        <FallbackPreview
+          icon={<FileIcon className='h-24 w-24' />}
+          message='Preview not available'
+          subMessage='The document could not be loaded'
+        />
+      );
+    }
+
     switch (fileType) {
       case 'image/gif':
         return (
@@ -89,6 +117,7 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
               alt={document.name}
               className='object-contain rounded-lg'
               style={{ width: '100%', height: '100%' }}
+              onError={() => setHasError(true)}
             />
           </div>
         );
@@ -103,38 +132,44 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
               alt={document.name as string}
               className='object-contain rounded-lg'
               fill={true}
+              onError={() => setHasError(true)}
             />
           </div>
         );
       case 'application/pdf':
         return (
-          <iframe
-            src={document.url}
-            title={document.name}
-            className='w-full h-full border-0'
-          />
+          <div className='w-full h-full'>
+            <iframe
+              src={document.url}
+              title={document.name}
+              className='w-full h-full border-0'
+              onError={() => setHasError(true)}
+            />
+          </div>
         );
       case 'application/vnd.ms-excel':
+        return (
+          <FallbackPreview
+            icon={<FileSpreadsheetIcon className='h-24 w-24' />}
+            message='Excel document preview not available'
+            subMessage='Please download the file to view its contents'
+          />
+        );
       case 'application/msword':
         return (
-          <div className='flex flex-col items-center justify-center h-full'>
-            <FileIcon className='h-24 w-24 text-gray-400' />
-            <p className='mt-4 text-lg text-gray-600'>
-              Preview not available for{' '}
-              {fileType === 'application/vnd.ms-excel' ? 'Excel' : 'Word'}{' '}
-              documents
-            </p>
-            <p className='mt-2 text-sm text-gray-500'>
-              Please download the file to view its contents
-            </p>
-          </div>
+          <FallbackPreview
+            icon={<FileTypeIcon className='h-24 w-24' />}
+            message='Word document preview not available'
+            subMessage='Please download the file to view its contents'
+          />
         );
       default:
         return (
-          <div className='flex flex-col items-center justify-center h-full'>
-            <FileIcon className='h-24 w-24 text-gray-400' />
-            <p className='mt-4 text-lg text-gray-600'>Preview not available</p>
-          </div>
+          <FallbackPreview
+            icon={<FileIcon className='h-24 w-24' />}
+            message='Preview not available'
+            subMessage='This file type is not supported for preview'
+          />
         );
     }
   };
@@ -257,19 +292,18 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
               <div className='flex items-center space-x-3'>
                 <Avatar className='h-10 w-10 md:h-12 md:w-12'>
                   <AvatarImage
-                    src={document?.owner?.profile?.profilePicture}
-                    alt={document?.owner?.profile?.fullName}
+                    src={document?.owner?.profilePicture}
+                    alt={document?.owner?.fullName}
                   />
                   <AvatarFallback className='text-base md:text-lg'>
-                    {document?.owner?.profile?.fullName
-                      ?.split(' ')
-                      .map((n) => n[0])
-                      .join('')}
+                    <AvatarFallback>
+                      {document.owner?.fullName?.slice(0, 2).toUpperCase()}
+                    </AvatarFallback>
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <p className='font-medium text-gray-900 dark:text-gray-100'>
-                    {document?.owner?.profile?.fullName}
+                    {document?.owner?.fullName}
                   </p>
                   <p className='text-sm text-gray-500 dark:text-gray-400'>
                     {document?.owner?.email}
@@ -294,7 +328,7 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
                   Updated
                 </h3>
                 <p className='text-sm text-gray-600 dark:text-gray-400'>
-                  {format(new Date(document.updatedAt), 'PPpp')}
+                  {format(new Date(document.createdAt), 'PPpp')}
                 </p>
               </div>
             </div>

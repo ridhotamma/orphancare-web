@@ -27,7 +27,10 @@ const UserDetailPage: React.FC<UserDetailProps> = ({
   const { toast } = useToast();
 
   const [loading, setLoading] = useState(true);
-  const [userCredential, setUserCredential] = useState<Omit<User, 'profile'> | null>(null);
+  const [userCredential, setUserCredential] = useState<Omit<
+    User,
+    'profile'
+  > | null>(null);
   const [userProfile, setUserProfile] = useState<Profile | null>(null);
   const [userDocuments, setUserDocuments] = useState<Document[] | null>(null);
 
@@ -36,7 +39,7 @@ const UserDetailPage: React.FC<UserDetailProps> = ({
       try {
         setLoading(true);
 
-        const [credentialsResult, documentsResult, profileResult] =
+        const [credentialsResult, { data: documentsResult }, profileResult] =
           await Promise.all([
             requests({
               url: `/admin/users/${userId}`,
@@ -70,19 +73,21 @@ const UserDetailPage: React.FC<UserDetailProps> = ({
     {
       id: 'profile',
       label: 'Profile',
-      content: <DetailProfile data={userProfile as Profile}/>,
+      content: <DetailProfile data={userProfile as Profile} />,
       icon: <UserCircle className='h-5 w-5' />,
     },
     {
       id: 'documents',
       label: 'Documents',
-      content: <DetailDocuments data={userDocuments as Document[]}/>,
+      content: <DetailDocuments data={userDocuments as Document[]} />,
       icon: <File className='h-5 w-5' />,
     },
     {
       id: 'credentials',
       label: 'Credentials',
-      content: <DetailCredentials data={userCredential as Omit<User, 'profile'>} />,
+      content: (
+        <DetailCredentials data={userCredential as Omit<User, 'profile'>} />
+      ),
       icon: <UserIcon className='h-5 w-5' />,
     },
   ];

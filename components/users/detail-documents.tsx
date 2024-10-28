@@ -29,7 +29,6 @@ import { useToast } from '@/hooks/use-toast';
 import EmptyContainer from '@/components/container/empty-container';
 import EmptyImage from '@/images/not-found-document.png';
 import Image from 'next/image';
-import { mockDocuments } from '@/data/mockup/document-mockup';
 import { Input } from '@/components/ui/input';
 import FullscreenDocumentPreview from '@/components/documents/document-preview';
 
@@ -44,30 +43,50 @@ const getDocumentType = (url: string): string => {
 
 // File preview component
 const FilePreview: React.FC<{ url: string }> = ({ url }) => {
+  const [hasError, setHasError] = React.useState(false);
   const type = getDocumentType(url);
 
-  if (!url) return <div className='text-center p-4'>Preview not available</div>;
+  const FallbackPreview = () => (
+    <div className='h-40 w-full flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-800'>
+      <File className='h-12 w-12 text-gray-400 mb-2' />
+      <p className='text-sm text-gray-500 dark:text-gray-400'>
+        Preview not available
+      </p>
+    </div>
+  );
+
+  if (!url || hasError) {
+    return <FallbackPreview />;
+  }
 
   switch (type) {
     case 'image':
     case 'gif':
       return (
-        <Image
-          src={url}
-          alt='Document preview'
-          width={200}
-          height={200}
-          className='object-cover w-full h-40'
-        />
+        <div className='relative h-40 w-full'>
+          <Image
+            src={url}
+            alt='Document preview'
+            fill
+            className='object-cover'
+            onError={() => setHasError(true)}
+          />
+        </div>
       );
     case 'pdf':
       return (
-        <object data={url} type='application/pdf' width='100%' height='160'>
-          <p>PDF preview not available</p>
+        <object
+          data={url}
+          type='application/pdf'
+          width='100%'
+          height='160'
+          onError={() => setHasError(true)}
+        >
+          <FallbackPreview />
         </object>
       );
     default:
-      return <div className='text-center p-4'>Preview not available</div>;
+      return <FallbackPreview />;
   }
 };
 
@@ -85,7 +104,7 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
   data,
 }: DetailDocumentsProps) => {
   const { toast } = useToast();
-  const [documents, setDocuments] = useState<Document[]>(mockDocuments);
+  const [documents, setDocuments] = useState<Document[]>(data as Document[]);
   const [isAddDocumentModalOpen, setIsAddDocumentModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [newDocument, setNewDocument] = useState<NewDocument>({
@@ -123,27 +142,7 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
     try {
       const url = URL.createObjectURL(newDocument.file);
 
-      const newDoc: Document = {
-        id: `doc-${Date.now()}`,
-        name: newDocument.name,
-        url: url,
-        documentType: {
-          id: `type-${Date.now()}`,
-          name: newDocument.type === 'pdf' ? 'PDF Document' : 'Image',
-          type: newDocument.type === 'pdf' ? 'DOCUMENT_PDF' : 'DOCUMENT_IMAGE',
-          mandatory: false,
-        },
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        owner: {
-          id: 'current-user',
-          email: 'current@example.com',
-          profile: {
-            fullName: 'Current User',
-            profilePicture: 'https://i.pravatar.cc/150?u=current-user',
-          },
-        },
-      };
+      const newDoc: any = {};
 
       setDocuments((prevDocs) => [newDoc, ...prevDocs]);
 
@@ -164,17 +163,6 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
     }
   };
 
-  const getFileIcon = (type: string) => {
-    switch (type) {
-      case 'DOCUMENT_PDF':
-        return <File className='h-20 w-20 text-red-500' />;
-      case 'DOCUMENT_IMAGE':
-        return <File className='h-20 w-20 text-green-500' />;
-      default:
-        return <File className='h-20 w-20 text-gray-500' />;
-    }
-  };
-
   const getTypeBadgeColor = (type: string) => {
     switch (type) {
       case 'DOCUMENT_PDF':
@@ -187,7 +175,7 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
   };
 
   return (
-    <div>
+    <div className='container mx-auto px-0 lg:px-20'>
       <div className='flex justify-between items-center mb-8'>
         <div className='relative'>
           <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400' />
@@ -219,7 +207,7 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
           text="You haven't added any documents yet. Click 'Add Document' to get started."
         />
       ) : (
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-10'>
           {documents.map((doc) => (
             <Card
               key={doc.id}
