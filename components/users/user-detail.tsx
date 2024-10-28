@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import TabLayout, { TabItem } from '@/components/layout/tab-layout';
+import LoadingContainer from '../container/loading-container';
 import { usePageTitle } from '@/hooks/use-page-title';
 import { ArrowLeft, File, UserIcon, UserCircle } from 'lucide-react';
 import { DetailDocuments } from '@/components/users/detail-documents';
@@ -9,7 +10,6 @@ import { DetailCredentials } from '@/components/users/detail-credentials';
 import { Button } from '@/components/ui/button';
 import { requests } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
-import LoadingContainer from '../container/loading-container';
 import { Profile } from '@/types/profile';
 import { User } from '@/types/user';
 import { Document } from '@/types/document';

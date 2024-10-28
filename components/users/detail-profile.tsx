@@ -22,6 +22,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import AutocompleteSelect from '../ui/autocomplete-select';
 import { requests } from '@/lib/api';
+import { BedRoom } from '@/types/bedroom';
 
 type AutocompleteItem = {
   value: string;
@@ -49,6 +50,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
   const [regencies, setRegencies] = useState<AutocompleteItem[]>([]);
   const [districts, setDistricts] = useState<AutocompleteItem[]>([]);
   const [villages, setVillages] = useState<AutocompleteItem[]>([]);
+  const [bedRooms, setBedrooms] = useState([]);
 
   const [userAddress, setUserAddress] = useState<AddressState>({
     province: null,
@@ -146,6 +148,23 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
   };
 
   useEffect(() => {
+    const getBedRooms = async () => {
+      try {
+        const data = await requests({
+          url: '/admin/bedrooms/dropdown',
+          params: {
+            perPage: 50,
+          },
+        });
+        setBedrooms(data);
+      } catch (error: any) {
+        toast({
+          title: error.message,
+          variant: 'destructive',
+        });
+      }
+    };
+
     const getProvinces = async () => {
       try {
         const data = await requests({
@@ -165,7 +184,52 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
     };
 
     getProvinces();
+    getBedRooms();
   }, [toast]);
+
+  useEffect(() => {
+    setUserAddress((prev) => ({
+      ...prev,
+      province: {
+        label: data?.address?.provinceDetail?.name || '',
+        value: data?.address?.provinceDetail?.id || '',
+      },
+      regency: {
+        label: data?.address?.regencyDetail?.name || '',
+        value: data?.address?.regencyDetail?.id || '',
+      },
+      district: {
+        label: data?.address?.districtDetail?.name || '',
+        value: data?.address?.districtDetail?.id || '',
+      },
+      village: {
+        label: data?.address?.villageDetail?.name || '',
+        value: data?.address?.villageDetail?.id || '',
+      },
+    }));
+
+    setGuardianAddress((prev) => ({
+      ...prev,
+      province: {
+        label: data?.guardian?.address?.provinceDetail?.name || '',
+        value: data?.guardian?.address?.provinceDetail?.id || '',
+      },
+      regency: {
+        label: data?.guardian?.address?.regencyDetail?.name || '',
+        value: data?.guardian?.address?.regencyDetail?.id || '',
+      },
+      district: {
+        label: data?.guardian?.address?.districtDetail?.name || '',
+        value: data?.guardian?.address?.districtDetail?.id || '',
+      },
+      village: {
+        label: data?.guardian?.address?.villageDetail?.name || '',
+        value: data?.guardian?.address?.villageDetail?.id || '',
+      },
+    }));
+
+    console.log({ userAddress, guardianAddress })
+  }, [data]);
 
   const handleAddressChange = (
     addressType: 'user' | 'guardian',
@@ -479,7 +543,11 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                   <SelectValue placeholder='Select bedroom' />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value='1'>Test Bedroom</SelectItem>
+                  {bedRooms?.map((bedRoom: BedRoom) => (
+                    <SelectItem key={bedRoom.id} value={bedRoom.id}>
+                      {bedRoom.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

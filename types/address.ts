@@ -1,3 +1,8 @@
+export type AddressDetail = {
+  id: string;
+  name: string;
+};
+
 export type Address = {
   id?: string;
   street?: string;
@@ -8,4 +13,8 @@ export type Address = {
   postalCode?: string;
   createdAt?: string;
   updatedAt?: string;
+  provinceDetail?: AddressDetail;
+  regencyDetail?: AddressDetail;
+  districtDetail?: AddressDetail;
+  villageDetail?: AddressDetail;
 };
