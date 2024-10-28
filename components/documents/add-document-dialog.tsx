@@ -1,5 +1,5 @@
 import React from 'react';
-import { Camera } from 'lucide-react';
+import { CloudUpload } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -61,7 +61,7 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({
             </div>
           ) : (
             <div className='text-center'>
-              <Camera className='mx-auto h-12 w-12 text-gray-400' />
+              <CloudUpload className='mx-auto h-12 w-12 text-gray-400' />
               <p className='mt-2 text-sm text-gray-600'>
                 Click to upload a file
               </p>
