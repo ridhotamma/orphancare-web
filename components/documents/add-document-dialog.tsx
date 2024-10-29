@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { DocumentType } from '@/types/document-type';
+import Image from 'next/image';
 
 interface AddDocumentDialogProps {
   isOpen: boolean;
@@ -47,7 +48,7 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({
   onFileChange,
   documentTypes,
   loading,
-  submitting
+  submitting,
 }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isImage, setIsImage] = useState(false);
@@ -65,7 +66,7 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({
         setPreviewUrl(null);
       }
     }
-  }, [newDocument.url]);
+  }, [newDocument.url, fileInputRef]);
 
   const renderPreview = () => {
     if (loading) {
@@ -84,10 +85,12 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({
     if (isImage && previewUrl) {
       return (
         <div className='relative w-full h-full'>
-          <img
+          <Image
             src={previewUrl}
             alt='Preview'
             className='absolute inset-0 w-full h-full object-contain'
+            style={{ width: '100%', height: '100%' }}
+            fill={true}
           />
           <p className='absolute bottom-2 left-0 right-0 text-xs text-gray-500 text-center'>
             Click to change file
@@ -168,7 +171,15 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({
           <Button variant='outline' onClick={onClose}>
             Cancel
           </Button>
-          <Button disabled={submitting} onClick={onAddDocument}>
+          <Button
+            disabled={
+              submitting ||
+              !newDocument.url ||
+              !newDocument.documentTypeId ||
+              !newDocument.name
+            }
+            onClick={onAddDocument}
+          >
             Add Document
           </Button>
         </div>

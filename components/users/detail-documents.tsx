@@ -52,7 +52,7 @@ import {
 // Utility function to check document type based on URL
 const getDocumentType = (url: string): string => {
   const extension = url.split('.').pop()?.toLowerCase();
-  if (['jpg', 'jpeg', 'png', 'webp'].includes(extension!)) return 'image';
+  if (['jpg', 'jpeg', 'png', 'webp', 'avif'].includes(extension!)) return 'image';
   if (extension === 'gif') return 'gif';
   if (extension === 'pdf') return 'pdf';
   return 'unknown';
@@ -221,21 +221,15 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
   };
 
   const handleOpenDeleteDialog = (document: Document) => {
-    console.log({ document }, 'click delete');
     setDocumentToBeDeleted(document);
     setIsDeleteDialogOpen(true);
   };
 
-  const handleAddDocument = async () => {
-    if (!newDocument.url || !newDocument.name || !newDocument.documentTypeId) {
-      toast({
-        title: 'Error',
-        description: 'Please fill in all fields and select a file.',
-        variant: 'destructive',
-      });
-      return;
-    }
+  const handleDownloadDocument = (document: Document) => {
+    window.location.href = document?.url as string;
+  };
 
+  const handleAddDocument = async () => {
     try {
       setLoadingSubmit(true);
 
@@ -385,7 +379,9 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleDownloadDocument(doc)}
+                      >
                         <Download className='mr-2 h-4 w-4' /> Download
                       </DropdownMenuItem>
                       <DropdownMenuItem
@@ -445,10 +441,8 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
       {selectedDocument && (
         <FullscreenDocumentPreview
           document={selectedDocument}
-          onClose={() => {
-            setSelectedDocument(null);
-          }}
-          onDelete={() => {}}
+          onClose={() => setSelectedDocument(null)}
+          onDelete={handleDeleteDocument}
         />
       )}
     </div>

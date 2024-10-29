@@ -135,7 +135,7 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
               src={document.url}
               alt={document.name as string}
               className='object-contain rounded-lg'
-              style={{ width: '100%', height: '100%' }}
+              fill={true}
               onError={() => setHasError(true)}
             />
           </div>
