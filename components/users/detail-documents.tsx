@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import React, { useState, useRef, useEffect, Dispatch } from 'react';
@@ -37,6 +38,16 @@ import { requests } from '@/lib/api';
 import { DocumentType } from '@/types/document-type';
 import LoadingContainer from '@/components/container/loading-container';
 import { useDebounce } from '@/hooks/use-debounce';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle,
+  AlertDialogFooter,
+  AlertDialogHeader,
+} from '@/components/ui/alert-dialog';
 
 // Utility function to check document type based on URL
 const getDocumentType = (url: string): string => {
@@ -111,9 +122,13 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
   const [isAddDocumentModalOpen, setIsAddDocumentModalOpen] = useState(false);
   const [loadingUpload, setLoadingUpload] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
   const [documentTypes, setDocumentTypes] = useState<DocumentType[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isMounted, setIsMounted] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [documentToBeDeleted, setDocumentToBeDeleted] =
+    useState<Document | null>(null);
   const [newDocument, setNewDocument] = useState<NewDocument>({
     url: '',
     name: '',
@@ -167,7 +182,7 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
         setNewDocument((prev) => ({
           ...prev,
           url: response.url,
-          name: file?.name!,
+          name: file?.name as string,
         }));
       }
     } catch (error: any) {
@@ -179,6 +194,36 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
     } finally {
       setLoadingUpload(false);
     }
+  };
+
+  const handleDeleteDocument = async () => {
+    try {
+      setLoadingDelete(true);
+      await requests({
+        url: `/public/users/documents/${documentToBeDeleted?.id}`,
+        method: 'DELETE',
+      });
+      toast({
+        title: 'Successfully Deleted',
+        description: `${documentToBeDeleted?.name} Successfully deleted`,
+        variant: 'success',
+      });
+      onRefresh();
+    } catch (error: any) {
+      toast({
+        title: 'Cannot delete document',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoadingDelete(false);
+    }
+  };
+
+  const handleOpenDeleteDialog = (document: Document) => {
+    console.log({ document }, 'click delete');
+    setDocumentToBeDeleted(document);
+    setIsDeleteDialogOpen(true);
   };
 
   const handleAddDocument = async () => {
@@ -241,7 +286,7 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
       }
     };
     getDocumentTypes();
-  }, []);
+  }, [setLoading, toast]);
 
   const debounceSearch = useDebounce(searchQuery, 400);
 
@@ -343,7 +388,9 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
                       <DropdownMenuItem>
                         <Download className='mr-2 h-4 w-4' /> Download
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleOpenDeleteDialog(doc)}
+                      >
                         <Trash2 className='mr-2 h-4 w-4' /> Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -366,6 +413,34 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
         loading={loadingUpload}
         submitting={loadingSubmit}
       />
+
+      {/* Delete Dialog */}
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              document &quot;{documentToBeDeleted?.name}&quot; and remove it
+              from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={loadingDelete}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={loadingDelete}
+              onClick={handleDeleteDocument}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {selectedDocument && (
         <FullscreenDocumentPreview

@@ -7,16 +7,18 @@ import {
   FileSpreadsheetIcon,
   FileTypeIcon,
   X,
-  Download,
   ChevronLeft,
   Info,
   Trash2,
   Share2,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import {
   AlertDialog,
@@ -82,7 +84,8 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
 }) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isDownloadSuccessDialogOpen, setIsDownloadSuccessDialogOpen] = useState(false);
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
   const [fileType, setFileType] = useState<string>('unknown');
   const [hasError, setHasError] = useState(false);
 
@@ -90,6 +93,28 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
     setFileType(getFileTypeFromUrl(document.url as string));
     setHasError(false);
   }, [document.url]);
+
+  useEffect(() => {
+    if (isCopied) {
+      const timer = setTimeout(() => {
+        setIsCopied(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isCopied]);
+
+  const handleCopyUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(document.url as string);
+      setIsCopied(true);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  const handleShare = () => {
+    setIsShareDialogOpen(true);
+  };
 
   const renderDocumentPreview = () => {
     if (!document.url || hasError) {
@@ -106,9 +131,9 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
       case 'image/gif':
         return (
           <div className='relative w-full h-full'>
-            <img
+            <Image
               src={document.url}
-              alt={document.name}
+              alt={document.name as string}
               className='object-contain rounded-lg'
               style={{ width: '100%', height: '100%' }}
               onError={() => setHasError(true)}
@@ -187,10 +212,6 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
   const handleDelete = () => {
     setIsDeleteDialogOpen(false);
     onDelete();
-  };
-
-  const handleShare = async () => {
-    console.log('share click');
   };
 
   return (
@@ -274,9 +295,7 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
                     alt={document?.owner?.fullName}
                   />
                   <AvatarFallback className='text-base md:text-lg'>
-                    <AvatarFallback>
-                      {document.owner?.fullName?.slice(0, 2).toUpperCase()}
-                    </AvatarFallback>
+                    {document.owner?.fullName?.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div>
@@ -332,6 +351,42 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
         </div>
       </div>
 
+      {/* Share Dialog */}
+      <AlertDialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className='flex items-center gap-2'>
+              <Share2 className='h-5 w-5 text-blue-500' />
+              Share Document
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Copy the link below to share this document
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className='flex items-center space-x-2 my-4'>
+            <div className='relative flex-1'>
+              <Input value={document.url} readOnly className='pr-10' />
+              <Button
+                variant='ghost'
+                size='icon'
+                className='absolute right-0 top-0 h-full'
+                onClick={handleCopyUrl}
+              >
+                {isCopied ? (
+                  <Check className='h-4 w-4 text-green-500' />
+                ) : (
+                  <Copy className='h-4 w-4' />
+                )}
+              </Button>
+            </div>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Close</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete Dialog */}
       <AlertDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
@@ -348,31 +403,6 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      <AlertDialog
-        open={isDownloadSuccessDialogOpen}
-        onOpenChange={setIsDownloadSuccessDialogOpen}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle className='flex items-center gap-2'>
-              <Download className='h-5 w-5 text-green-500' />
-              Download Successful
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              The file &quot;{document.name}&quot; has been successfully
-              downloaded.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction
-              onClick={() => setIsDownloadSuccessDialogOpen(false)}
-            >
-              OK
-            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

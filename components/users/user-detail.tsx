@@ -96,6 +96,7 @@ const UserDetailPage: React.FC<UserDetailProps> = ({
         params: { name: searchTerm },
         method: 'GET',
       });
+      setUserDocuments(response.data)
     } catch (error: any) {
       toast({
         title: 'Failed to search documents',
