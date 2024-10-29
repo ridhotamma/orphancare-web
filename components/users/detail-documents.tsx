@@ -52,7 +52,8 @@ import {
 // Utility function to check document type based on URL
 const getDocumentType = (url: string): string => {
   const extension = url.split('.').pop()?.toLowerCase();
-  if (['jpg', 'jpeg', 'png', 'webp', 'avif'].includes(extension!)) return 'image';
+  if (['jpg', 'jpeg', 'png', 'webp', 'avif'].includes(extension!))
+    return 'image';
   if (extension === 'gif') return 'gif';
   if (extension === 'pdf') return 'pdf';
   return 'unknown';
@@ -217,6 +218,8 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
       });
     } finally {
       setLoadingDelete(false);
+      setSelectedDocument(null);
+      setDocumentToBeDeleted(null);
     }
   };
 
@@ -442,7 +445,10 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
         <FullscreenDocumentPreview
           document={selectedDocument}
           onClose={() => setSelectedDocument(null)}
-          onDelete={handleDeleteDocument}
+          onDelete={() => {
+            setDocumentToBeDeleted(selectedDocument);
+            handleDeleteDocument();
+          }}
         />
       )}
     </div>

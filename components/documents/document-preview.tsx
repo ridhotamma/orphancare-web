@@ -49,6 +49,7 @@ const getFileTypeFromUrl = (url: string): string => {
     case 'gif':
     case 'bmp':
     case 'webp':
+    case 'avif':
       return `image/${extension}`;
     case 'xls':
     case 'xlsx':
@@ -145,6 +146,7 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
       case 'image/png':
       case 'image/bmp':
       case 'image/webp':
+      case 'image/avif':
         return (
           <div className='relative w-full h-full'>
             <Image
@@ -210,7 +212,6 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
   };
 
   const handleDelete = () => {
-    setIsDeleteDialogOpen(false);
     onDelete();
   };
 
