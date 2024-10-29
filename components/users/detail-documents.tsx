@@ -1,4 +1,6 @@
-import React, { useState, useRef } from 'react';
+'use client';
+
+import React, { useState, useRef, useEffect, Dispatch } from 'react';
 import {
   File,
   Eye,
@@ -31,6 +33,10 @@ import EmptyImage from '@/images/not-found-document.png';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import FullscreenDocumentPreview from '@/components/documents/document-preview';
+import { requests } from '@/lib/api';
+import { DocumentType } from '@/types/document-type';
+import LoadingContainer from '@/components/container/loading-container';
+import { useDebounce } from '@/hooks/use-debounce';
 
 // Utility function to check document type based on URL
 const getDocumentType = (url: string): string => {
@@ -73,64 +79,110 @@ const FilePreview: React.FC<{ url: string }> = ({ url }) => {
           />
         </div>
       );
-    case 'pdf':
-      return (
-        <object
-          data={url}
-          type='application/pdf'
-          width='100%'
-          height='160'
-          onError={() => setHasError(true)}
-        >
-          <FallbackPreview />
-        </object>
-      );
     default:
       return <FallbackPreview />;
   }
 };
 
 type NewDocument = {
-  file: File | null;
+  url: string;
   name: string;
-  type: string;
+  documentTypeId: string;
 };
 
 type DetailDocumentsProps = {
   data?: Document[] | null;
+  loading: boolean;
+  setLoading: Dispatch<React.SetStateAction<boolean>>;
+  onSearch: (searchTerm: string) => void;
+  onRefresh: () => void;
+  userId: string;
 };
 
 export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
-  data,
+  data: documents,
+  loading,
+  setLoading,
+  onSearch,
+  onRefresh,
+  userId,
 }: DetailDocumentsProps) => {
   const { toast } = useToast();
-  const [documents, setDocuments] = useState<Document[]>(data as Document[]);
   const [isAddDocumentModalOpen, setIsAddDocumentModalOpen] = useState(false);
+  const [loadingUpload, setLoadingUpload] = useState(false);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [documentTypes, setDocumentTypes] = useState<DocumentType[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isMounted, setIsMounted] = useState(false);
   const [newDocument, setNewDocument] = useState<NewDocument>({
-    file: null,
+    url: '',
     name: '',
-    type: '',
+    documentTypeId: '',
   });
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(
     null
   );
 
-  const handleSearchDocuments = (value: string) => {
+  const handleSearchDocuments = async (value: string) => {
     setSearchQuery(value);
   };
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCloseDialog = () => {
+    setIsAddDocumentModalOpen(false);
+    setNewDocument({
+      url: '',
+      name: '',
+      documentTypeId: '',
+    });
+  };
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
-    if (file) {
-      setNewDocument((prev) => ({ ...prev, file }));
+
+    if (!file) {
+      toast({
+        title: 'Failed to upload a file',
+        description: 'Check your device permission to continue',
+        variant: 'destructive',
+      });
+    }
+
+    try {
+      setLoadingUpload(true);
+
+      const data = new FormData();
+      data.append('file', file!);
+
+      const response = await requests({
+        url: '/public/files/upload',
+        method: 'POST',
+        data,
+      });
+
+      if (response.url) {
+        setNewDocument((prev) => ({
+          ...prev,
+          url: response.url,
+          name: file?.name!,
+        }));
+      }
+    } catch (error: any) {
+      toast({
+        title: 'Something went wrong',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoadingUpload(false);
     }
   };
 
   const handleAddDocument = async () => {
-    if (!newDocument.file || !newDocument.name || !newDocument.type) {
+    if (!newDocument.url || !newDocument.name || !newDocument.documentTypeId) {
       toast({
         title: 'Error',
         description: 'Please fill in all fields and select a file.',
@@ -140,19 +192,23 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
     }
 
     try {
-      const url = URL.createObjectURL(newDocument.file);
+      setLoadingSubmit(true);
 
-      const newDoc: any = {};
-
-      setDocuments((prevDocs) => [newDoc, ...prevDocs]);
+      await requests({
+        url: `/public/users/${userId}/documents`,
+        method: 'POST',
+        data: newDocument,
+      });
 
       setIsAddDocumentModalOpen(false);
-      setNewDocument({ file: null, name: '', type: '' });
+      setNewDocument({ url: '', name: '', documentTypeId: '' });
+      onRefresh();
 
       toast({
         title: 'Document added',
         description:
           'Your new document has been successfully uploaded and added.',
+        variant: 'success',
       });
     } catch (error: any) {
       toast({
@@ -160,8 +216,43 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
         description: error.message,
         variant: 'destructive',
       });
+    } finally {
+      setLoadingSubmit(false);
     }
   };
+
+  useEffect(() => {
+    const getDocumentTypes = async () => {
+      try {
+        setLoading(true);
+        const data = await requests({
+          url: '/admin/document-types',
+          method: 'GET',
+        });
+        setDocumentTypes(data);
+      } catch (error: any) {
+        toast({
+          title: 'Something went wrong',
+          description: error.message,
+          variant: 'destructive',
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    getDocumentTypes();
+  }, []);
+
+  const debounceSearch = useDebounce(searchQuery, 400);
+
+  useEffect(() => {
+    if (debounceSearch) {
+      onSearch(searchQuery);
+    } else if (!debounceSearch && isMounted) {
+      onRefresh();
+    }
+    setIsMounted(true);
+  }, [debounceSearch]);
 
   const getTypeBadgeColor = (type: string) => {
     switch (type) {
@@ -194,7 +285,7 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
           <Plus className='mr-2 h-4 w-4' /> Add Document
         </Button>
       </div>
-      {documents.length === 0 ? (
+      {documents?.length === 0 ? (
         <EmptyContainer
           image={
             <Image
@@ -207,68 +298,73 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
           text="You haven't added any documents yet. Click 'Add Document' to get started."
         />
       ) : (
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-10'>
-          {documents.map((doc) => (
-            <Card
-              key={doc.id}
-              className='overflow-hidden transition-all duration-300 hover:shadow-lg flex flex-col'
-            >
-              <CardHeader className='p-4 flex flex-col items-center'>
-                <div className='flex items-center justify-center h-40 w-full bg-gray-100 dark:bg-gray-800 rounded-t-lg'>
-                  <FilePreview url={doc.url as string} />
-                </div>
-              </CardHeader>
-              <CardContent className='px-4 flex flex-col items-center flex-grow'>
-                <Badge
-                  className={`mb-2 flex-grow-0 ${getTypeBadgeColor(
-                    doc.documentType.type!
-                  )}`}
-                >
-                  {doc.documentType.name}
-                </Badge>
-                <h2 className='flex-grow ext-lg font-semibold text-center mb-2 line-clamp-2'>
-                  {doc.name}
-                </h2>
-                <p className='flex-grow-0 text-sm text-gray-600 dark:text-gray-300'>
-                  Created: {format(new Date(doc.createdAt), 'PP')}
-                </p>
-              </CardContent>
-              <CardFooter className='bg-gray-50 dark:bg-gray-800 p-4 flex justify-between'>
-                <Button
-                  onClick={() => setSelectedDocument(doc)}
-                  variant='outline'
-                  size='sm'
-                >
-                  <Eye className='mr-2 h-4 w-4' /> Preview
-                </Button>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant='ghost' size='sm'>
-                      <MoreVertical className='h-4 w-4' />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem>
-                      <Download className='mr-2 h-4 w-4' /> Download
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Trash2 className='mr-2 h-4 w-4' /> Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+        <LoadingContainer loading={loading}>
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-10'>
+            {documents?.map((doc) => (
+              <Card
+                key={doc.id}
+                className='overflow-hidden transition-all duration-300 hover:shadow-lg flex flex-col'
+              >
+                <CardHeader className='p-4 flex flex-col items-center'>
+                  <div className='flex items-center justify-center h-40 w-full bg-gray-100 dark:bg-gray-800 rounded-t-lg'>
+                    <FilePreview url={doc.url as string} />
+                  </div>
+                </CardHeader>
+                <CardContent className='px-4 flex flex-col items-center flex-grow'>
+                  <Badge
+                    className={`mb-2 flex-grow-0 ${getTypeBadgeColor(
+                      doc.documentType.type!
+                    )}`}
+                  >
+                    {doc.documentType.name}
+                  </Badge>
+                  <h2 className='flex-grow ext-lg font-semibold text-center mb-2 line-clamp-2'>
+                    {doc.name}
+                  </h2>
+                  <p className='flex-grow-0 text-sm text-gray-600 dark:text-gray-300'>
+                    Created: {format(new Date(doc.createdAt), 'PP')}
+                  </p>
+                </CardContent>
+                <CardFooter className='bg-gray-50 dark:bg-gray-800 p-4 flex justify-between'>
+                  <Button
+                    onClick={() => setSelectedDocument(doc)}
+                    variant='outline'
+                    size='sm'
+                  >
+                    <Eye className='mr-2 h-4 w-4' /> Preview
+                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant='ghost' size='sm'>
+                        <MoreVertical className='h-4 w-4' />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem>
+                        <Download className='mr-2 h-4 w-4' /> Download
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Trash2 className='mr-2 h-4 w-4' /> Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        </LoadingContainer>
       )}
       <AddDocumentDialog
         isOpen={isAddDocumentModalOpen}
-        onClose={() => setIsAddDocumentModalOpen(false)}
+        onClose={handleCloseDialog}
         newDocument={newDocument}
         setNewDocument={setNewDocument}
         onAddDocument={handleAddDocument}
         fileInputRef={fileInputRef}
         onFileChange={handleFileChange}
+        documentTypes={documentTypes}
+        loading={loadingUpload}
+        submitting={loadingSubmit}
       />
 
       {selectedDocument && (

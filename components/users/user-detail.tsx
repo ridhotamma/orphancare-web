@@ -33,6 +33,7 @@ const UserDetailPage: React.FC<UserDetailProps> = ({
   > | null>(null);
   const [userProfile, setUserProfile] = useState<Profile | null>(null);
   const [userDocuments, setUserDocuments] = useState<Document[] | null>(null);
+  const [loadingSearchDocument, setLoadingSearchDocument] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -69,6 +70,43 @@ const UserDetailPage: React.FC<UserDetailProps> = ({
     fetchUserData();
   }, [userId, toast]);
 
+  const refreshUserDocuments = async () => {
+    try {
+      setLoadingSearchDocument(true);
+      const response = await requests({
+        url: `/public/users/${userId}/documents`,
+      });
+      setUserDocuments(response.data);
+    } catch (error: any) {
+      toast({
+        title: 'Cannot refresh documents',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoadingSearchDocument(false);
+    }
+  };
+
+  const onDocumentSearch = async (searchTerm: string) => {
+    try {
+      setLoadingSearchDocument(true);
+      const response = await requests({
+        url: `/public/users/${userId}/documents`,
+        params: { name: searchTerm },
+        method: 'GET',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Failed to search documents',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoadingSearchDocument(false);
+    }
+  };
+
   const tabItems: TabItem[] = [
     {
       id: 'profile',
@@ -84,7 +122,16 @@ const UserDetailPage: React.FC<UserDetailProps> = ({
     {
       id: 'documents',
       label: 'Documents',
-      content: <DetailDocuments data={userDocuments as Document[]} />,
+      content: (
+        <DetailDocuments
+          data={userDocuments as Document[]}
+          loading={loadingSearchDocument}
+          setLoading={setLoadingSearchDocument}
+          onSearch={onDocumentSearch}
+          userId={userId}
+          onRefresh={refreshUserDocuments}
+        />
+      ),
       icon: <File className='h-5 w-5' />,
     },
     {

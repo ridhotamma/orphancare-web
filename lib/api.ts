@@ -10,7 +10,7 @@ const createAxiosInstance = (): AxiosInstance => {
   });
 
   instance.interceptors.request.use(async (config) => {
-    const authToken = await cookieStorage.getItem('authToken');
+    const authToken = cookieStorage.getItem('authToken');
     if (authToken) {
       config.headers['Authorization'] = `Bearer ${authToken}`;
     }
@@ -42,7 +42,10 @@ export const requests = async ({
       headers,
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
+    if (error.status === 401) {
+      document.dispatchEvent(new Event('session-expired'));
+    }
     const errorObject = error as AxiosError;
     throw errorObject.response?.data;
   }

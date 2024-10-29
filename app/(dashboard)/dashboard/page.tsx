@@ -81,14 +81,10 @@ const DashboardPage = () => {
         });
         setDashboardData(data);
       } catch (error: any) {
-        if (error.status === 401) {
-          setUnauthorized(true);
-        } else {
-          toast({
-            title: error.message,
-            variant: 'destructive',
-          });
-        }
+        toast({
+          title: error.message,
+          variant: 'destructive',
+        });
       } finally {
         setLoading(false);
       }

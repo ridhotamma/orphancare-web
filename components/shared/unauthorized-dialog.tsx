@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React from 'react';
 import {
@@ -16,7 +16,6 @@ export const UnauthorizedDialog: React.FC = () => {
   const { isUnauthorized, setUnauthorized, logout } = useAuth();
 
   const handleLogout = () => {
-    setUnauthorized(false);
     logout();
   };
 

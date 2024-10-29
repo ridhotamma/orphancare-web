@@ -94,14 +94,10 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
         setUserData(response.data);
         setPaginationMeta(response.meta);
       } catch (error: any) {
-        if (error.status === 401) {
-          setUnauthorized(true);
-        } else {
-          toast({
-            title: error.message,
-            variant: 'destructive',
-          });
-        }
+        toast({
+          title: error.message,
+          variant: 'destructive',
+        });
       } finally {
         setLoading(false);
         setSearching(false);
@@ -152,14 +148,10 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
         });
         setBedRoomData(response.data);
       } catch (error: any) {
-        if (error.status === 401) {
-          setUnauthorized(true);
-        } else {
-          toast({
-            title: error.message,
-            variant: 'destructive',
-          });
-        }
+        toast({
+          title: error.message,
+          variant: 'destructive',
+        });
       }
     };
 

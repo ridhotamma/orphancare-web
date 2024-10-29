@@ -11,8 +11,7 @@ import {
   ChevronLeft,
   Info,
   Trash2,
-  AlertCircle,
-  Loader2,
+  Share2,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -83,12 +82,7 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
 }) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isDownloadErrorDialogOpen, setIsDownloadErrorDialogOpen] =
-    useState(false);
-  const [downloadErrorMessage, setDownloadErrorMessage] = useState('');
-  const [isDownloadSuccessDialogOpen, setIsDownloadSuccessDialogOpen] =
-    useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
+  const [isDownloadSuccessDialogOpen, setIsDownloadSuccessDialogOpen] = useState(false);
   const [fileType, setFileType] = useState<string>('unknown');
   const [hasError, setHasError] = useState(false);
 
@@ -122,6 +116,7 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
           </div>
         );
       case 'image/jpeg':
+      case 'image/jpg':
       case 'image/png':
       case 'image/bmp':
       case 'image/webp':
@@ -138,14 +133,10 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
         );
       case 'application/pdf':
         return (
-          <div className='w-full h-full'>
-            <iframe
-              src={document.url}
-              title={document.name}
-              className='w-full h-full border-0'
-              onError={() => setHasError(true)}
-            />
-          </div>
+          <div
+            className='smallpdf-widget h-full w-full'
+            data-pdf-url={document.url}
+          ></div>
         );
       case 'application/vnd.ms-excel':
         return (
@@ -198,21 +189,8 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
     onDelete();
   };
 
-  const handleDownload = async () => {
-    setIsDownloading(true);
-    try {
-      // Simulating download process
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setIsDownloadSuccessDialogOpen(true);
-    } catch (error) {
-      console.error('Error downloading file:', error);
-      setDownloadErrorMessage(
-        'Failed to download the file. Please try again later.'
-      );
-      setIsDownloadErrorDialogOpen(true);
-    } finally {
-      setIsDownloading(false);
-    }
+  const handleShare = async () => {
+    console.log('share click');
   };
 
   return (
@@ -337,15 +315,10 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
               <Button
                 variant='outline'
                 className='w-full'
-                onClick={handleDownload}
-                disabled={isDownloading}
+                onClick={handleShare}
               >
-                {isDownloading ? (
-                  <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                ) : (
-                  <Download className='mr-2 h-4 w-4' />
-                )}
-                Download
+                <Share2 className='mr-2 h-4 w-4' />
+                Share document
               </Button>
               <Button
                 variant='destructive'
@@ -375,30 +348,6 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      <AlertDialog
-        open={isDownloadErrorDialogOpen}
-        onOpenChange={setIsDownloadErrorDialogOpen}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle className='flex items-center gap-2'>
-              <AlertCircle className='h-5 w-5 text-red-500' />
-              Download Error
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {downloadErrorMessage}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction
-              onClick={() => setIsDownloadErrorDialogOpen(false)}
-            >
-              OK
-            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

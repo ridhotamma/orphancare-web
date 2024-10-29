@@ -141,7 +141,6 @@ const UserForm = <T extends Partial<FormValues>>({
   });
 
   const { toast } = useToast();
-  const { setUnauthorized } = useAuth();
   const router = useRouter();
   const params = useParams();
 
@@ -369,23 +368,19 @@ const UserForm = <T extends Partial<FormValues>>({
         variant: 'success',
       });
     } catch (error: any) {
-      if (error.status === 401) {
-        setUnauthorized(true);
-      } else {
-        const errorMessage =
-          error.message ||
-          Object.entries(error)
-            .map((entry) => {
-              const [key, value] = entry;
-              const message = `${key} ${value}`;
-              return message;
-            })
-            .join(', ');
-        toast({
-          variant: 'destructive',
-          title: errorMessage,
-        });
-      }
+      const errorMessage =
+        error.message ||
+        Object.entries(error)
+          .map((entry) => {
+            const [key, value] = entry;
+            const message = `${key} ${value}`;
+            return message;
+          })
+          .join(', ');
+      toast({
+        variant: 'destructive',
+        title: errorMessage,
+      });
     } finally {
       setSubmitting(false);
     }
