@@ -10,7 +10,6 @@ import {
   Eye,
   Settings,
 } from 'lucide-react';
-import { mockDocuments } from '@/data/mockup/document-mockup';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -31,43 +30,67 @@ import {
 } from '@/components/ui/card';
 import { format } from 'date-fns';
 import FullscreenDocumentPreview from './document-preview';
-import { Document } from '@/types/document';
 import HorizontalAddDocumentDialog from './horizontal-add-dialog';
+import { Document } from '@/types/document';
 
-interface DocumentIconProps {
-  type: string | undefined;
-}
+const getFileTypeFromUrl = (url: string): string => {
+  const extension = url.split('.').pop()?.toLowerCase();
+  switch (extension) {
+    case 'pdf':
+      return 'application/pdf';
+    case 'jpg':
+    case 'jpeg':
+    case 'png':
+    case 'gif':
+    case 'bmp':
+    case 'webp':
+    case 'avif':
+      return `image/${extension}`;
+    case 'xls':
+    case 'xlsx':
+      return 'application/vnd.ms-excel';
+    case 'doc':
+    case 'docx':
+      return 'application/msword';
+    default:
+      return 'unknown';
+  }
+};
 
-const DocumentIcon: React.FC<DocumentIconProps> = ({ type }) => {
+const DocumentIcon = ({ url }: { url: string }) => {
+  const type = getFileTypeFromUrl(url);
   switch (type) {
     case 'application/pdf':
       return <FileTextIcon className='h-8 w-8 text-red-500' />;
     case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
       return <FileTextIcon className='h-8 w-8 text-blue-500' />;
+    case 'image/jpg':
     case 'image/jpeg':
+    case 'image/png':
+    case 'image/gif':
+    case 'image/webp':
+    case 'image/avif':
       return <ImageIcon className='h-8 w-8 text-green-500' />;
     default:
       return <FileIcon className='h-8 w-8 text-gray-500 dark:text-gray-200' />;
   }
 };
 
-const DocumentList: React.FC = () => {
+type DocumentListProps = {
+  documents: Document[];
+  metaData: Record<string, any>;
+};
+
+const DocumentList: React.FC<DocumentListProps> = ({
+  documents,
+  metaData,
+}: DocumentListProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(
     null
   );
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-
-  const filteredDocuments = mockDocuments.filter((doc) => {
-    const matchesSearch = doc
-      .name!.toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    const matchesFilter =
-      filterCategory === 'all' ||
-      doc.documentType.name!.toLowerCase() === filterCategory;
-    return matchesSearch && matchesFilter;
-  });
 
   return (
     <div>
@@ -116,13 +139,13 @@ const DocumentList: React.FC = () => {
         </div>
       </div>
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
-        {filteredDocuments.map((doc) => (
+        {documents.map((doc) => (
           <Card
             key={doc.id}
             className='hover:shadow-lg transition-shadow duration-300 flex flex-col'
           >
             <CardHeader className='flex'>
-              <DocumentIcon type={doc.documentType.type} />
+              <DocumentIcon url={doc?.url as string} />
               <CardTitle className='text-lg font-semibold line-clamp-2 max-w-full'>
                 {doc.name}
               </CardTitle>
@@ -131,18 +154,15 @@ const DocumentList: React.FC = () => {
               <div className='flex items-center space-x-2 mb-4'>
                 <Avatar className='h-8 w-8'>
                   <AvatarImage
-                    src={doc.owner?.profile?.profilePicture}
-                    alt={doc.owner?.profile?.fullName}
+                    src={doc.owner?.profilePicture}
+                    alt={doc.owner?.fullName}
                   />
                   <AvatarFallback>
-                    {doc.owner?.profile
-                      ?.fullName!.split(' ')
-                      .map((n) => n[0])
-                      .join('')}
+                    {doc.owner?.fullName?.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <span className='text-sm text-gray-600 dark:text-gray-200'>
-                  {doc.owner?.profile?.fullName}
+                  {doc.owner?.fullName}
                 </span>
               </div>
               <Badge variant='secondary' className='mb-2'>
