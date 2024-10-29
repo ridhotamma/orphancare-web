@@ -33,7 +33,6 @@ import {
 } from '@/types/dashboard-analytics';
 import LoadingContainer from '@/components/container/loading-container';
 import { usePageTitle } from '@/hooks/use-page-title';
-import { useAuth } from '@/provider/auth-provider';
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -69,8 +68,6 @@ const DashboardPage = () => {
     latestEvents = [],
   } = dashboardData;
 
-  const { setUnauthorized } = useAuth();
-
   useEffect(() => {
     const getDashboardAnalyticsData = async () => {
       setLoading(true);
@@ -91,7 +88,7 @@ const DashboardPage = () => {
     };
 
     getDashboardAnalyticsData();
-  }, [toast, setUnauthorized]);
+  }, [toast]);
 
   return (
     <LoadingContainer loading={loading}>

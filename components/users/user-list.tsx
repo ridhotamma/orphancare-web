@@ -32,7 +32,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/provider/auth-provider';
 import { requests } from '@/lib/api';
 import LoadingContainer from '@/components/container/loading-container';
 import { User } from '@/types/user';
@@ -71,7 +70,6 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
   });
 
   const { toast } = useToast();
-  const { setUnauthorized } = useAuth();
 
   const getChildrenData = useCallback(
     async (query: string = '', page: number = 0) => {
@@ -108,7 +106,6 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
       bedRoomFilter,
       genderFilter,
       paginationMeta.perPage,
-      setUnauthorized,
       toast,
     ]
   );
@@ -156,7 +153,7 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
     };
 
     getBedRooms();
-  }, [setUnauthorized, toast]);
+  }, [toast]);
 
   useEffect(() => {
     setSearching(true);

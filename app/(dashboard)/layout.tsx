@@ -80,7 +80,7 @@ const DashboardLayoutContent: React.FC<DashboardLayoutProps> = ({
     return () => {
       document.addEventListener('session-expired', handleSessionExpired);
     };
-  }, []);
+  }, [setCurrentUser, setUnauthorized]);
 
   return (
     <LoadingContainer loading={initialLoading} fullScreen>
