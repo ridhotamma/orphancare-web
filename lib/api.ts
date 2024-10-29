@@ -43,10 +43,15 @@ export const requests = async ({
     });
     return response.data;
   } catch (error: any) {
+    const errorObject = error as AxiosError;
     if (error.status === 401) {
       document.dispatchEvent(new Event('session-expired'));
+      return {
+        data: null,
+        error: errorObject.response?.data || 'Unauthorized',
+        status: 401,
+      };
     }
-    const errorObject = error as AxiosError;
     throw errorObject.response?.data;
   }
 };
