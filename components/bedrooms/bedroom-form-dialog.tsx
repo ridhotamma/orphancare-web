@@ -1,11 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -26,7 +19,7 @@ interface Bedroom {
   occupants: string[];
 }
 
-type BedroomFormDialogProps = {
+type AbsoluteBedroomFormProps = {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (bedroom: Bedroom) => void;
@@ -35,7 +28,7 @@ type BedroomFormDialogProps = {
   initialBedroom?: Bedroom;
 };
 
-const BedroomFormDialog: React.FC<BedroomFormDialogProps> = ({
+const AbsoluteBedroomForm: React.FC<AbsoluteBedroomFormProps> = ({
   isOpen,
   onOpenChange,
   onSubmit,
@@ -64,73 +57,96 @@ const BedroomFormDialog: React.FC<BedroomFormDialogProps> = ({
 
   const isEditMode = !!initialBedroom;
 
+  if (!isOpen) return null;
+
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle className='text-2xl font-bold'>
+    <>
+      {/* Backdrop */}
+      <div
+        className='fixed inset-0 bg-black/70 z-40'
+        onClick={() => onOpenChange(false)}
+      />
+
+      {/* Dialog */}
+      <div className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[75%] max-w-md bg-white dark:bg-gray-900 rounded-lg shadow-xl z-50'>
+        {/* Header */}
+        <div className='p-6 border-b border-gray-200 dark:border-gray-800'>
+          <h2 className='text-2xl font-bold'>
             {isEditMode ? 'Edit Bedroom' : 'Add New Bedroom'}
-          </DialogTitle>
-        </DialogHeader>
-        <div className='mt-6 space-y-6'>
-          <div className='space-y-2'>
-            <Label htmlFor='name' className='text-sm font-medium'>
-              Bedroom Name
-            </Label>
-            <Input
-              id='name'
-              value={bedroom.name}
-              onChange={(e) => setBedroom({ ...bedroom, name: e.target.value })}
-              className='w-full'
-              placeholder='Enter bedroom name'
-            />
-          </div>
-          <div className='space-y-2'>
-            <Label htmlFor='type' className='text-sm font-medium'>
-              Bedroom Type
-            </Label>
-            <Select
-              value={bedroom.bedRoomTypeId}
-              onValueChange={(value) =>
-                setBedroom({ ...bedroom, bedRoomTypeId: value })
-              }
-            >
-              <SelectTrigger className='w-full'>
-                <SelectValue placeholder='Select bedroom type' />
-              </SelectTrigger>
-              <SelectContent>
-                {bedRoomTypes.map((type, index) => (
-                  <SelectItem key={index} value={type.id}>
-                    {type.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className='space-y-2'>
-            <Label htmlFor='occupants' className='text-sm font-medium'>
-              Occupants
-            </Label>
-            <MultiSelect
-              options={users}
-              value={bedroom.occupants}
-              onValueChange={(value) =>
-                setBedroom({ ...bedroom, occupants: value })
-              }
-              placeholder='Select Occupants'
-              variant='default'
-              className='w-full'
-            />
+          </h2>
+        </div>
+
+        {/* Content */}
+        <div className='p-6 max-h-[calc(90vh-200px)] overflow-y-auto'>
+          <div className='space-y-6'>
+            <div className='space-y-2'>
+              <Label htmlFor='name' className='text-sm font-medium'>
+                Bedroom Name
+              </Label>
+              <Input
+                id='name'
+                value={bedroom.name}
+                onChange={(e) =>
+                  setBedroom({ ...bedroom, name: e.target.value })
+                }
+                className='w-full'
+                placeholder='Enter bedroom name'
+              />
+            </div>
+
+            <div className='space-y-2'>
+              <Label htmlFor='type' className='text-sm font-medium'>
+                Bedroom Type
+              </Label>
+              <Select
+                value={bedroom.bedRoomTypeId}
+                onValueChange={(value) =>
+                  setBedroom({ ...bedroom, bedRoomTypeId: value })
+                }
+              >
+                <SelectTrigger className='w-full'>
+                  <SelectValue placeholder='Select bedroom type' />
+                </SelectTrigger>
+                <SelectContent>
+                  {bedRoomTypes.map((type, index) => (
+                    <SelectItem key={index} value={type.id}>
+                      {type.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className='space-y-2'>
+              <Label htmlFor='occupants' className='text-sm font-medium'>
+                Occupants
+              </Label>
+              <MultiSelect
+                options={users}
+                value={bedroom.occupants}
+                onValueChange={(value) =>
+                  setBedroom({ ...bedroom, occupants: value })
+                }
+                placeholder='Select Occupants'
+                variant='default'
+                className='w-full'
+              />
+            </div>
           </div>
         </div>
-        <DialogFooter className='mt-6'>
-          <Button onClick={handleSubmit} className='w-full sm:w-auto'>
+
+        {/* Footer */}
+        <div className='p-6 border-t border-gray-200 dark:border-gray-800 flex justify-end space-x-4'>
+          <Button variant='outline' onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit}>
             {isEditMode ? 'Update Bedroom' : 'Add Bedroom'}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </div>
+    </>
   );
 };
 
-export default BedroomFormDialog;
+export default AbsoluteBedroomForm;

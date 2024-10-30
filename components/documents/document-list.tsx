@@ -178,9 +178,6 @@ const DocumentList: React.FC<DocumentListProps> = ({
                 <Badge variant='secondary' className='text-xs'>
                   {doc.documentType.name}
                 </Badge>
-                <Button variant='ghost' size='icon' className='h-8 w-8'>
-                  <Eye className='h-4 w-4' />
-                </Button>
               </div>
             </CardContent>
           </Card>

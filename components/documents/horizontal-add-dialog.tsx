@@ -1,7 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { Trash2, Upload, FileText } from 'lucide-react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,7 +10,7 @@ import { DocumentType } from '@/types/document-type';
 import { User } from '@/types/user';
 import AutocompleteSelect from '../ui/autocomplete-select';
 
-interface HorizontalAddDocumentDialogProps {
+interface AbsoluteDocumentDialogProps {
   isOpen: boolean;
   onClose: () => void;
 }
@@ -22,12 +20,13 @@ type SelectItem = {
   label: string;
 };
 
-const HorizontalAddDocumentDialog = ({
+const AbsoluteDocumentDialog = ({
   isOpen,
   onClose,
-}: HorizontalAddDocumentDialogProps) => {
+}: AbsoluteDocumentDialogProps) => {
   const [name, setName] = useState('');
-  const [selectedDocumentType, setSelectedDocumentType] = useState<SelectItem | null>(null);
+  const [selectedDocumentType, setSelectedDocumentType] =
+    useState<SelectItem | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [fileName, setFileName] = useState('');
@@ -145,6 +144,7 @@ const HorizontalAddDocumentDialog = ({
       fetchDocumentTypes();
       handleUserSearch('');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   const renderPreview = () => {
@@ -180,15 +180,24 @@ const HorizontalAddDocumentDialog = ({
     }
   };
 
+  if (!isOpen) return null;
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent
+    <>
+      {/* Backdrop */}
+      <div
+        className='fixed inset-0 bg-black/70 z-40'
+        onClick={handleBeforeClose}
+      />
+
+      {/* Dialog */}
+      <div
         ref={dialogRef}
-        className='sm:max-w-[800px] max-h-[100vh] overflow-auto flex flex-col p-0'
+        className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full lg:w-[70%] max-h-[90vh] bg-white dark:bg-gray-900 rounded-lg shadow-xl z-50 overflow-hidden'
       >
         <div className='flex flex-col md:flex-row h-full'>
           {/* Left side - File preview */}
-          <div className='w-full h-[400px] md:h-auto md:w-1/2 bg-gray-100 dark:bg-gray-800 flex flex-col items-center justify-center p-6 relative'>
+          <div className='w-full h-[400px] md:h-[600px] md:w-1/2 bg-gray-100 dark:bg-gray-800 flex flex-col items-center justify-center p-6 relative'>
             {renderPreview()}
             {file && (
               <Button
@@ -280,9 +289,9 @@ const HorizontalAddDocumentDialog = ({
             </div>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </>
   );
 };
 
-export default HorizontalAddDocumentDialog;
+export default AbsoluteDocumentDialog;

@@ -54,8 +54,8 @@ const DocumentsPage = () => {
       icon: <BookLock className='h-5 w-5' />,
     },
     {
-      id: 'user-documents',
-      label: 'User Documents',
+      id: 'all-documents',
+      label: 'All User Documents',
       content: <DocumentList documents={documents} metaData={metaData} />,
       icon: <File className='h-5 w-5' />,
     },
