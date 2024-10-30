@@ -62,18 +62,18 @@ const DocumentIcon = ({ url }: { url: string }) => {
   const type = getFileTypeFromUrl(url);
   switch (type) {
     case 'application/pdf':
-      return <FileTextIcon className='h-8 w-8 text-red-500' />;
+      return <FileTextIcon className='h-6 w-6 text-red-500' />;
     case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-      return <FileTextIcon className='h-8 w-8 text-blue-500' />;
+      return <FileTextIcon className='h-6 w-6 text-blue-500' />;
     case 'image/jpg':
     case 'image/jpeg':
     case 'image/png':
     case 'image/gif':
     case 'image/webp':
     case 'image/avif':
-      return <ImageIcon className='h-8 w-8 text-green-500' />;
+      return <ImageIcon className='h-6 w-6 text-green-500' />;
     default:
-      return <FileIcon className='h-8 w-8 text-gray-500 dark:text-gray-200' />;
+      return <FileIcon className='h-6 w-6 text-gray-500 dark:text-gray-200' />;
   }
 };
 
@@ -139,52 +139,54 @@ const DocumentList: React.FC<DocumentListProps> = ({
           </div>
         </div>
       </div>
-      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
+
+      {/* Documents Grid */}
+      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
         {documents.map((doc) => (
           <Card
             key={doc.id}
-            className='hover:shadow-lg transition-shadow duration-300 flex flex-col'
+            className='group cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]'
+            onClick={() => setSelectedDocument(doc)}
           >
-            <CardHeader className='flex'>
+            <CardHeader className='flex flex-row items-center gap-4 pb-2'>
               <DocumentIcon url={doc?.url as string} />
-              <CardTitle className='text-lg font-semibold line-clamp-2 max-w-full'>
-                {doc.name}
-              </CardTitle>
+              <div className='flex-1 min-w-0'>
+                <h3 className='font-medium text-sm line-clamp-1'>{doc.name}</h3>
+                <p className='text-xs text-muted-foreground'>
+                  {format(doc.createdAt, 'MMM d, yyyy')}
+                </p>
+              </div>
             </CardHeader>
-            <CardContent className='flex-grow flex flex-col items-start justify-end'>
-              <div className='flex items-center space-x-2 mb-4'>
-                <Avatar className='h-8 w-8'>
+
+            <CardContent className='pt-0'>
+              <div className='flex items-center gap-2 mb-3'>
+                <Avatar className='h-6 w-6'>
                   <AvatarImage
                     src={doc.owner?.profilePicture}
                     alt={doc.owner?.fullName}
                   />
-                  <AvatarFallback>
+                  <AvatarFallback className='text-xs'>
                     {doc.owner?.fullName?.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <span className='text-sm text-gray-600 dark:text-gray-200'>
+                <span className='text-xs text-muted-foreground truncate'>
                   {doc.owner?.fullName}
                 </span>
               </div>
-              <Badge variant='secondary' className='mb-2'>
-                {doc.documentType.name}
-              </Badge>
-              <div className='text-sm text-gray-500 dark:text-gray-200 space-y-1'>
-                <p>Created: {format(doc.createdAt, 'dd MMM yyyy HH:mm')}</p>
+
+              <div className='flex items-center justify-between'>
+                <Badge variant='secondary' className='text-xs'>
+                  {doc.documentType.name}
+                </Badge>
+                <Button variant='ghost' size='icon' className='h-8 w-8'>
+                  <Eye className='h-4 w-4' />
+                </Button>
               </div>
             </CardContent>
-            <CardFooter>
-              <Button
-                onClick={() => setSelectedDocument(doc as Document)}
-                variant='outline'
-                className='w-full'
-              >
-                <Eye className='mr-2 h-4 w-4' /> View Details
-              </Button>
-            </CardFooter>
           </Card>
         ))}
       </div>
+
       {selectedDocument && (
         <FullscreenDocumentPreview
           document={selectedDocument}

@@ -73,7 +73,6 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
 
   const getChildrenData = useCallback(
     async (query: string = '', page: number = 0) => {
-      setLoading(true);
       try {
         const params: Record<string, any> = {
           isCareTaker,
