@@ -10,7 +10,7 @@ type LoadingContainerProps = {
 const LoadingContainer: React.FC<LoadingContainerProps> = ({
   loading,
   children,
-  fullScreen = true,
+  fullScreen = false,
 }) => {
   if (!loading) return <>{children}</>;
 

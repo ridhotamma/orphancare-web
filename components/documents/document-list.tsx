@@ -8,7 +8,6 @@ import {
   ImageIcon,
   Plus,
   Search,
-  Eye,
   Settings,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -22,18 +21,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { format } from 'date-fns';
 import FullscreenDocumentPreview from './document-preview';
 import HorizontalAddDocumentDialog from './horizontal-add-dialog';
 import { Document } from '@/types/document';
 import { useDebounce } from '@/hooks/use-debounce';
+import LoadingContainer from '@/components/container/loading-container';
+import EmptyContainer from '@/components/container/empty-container';
+import Image from 'next/image';
+import NotFoundImage from '@/images/not-found-document.png';
 
 const getFileTypeFromUrl = (url: string): string => {
   const extension = url.split('.').pop()?.toLowerCase();
@@ -81,29 +78,27 @@ const DocumentIcon = ({ url }: { url: string }) => {
 type DocumentListProps = {
   documents: Document[];
   metaData: Record<string, any>;
-  onSearch: (searchTerm: string) => void
+  onSearch: (searchTerm: string, params: Record<string, any>) => void;
+  loading: boolean;
 };
 
 const DocumentList: React.FC<DocumentListProps> = ({
   documents,
   metaData,
-  onSearch
+  onSearch,
+  loading,
 }: DocumentListProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
-  const [selectedDocument, setSelectedDocument] = useState<Document | null>(
-    null
-  );
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
-  const debounceSearch = useDebounce(searchQuery, 400)
+  const debounceSearch = useDebounce(searchQuery, 400);
 
   useEffect(() => {
-    if (debounceSearch) {
-      onSearch(debounceSearch)
-    }
-  }, [debounceSearch, onSearch])
-  
+    onSearch(debounceSearch, {});
+  }, [debounceSearch]);
+
   return (
     <div>
       <div className='mb-8 space-y-4'>
@@ -151,49 +146,67 @@ const DocumentList: React.FC<DocumentListProps> = ({
         </div>
       </div>
 
-      {/* Documents Grid */}
-      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
-        {documents.map((doc) => (
-          <Card
-            key={doc.id}
-            className='group cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]'
-            onClick={() => setSelectedDocument(doc)}
-          >
-            <CardHeader className='flex flex-row items-center gap-4 pb-2'>
-              <DocumentIcon url={doc?.url as string} />
-              <div className='flex-1 min-w-0'>
-                <h3 className='font-medium text-sm line-clamp-1'>{doc.name}</h3>
-                <p className='text-xs text-muted-foreground'>
-                  {format(doc.createdAt, 'MMM d, yyyy')}
-                </p>
-              </div>
-            </CardHeader>
+      <LoadingContainer loading={loading}>
+        {/* Documents Grid */}
+        {documents.length > 0 ? (
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
+            {documents.map((doc) => (
+              <Card
+                key={doc.id}
+                className='group cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]'
+                onClick={() => setSelectedDocument(doc)}
+              >
+                <CardHeader className='flex flex-row items-center gap-4 pb-2'>
+                  <DocumentIcon url={doc?.url as string} />
+                  <div className='flex-1 min-w-0'>
+                    <h3 className='font-medium text-sm line-clamp-1'>
+                      {doc.name}
+                    </h3>
+                    <p className='text-xs text-muted-foreground'>
+                      {format(doc.createdAt, 'MMM d, yyyy')}
+                    </p>
+                  </div>
+                </CardHeader>
 
-            <CardContent className='pt-0'>
-              <div className='flex items-center gap-2 mb-3'>
-                <Avatar className='h-6 w-6'>
-                  <AvatarImage
-                    src={doc.owner?.profilePicture}
-                    alt={doc.owner?.fullName}
-                  />
-                  <AvatarFallback className='text-xs'>
-                    {doc.owner?.fullName?.slice(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <span className='text-xs text-muted-foreground truncate'>
-                  {doc.owner?.fullName}
-                </span>
-              </div>
+                <CardContent className='pt-0'>
+                  <div className='flex items-center gap-2 mb-3'>
+                    <Avatar className='h-6 w-6'>
+                      <AvatarImage
+                        src={doc.owner?.profilePicture}
+                        alt={doc.owner?.fullName}
+                      />
+                      <AvatarFallback className='text-xs'>
+                        {doc.owner?.fullName?.slice(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className='text-xs text-muted-foreground truncate'>
+                      {doc.owner?.fullName}
+                    </span>
+                  </div>
 
-              <div className='flex items-center justify-between'>
-                <Badge variant='secondary' className='text-xs'>
-                  {doc.documentType.name}
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                  <div className='flex items-center justify-between'>
+                    <Badge variant='secondary' className='text-xs'>
+                      {doc.documentType.name}
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <EmptyContainer
+            image={
+              <Image
+                width={300}
+                height={300}
+                src={NotFoundImage}
+                alt='not found users'
+              />
+            }
+            text='Document not found'
+          />
+        )}
+      </LoadingContainer>
 
       {selectedDocument && (
         <FullscreenDocumentPreview
