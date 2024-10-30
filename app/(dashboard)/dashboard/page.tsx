@@ -33,6 +33,11 @@ import {
 } from '@/types/dashboard-analytics';
 import LoadingContainer from '@/components/container/loading-container';
 import { usePageTitle } from '@/hooks/use-page-title';
+import Image from 'next/image';
+import EmptyImageDistribution from '@/images/not-found-analytics.png';
+import EmptyImageDonation from '@/images/not-found-donation.png';
+import EmptyImageRecentDonation from '@/images/not-found-money.png';
+import EmptyImageEvent from '@/images/not-found-document.png';
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -90,6 +95,38 @@ const DashboardPage = () => {
     getDashboardAnalyticsData();
   }, [toast]);
 
+  const renderEmptyState = (
+    title: string,
+    description: string,
+    type:
+      | 'donationDistribution'
+      | 'donationTrends'
+      | 'recentDonations'
+      | 'recentEvents'
+  ) => {
+    const ImageType: Record<string, any> = {
+      donationDistribution: EmptyImageDistribution,
+      donationTrends: EmptyImageDonation,
+      recentDonations: EmptyImageRecentDonation,
+      recentEvents: EmptyImageEvent,
+    };
+
+    return (
+      <div className='flex flex-col items-center justify-center p-8 text-center h-[300px] w-full rounded-lg'>
+        <div className='relative h-full w-full mb-4'>
+          <Image
+            src={ImageType[type]}
+            alt='Empty state illustration'
+            fill={true}
+            objectFit='contain'
+          />
+        </div>
+        <h3 className='text-lg font-semibold text-gray-900 mb-2'>{title}</h3>
+        <p className='text-sm text-gray-500'>{description}</p>
+      </div>
+    );
+  };
+
   return (
     <LoadingContainer loading={loading}>
       <div>
@@ -102,7 +139,9 @@ const DashboardPage = () => {
               <Users className='h-4 w-4 text-pink-500' />
             </CardHeader>
             <CardContent>
-              <div className='text-3xl font-bold'>{profile.totalStudentFemaleCount}</div>
+              <div className='text-3xl font-bold'>
+                {profile.totalStudentFemaleCount}
+              </div>
               <p className='text-xs text-gray-500 mt-1'>
                 {profile.studentFemaleDifference === 'N/A'
                   ? 'N/A'
@@ -119,7 +158,9 @@ const DashboardPage = () => {
               <Users className='h-4 w-4 text-blue-500' />
             </CardHeader>
             <CardContent>
-              <div className='text-3xl font-bold'>{profile.totalStudentMaleCount}</div>
+              <div className='text-3xl font-bold'>
+                {profile.totalStudentMaleCount}
+              </div>
               <p className='text-xs text-gray-500 mt-1'>
                 {profile.studentMaleDifference} dibanding tahun lalu
               </p>
@@ -165,36 +206,44 @@ const DashboardPage = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width='100%' height={300}>
-                <PieChart>
-                  <Pie
-                    data={donationTypeDistribution}
-                    dataKey='amount'
-                    nameKey='name'
-                    cx='50%'
-                    cy='50%'
-                    outerRadius={80}
-                    fill='#8884d8'
-                    label
-                  >
-                    {donationTypeDistribution.map(
-                      (entry: any, index: number) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
-                      )
-                    )}
-                  </Pie>
-                  <Tooltip />
-                  <Legend
-                    wrapperStyle={{
-                      fontWeight: 'bold',
-                      fontSize: '14px',
-                    }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
+              {donationTypeDistribution.length > 0 ? (
+                <ResponsiveContainer width='100%' height={300}>
+                  <PieChart>
+                    <Pie
+                      data={donationTypeDistribution}
+                      dataKey='amount'
+                      nameKey='name'
+                      cx='50%'
+                      cy='50%'
+                      outerRadius={80}
+                      fill='#8884d8'
+                      label
+                    >
+                      {donationTypeDistribution.map(
+                        (entry: any, index: number) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={COLORS[index % COLORS.length]}
+                          />
+                        )
+                      )}
+                    </Pie>
+                    <Tooltip />
+                    <Legend
+                      wrapperStyle={{
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                renderEmptyState(
+                  'Tidak ada data',
+                  'Data donasi tidak ditemukan',
+                  'donationDistribution'
+                )
+              )}
             </CardContent>
           </Card>
 
@@ -205,50 +254,58 @@ const DashboardPage = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width='100%' height={300}>
-                <LineChart data={donationTrends}>
-                  <CartesianGrid strokeDasharray='3 3' />
-                  <XAxis dataKey='month' />
-                  <YAxis
-                    label={{
-                      value: 'Number of Donations',
-                      angle: -90,
-                      position: 'insideLeft',
-                      offset: 0,
-                      textAnchor: 'middle',
-                      dy: 70,
-                    }}
-                  />
-                  <Tooltip />
-                  <Legend
-                    wrapperStyle={{
-                      fontWeight: 'bold',
-                      fontSize: '14px',
-                    }}
-                  />
-                  <Line
-                    type='monotone'
-                    dataKey='donasi makanan'
-                    stroke='#8884d8'
-                    name='Donasi Makanan'
-                    strokeWidth={3}
-                  />
-                  <Line
-                    type='monotone'
-                    dataKey='donasi kendaraan'
-                    stroke='#82ca9d'
-                    name='Donasi Kendaraan'
-                    strokeWidth={3}
-                  />
-                  <Line
-                    type='monotone'
-                    dataKey='donasi alat masak'
-                    stroke='#ffc658'
-                    name='Donasi Alat Masak'
-                    strokeWidth={3}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              {donationTrends.length > 0 ? (
+                <ResponsiveContainer width='100%' height={300}>
+                  <LineChart data={donationTrends}>
+                    <CartesianGrid strokeDasharray='3 3' />
+                    <XAxis dataKey='month' />
+                    <YAxis
+                      label={{
+                        value: 'Number of Donations',
+                        angle: -90,
+                        position: 'insideLeft',
+                        offset: 0,
+                        textAnchor: 'middle',
+                        dy: 70,
+                      }}
+                    />
+                    <Tooltip />
+                    <Legend
+                      wrapperStyle={{
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                      }}
+                    />
+                    <Line
+                      type='monotone'
+                      dataKey='donasi makanan'
+                      stroke='#8884d8'
+                      name='Donasi Makanan'
+                      strokeWidth={3}
+                    />
+                    <Line
+                      type='monotone'
+                      dataKey='donasi kendaraan'
+                      stroke='#82ca9d'
+                      name='Donasi Kendaraan'
+                      strokeWidth={3}
+                    />
+                    <Line
+                      type='monotone'
+                      dataKey='donasi alat masak'
+                      stroke='#ffc658'
+                      name='Donasi Alat Masak'
+                      strokeWidth={3}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                renderEmptyState(
+                  'Tidak ada data',
+                  'Data trend tidak ditemukan',
+                  'donationTrends'
+                )
+              )}
             </CardContent>
           </Card>
         </div>
@@ -261,26 +318,34 @@ const DashboardPage = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className='space-y-4'>
-                {latestDonations.slice(0, 5).map((donation: any) => (
-                  <li key={donation.id} className='border-b pb-2'>
-                    <div className='flex justify-between items-center'>
-                      <span className='font-semibold'>
-                        {donation.donatorName}
-                      </span>
-                      <span className='text-green-600 font-bold'>
-                        {donation.amount}
-                      </span>
-                    </div>
-                    <div className='flex justify-between items-center text-sm text-gray-600'>
-                      <span>{donation.donationType}</span>
-                      <span>
-                        {new Date(donation.receivedDate).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+              {latestDonations.length > 0 ? (
+                <ul className='space-y-4'>
+                  {latestDonations.slice(0, 5).map((donation: any) => (
+                    <li key={donation.id} className='border-b pb-2'>
+                      <div className='flex justify-between items-center'>
+                        <span className='font-semibold'>
+                          {donation.donatorName}
+                        </span>
+                        <span className='text-green-600 font-bold'>
+                          {donation.amount}
+                        </span>
+                      </div>
+                      <div className='flex justify-between items-center text-sm text-gray-600'>
+                        <span>{donation.donationType}</span>
+                        <span>
+                          {new Date(donation.receivedDate).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                renderEmptyState(
+                  'Tidak ada data',
+                  'Data donasi terbaru tidak ditemukan',
+                  'recentDonations'
+                )
+              )}
             </CardContent>
           </Card>
 
@@ -291,28 +356,36 @@ const DashboardPage = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className='space-y-4'>
-                {latestEvents.slice(0, 5).map((event: any) => (
-                  <li key={event.id} className='border-b pb-2'>
-                    <div className='flex justify-between items-center'>
-                      <span className='font-semibold'>{event.name}</span>
-                      <Badge variant={BadgeVariant[event.status]}>
-                        {event.status}
-                      </Badge>
-                    </div>
-                    <div className='flex justify-between items-center text-sm text-gray-600 mt-1'>
-                      <span>{event.organizer}</span>
-                    </div>
-                    <div className='text-xs text-gray-500 mt-1'>
-                      {formatDate(event.startDate)} -{' '}
-                      {formatDate(event.endDate)}
-                    </div>
-                    <div className='text-xs text-gray-500 mt-1'>
-                      {event.place}
-                    </div>
-                  </li>
-                ))}
-              </ul>
+              {latestEvents.length > 0 ? (
+                <ul className='space-y-4'>
+                  {latestEvents.slice(0, 5).map((event: any) => (
+                    <li key={event.id} className='border-b pb-2'>
+                      <div className='flex justify-between items-center'>
+                        <span className='font-semibold'>{event.name}</span>
+                        <Badge variant={BadgeVariant[event.status]}>
+                          {event.status}
+                        </Badge>
+                      </div>
+                      <div className='flex justify-between items-center text-sm text-gray-600 mt-1'>
+                        <span>{event.organizer}</span>
+                      </div>
+                      <div className='text-xs text-gray-500 mt-1'>
+                        {formatDate(event.startDate)} -{' '}
+                        {formatDate(event.endDate)}
+                      </div>
+                      <div className='text-xs text-gray-500 mt-1'>
+                        {event.place}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                renderEmptyState(
+                  'Tidak ada data',
+                  'Data event tidak ditemukan',
+                  'recentEvents'
+                )
+              )}
             </CardContent>
           </Card>
         </div>
