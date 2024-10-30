@@ -63,15 +63,15 @@ const Sidebar: React.FC<SidebarProps> = ({ menuItems, user, onClose }) => {
           <div className='flex items-center'>
             <Avatar className='mr-3'>
               <AvatarImage
-                src={user.profile?.profilePicture}
+                src={user?.profile?.profilePicture}
                 alt='User avatar'
               />
               <AvatarFallback>
-                {user.profile?.fullName!.charAt(0)}
+                {user?.profile?.fullName!.charAt(0)}
               </AvatarFallback>
             </Avatar>
             <div>
-              <p className='font-semibold text-lg line-clamp-1'>{user.profile?.fullName}</p>
+              <p className='font-semibold text-lg line-clamp-1'>{user?.profile?.fullName}</p>
               <p className='text-sm text-blue-100'>Administrator</p>
             </div>
           </div>
