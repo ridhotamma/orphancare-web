@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -33,6 +33,7 @@ import { format } from 'date-fns';
 import FullscreenDocumentPreview from './document-preview';
 import HorizontalAddDocumentDialog from './horizontal-add-dialog';
 import { Document } from '@/types/document';
+import { useDebounce } from '@/hooks/use-debounce';
 
 const getFileTypeFromUrl = (url: string): string => {
   const extension = url.split('.').pop()?.toLowerCase();
@@ -80,11 +81,13 @@ const DocumentIcon = ({ url }: { url: string }) => {
 type DocumentListProps = {
   documents: Document[];
   metaData: Record<string, any>;
+  onSearch: (searchTerm: string) => void
 };
 
 const DocumentList: React.FC<DocumentListProps> = ({
   documents,
   metaData,
+  onSearch
 }: DocumentListProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
@@ -93,6 +96,14 @@ const DocumentList: React.FC<DocumentListProps> = ({
   );
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
+  const debounceSearch = useDebounce(searchQuery, 400)
+
+  useEffect(() => {
+    if (debounceSearch) {
+      onSearch(debounceSearch)
+    }
+  }, [debounceSearch, onSearch])
+  
   return (
     <div>
       <div className='mb-8 space-y-4'>
