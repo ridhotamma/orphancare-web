@@ -30,7 +30,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import ProfilePictureUpload from '@/components/users/profile-picture-upload';
 import Link from 'next/link';
-import { useAuth } from '@/provider/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { requests } from '@/lib/api';
 import { useParams, useRouter } from 'next/navigation';

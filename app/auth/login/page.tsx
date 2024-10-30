@@ -35,7 +35,9 @@ const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    const rememberedUsername = cookieStorage.getItem(REMEMBERED_USERNAME_KEY);
+    const rememberedUsername: string | null = cookieStorage.getItem(
+      REMEMBERED_USERNAME_KEY
+    );
     if (rememberedUsername) {
       setFormData((prev) => ({
         ...prev,
@@ -67,18 +69,10 @@ const LoginPage: React.FC = () => {
 
       const authToken = response.jwt;
 
-      cookieStorage.setItem('authToken', authToken, {
-        secure: process.env.NODE_ENV === 'production',
-        httpOnly: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-      });
+      cookieStorage.setItem('authToken', authToken);
 
       if (formData.rememberMe) {
-        cookieStorage.setItem(REMEMBERED_USERNAME_KEY, formData.username, {
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'strict',
-          expires: 30,
-        });
+        cookieStorage.setItem(REMEMBERED_USERNAME_KEY, formData.username);
       } else {
         cookieStorage.removeItem(REMEMBERED_USERNAME_KEY);
       }

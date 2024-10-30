@@ -8,10 +8,6 @@ export const mockDocuments: Document[] = [
     owner: {
       id: 'user1',
       email: 'john@example.com',
-      profile: {
-        fullName: 'John Doe',
-        profilePicture: 'https://i.pravatar.cc/150?u=user5',
-      },
     },
     documentType: {
       id: 'pdf',
@@ -28,10 +24,6 @@ export const mockDocuments: Document[] = [
     owner: {
       id: 'user2',
       email: 'jane@example.com',
-      profile: {
-        fullName: 'John Doe',
-        profilePicture: 'https://i.pravatar.cc/150?u=user5',
-      },
     },
     documentType: {
       id: 'docx',
@@ -48,10 +40,6 @@ export const mockDocuments: Document[] = [
     owner: {
       id: 'user3',
       email: 'alice@example.com',
-      profile: {
-        fullName: 'John Doe',
-        profilePicture: 'https://i.pravatar.cc/150?u=user5',
-      },
     },
     documentType: {
       id: 'jpg',

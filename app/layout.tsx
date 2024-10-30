@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning>
       <head>
-        <script src='https://smallpdf.com/api/embed-widget.js'></script>
+        <script src='https://smallpdf.com/api/embed-widget.js' async></script>
       </head>
       <body className={`${nunito.className} antialiased overflow-hidden`}>
         <NProgressProvider>

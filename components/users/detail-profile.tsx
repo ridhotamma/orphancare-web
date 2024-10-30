@@ -24,6 +24,7 @@ import { useToast } from '@/hooks/use-toast';
 import { requests } from '@/lib/api';
 import { BedRoom } from '@/types/bedroom';
 import { User } from '@/types/user';
+import { Guardian } from '@/types/guardian';
 
 type AutocompleteItem = {
   value: string;
@@ -311,12 +312,12 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
       setProfile((prev) => ({
         ...prev!,
         guardian: {
-          ...prev?.guardian!,
+          ...prev?.guardian,
           address: {
             ...prev?.guardian!.address,
             [field]: value?.label || '',
           },
-        },
+        } as Guardian,
       }));
     }
   };
@@ -362,12 +363,12 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
               setProfile((prev) => ({
                 ...prev!,
                 guardian: {
-                  ...prev?.guardian!,
+                  ...prev?.guardian,
                   address: {
                     ...prev?.guardian!.address,
                     street: e.target.value,
                   },
-                },
+                } as Guardian,
               }));
             }
           }}
@@ -462,12 +463,12 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
               setProfile((prev) => ({
                 ...prev!,
                 guardian: {
-                  ...prev?.guardian!,
+                  ...prev?.guardian,
                   address: {
                     ...prev?.guardian!.address,
                     postalCode: e.target.value,
                   },
-                },
+                } as Guardian,
               }));
             }
           }}
@@ -608,7 +609,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                 onValueChange={(value) =>
                   setProfile({
                     ...profile!,
-                    bedRoom: { ...profile?.bedRoom!, id: value },
+                    bedRoom: { ...profile?.bedRoom, id: value } as BedRoom,
                   })
                 }
               >
@@ -701,9 +702,9 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                       setProfile({
                         ...profile!,
                         guardian: {
-                          ...profile?.guardian!,
+                          ...profile?.guardian,
                           fullName: e.target.value,
-                        },
+                        } as Guardian,
                       })
                     }
                     disabled={!isEditProfile}
@@ -722,9 +723,9 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                       setProfile({
                         ...profile!,
                         guardian: {
-                          ...profile?.guardian!,
+                          ...profile?.guardian,
                           phoneNumber: value || '',
-                        },
+                        } as Guardian,
                       })
                     }
                     inputComponent={Input}
