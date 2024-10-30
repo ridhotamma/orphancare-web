@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Trash2, Upload, FileText } from 'lucide-react';
+import Image from 'next/image';
+import { Trash2, Upload, FileText, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
 import { requests } from '@/lib/api';
 import { DocumentType } from '@/types/document-type';
 import { User } from '@/types/user';
 import AutocompleteSelect from '../ui/autocomplete-select';
 
-interface AbsoluteDocumentDialogProps {
+interface HorizontalAddDocumentDialogProps {
   isOpen: boolean;
   onClose: () => void;
 }
@@ -20,67 +20,100 @@ type SelectItem = {
   label: string;
 };
 
-const AbsoluteDocumentDialog = ({
+type DocumentPayload = {
+  url: string;
+  name: string;
+  documentTypeId: string;
+};
+
+const HorizontalAddDocumentDialog = ({
   isOpen,
   onClose,
-}: AbsoluteDocumentDialogProps) => {
-  const [name, setName] = useState('');
+}: HorizontalAddDocumentDialogProps) => {
   const [selectedDocumentType, setSelectedDocumentType] =
     useState<SelectItem | null>(null);
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
-  const [fileName, setFileName] = useState('');
   const [selectedUser, setSelectedUser] = useState<SelectItem | null>(null);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [loadingDocumentTypes, setLoadingDocumentTypes] = useState(false);
+  const [loadingUpload, setLoadingUpload] = useState(false);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [userList, setUserList] = useState<SelectItem[]>([]);
   const [documentTypes, setDocumentTypes] = useState<SelectItem[]>([]);
+  const [file, setFile] = useState<File | null>(null);
+  const [documentPayload, setDocumentPayload] =
+    useState<DocumentPayload | null>(null);
 
   const dialogRef = React.useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      setFileName(selectedFile.name);
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      setLoadingUpload(true);
+      const selectedFile = e.target.files?.[0];
+      const data = new FormData();
 
-      if (selectedFile.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (e: ProgressEvent<FileReader>) => {
-          setPreview(e.target?.result as string);
-        };
-        reader.readAsDataURL(selectedFile);
-      } else {
-        setPreview(null);
+      data.append('file', selectedFile as File);
+
+      if (selectedFile) {
+        const response = await requests({
+          url: '/public/files/upload',
+          method: 'POST',
+          data,
+        });
+
+        setFile(selectedFile as File);
+        setDocumentPayload(
+          (prev) => ({ ...prev, url: response.url } as DocumentPayload)
+        );
       }
+    } catch (error: any) {
+      toast({
+        title: 'Cannot upload document',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoadingUpload(false);
     }
   };
 
   const handleRemoveFile = () => {
-    setFile(null);
-    setFileName('');
-    setPreview(null);
+    setDocumentPayload((prev) => ({ ...prev, url: '' } as DocumentPayload));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({
-      name,
-      documentType: selectedDocumentType?.value,
-      file,
-      user: selectedUser?.value,
-    });
-    onClose();
+    try {
+      setLoadingSubmit(true);
+      await requests({
+        url: `/public/users/${selectedUser?.value}/documents`,
+        method: 'POST',
+        data: documentPayload,
+      });
+      toast({
+        title: 'Document added',
+        description:
+          'Your new document has been successfully uploaded and added.',
+        variant: 'success',
+      });
+      handleBeforeClose();
+      onClose();
+    } catch (error: any) {
+      toast({
+        title: 'Cannot submit document',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoadingSubmit(false);
+    }
   };
 
   const handleBeforeClose = () => {
-    setName('');
-    setFileName('');
-    setFile(null);
-    setPreview(null);
     setSelectedDocumentType(null);
     setSelectedUser(null);
+    setDocumentPayload(null);
+    setFile(null);
     onClose();
   };
 
@@ -144,40 +177,58 @@ const AbsoluteDocumentDialog = ({
       fetchDocumentTypes();
       handleUserSearch('');
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
+  const isImageFile = (url: string) => {
+    const extension = url.split('.').pop()?.toLowerCase();
+    return ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension || '');
+  };
+
   const renderPreview = () => {
-    if (preview) {
-      return (
-        <div className='relative w-full h-full flex items-center justify-center'>
-          <Image
-            src={preview}
-            alt='Document preview'
-            className='max-w-full max-h-full object-contain'
-            layout='fill'
-          />
-        </div>
-      );
-    } else if (file) {
+    if (loadingUpload) {
       return (
         <div className='flex flex-col items-center justify-center'>
-          <FileText className='h-24 w-24 text-gray-400' />
+          <Loader2 className='h-12 w-12 animate-spin text-gray-400' />
           <p className='mt-2 text-sm text-gray-500 dark:text-gray-400'>
-            {file.name}
-          </p>
-        </div>
-      );
-    } else {
-      return (
-        <div className='text-center'>
-          <Upload className='mx-auto h-12 w-12 text-gray-400' />
-          <p className='mt-2 text-sm text-gray-500 dark:text-gray-400'>
-            Upload a document to preview
+            Uploading document...
           </p>
         </div>
       );
     }
+
+    if (documentPayload?.url) {
+      if (isImageFile(documentPayload.url)) {
+        return (
+          <div className='relative w-full h-full flex items-center justify-center'>
+            <Image
+              src={documentPayload.url}
+              alt='Document preview'
+              className='max-w-full max-h-full object-contain'
+              layout='fill'
+            />
+          </div>
+        );
+      }
+
+      return (
+        <div className='flex flex-col items-center justify-center'>
+          <FileText className='h-12 w-12 text-gray-400' />
+          <p className='mt-2 text-sm text-gray-500 dark:text-gray-400'>
+            {file?.name}
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className='text-center'>
+        <Upload className='mx-auto h-12 w-12 text-gray-400' />
+        <p className='mt-2 text-sm text-gray-500 dark:text-gray-400'>
+          Upload a document to preview
+        </p>
+      </div>
+    );
   };
 
   if (!isOpen) return null;
@@ -199,7 +250,7 @@ const AbsoluteDocumentDialog = ({
           {/* Left side - File preview */}
           <div className='w-full h-[400px] md:h-[600px] md:w-1/2 bg-gray-100 dark:bg-gray-800 flex flex-col items-center justify-center p-6 relative'>
             {renderPreview()}
-            {file && (
+            {documentPayload?.url && !loadingUpload && (
               <Button
                 variant='destructive'
                 className='absolute bottom-6 left-6 right-6'
@@ -219,8 +270,13 @@ const AbsoluteDocumentDialog = ({
                 <Label htmlFor='name'>Document Name</Label>
                 <Input
                   id='name'
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={documentPayload?.name}
+                  onChange={(e) =>
+                    setDocumentPayload(
+                      (prev) =>
+                        ({ ...prev, name: e.target.value } as DocumentPayload)
+                    )
+                  }
                   placeholder='Enter document name'
                   required
                 />
@@ -230,7 +286,15 @@ const AbsoluteDocumentDialog = ({
                 <AutocompleteSelect
                   items={documentTypes}
                   value={selectedDocumentType}
-                  onChange={setSelectedDocumentType}
+                  onChange={(item) =>
+                    setDocumentPayload(
+                      (prev) =>
+                        ({
+                          ...prev,
+                          documentTypeId: item?.value,
+                        } as DocumentPayload)
+                    )
+                  }
                   isLoading={loadingDocumentTypes}
                   searchPlaceholder='Search document type...'
                   placeholder='Select document type'
@@ -258,11 +322,12 @@ const AbsoluteDocumentDialog = ({
                     onClick={() =>
                       document.getElementById('file-upload')?.click()
                     }
+                    disabled={loadingUpload}
                   >
                     Choose file
                   </Button>
                   <span className='text-sm text-gray-500 dark:text-gray-400 truncate'>
-                    {fileName || 'No file chosen'}
+                    {file?.name || 'No file chosen'}
                   </span>
                   <input
                     id='file-upload'
@@ -280,11 +345,28 @@ const AbsoluteDocumentDialog = ({
                 type='button'
                 variant='outline'
                 onClick={handleBeforeClose}
+                disabled={loadingSubmit}
               >
                 Cancel
               </Button>
-              <Button type='submit' onClick={handleSubmit}>
-                Submit
+              <Button
+                type='submit'
+                onClick={handleSubmit}
+                disabled={
+                  loadingSubmit ||
+                  !documentPayload?.name ||
+                  !documentPayload.documentTypeId ||
+                  !documentPayload.url
+                }
+              >
+                {loadingSubmit ? (
+                  <>
+                    <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                    Submitting
+                  </>
+                ) : (
+                  'Submit'
+                )}
               </Button>
             </div>
           </div>
@@ -294,4 +376,4 @@ const AbsoluteDocumentDialog = ({
   );
 };
 
-export default AbsoluteDocumentDialog;
+export default HorizontalAddDocumentDialog;

@@ -357,7 +357,7 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className='flex items-center gap-2'>
-              <Share2 className='h-5 w-5 text-blue-500' />
+              <Share2 className='h-5 w-5' />
               Share Document
             </AlertDialogTitle>
             <AlertDialogDescription>

@@ -2,25 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  FileIcon,
-  FileTextIcon,
-  ImageIcon,
-  Plus,
-  Search,
-  Settings,
-} from 'lucide-react';
+import { FileIcon, FileTextIcon, ImageIcon, Plus, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { format } from 'date-fns';
 import FullscreenDocumentPreview from './document-preview';
@@ -31,6 +15,12 @@ import LoadingContainer from '@/components/container/loading-container';
 import EmptyContainer from '@/components/container/empty-container';
 import Image from 'next/image';
 import NotFoundImage from '@/images/not-found-document.png';
+import { User } from '@/types/user';
+import { DocumentType } from '@/types/document-type';
+import AutocompleteSelect, {
+  AutocompleteItem,
+} from '@/components/ui/autocomplete-select';
+import useCurrentUser from '@/stores/current-user';
 
 const getFileTypeFromUrl = (url: string): string => {
   const extension = url.split('.').pop()?.toLowerCase();
@@ -80,6 +70,8 @@ type DocumentListProps = {
   metaData: Record<string, any>;
   onSearch: (searchTerm: string, params: Record<string, any>) => void;
   loading: boolean;
+  users: User[];
+  documentTypes: DocumentType[];
 };
 
 const DocumentList: React.FC<DocumentListProps> = ({
@@ -87,17 +79,27 @@ const DocumentList: React.FC<DocumentListProps> = ({
   metaData,
   onSearch,
   loading,
+  users,
+  documentTypes,
 }: DocumentListProps) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterCategory, setFilterCategory] = useState('all');
-  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
+  const [filterCategory, setFilterCategory] = useState<AutocompleteItem | null>(
+    null
+  );
+  const [filterUser, setFilterUser] = useState<AutocompleteItem | null>(null);
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(
+    null
+  );
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-
   const debounceSearch = useDebounce(searchQuery, 400);
 
   useEffect(() => {
-    onSearch(debounceSearch, {});
-  }, [debounceSearch]);
+    onSearch(debounceSearch, {
+      ownerId: filterUser?.value === 'all' ? null : filterUser?.value,
+      documentTypeId:
+        filterCategory?.value === 'all' ? null : filterCategory?.value,
+    });
+  }, [debounceSearch, filterCategory, filterUser]);
 
   return (
     <div>
@@ -108,37 +110,30 @@ const DocumentList: React.FC<DocumentListProps> = ({
             <Input
               type='text'
               placeholder='Search documents...'
-              className='pl-10'
+              className='pl-10 min-w-56'
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           <div className='flex items-center gap-4'>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant='outline'>
-                  <Settings className='mr-2 h-4 w-4' />
-                  Category
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className='w-56'>
-                <DropdownMenuLabel>Filter Documents</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuRadioGroup
-                  value={filterCategory}
-                  onValueChange={setFilterCategory}
-                >
-                  <DropdownMenuRadioItem value='all'>All</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value='video'>
-                    Video
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value='pdf'>PDF</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value='image'>
-                    Image
-                  </DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <AutocompleteSelect
+              items={documentTypes as any}
+              placeholder='Filter by type'
+              searchPlaceholder='Search document type...'
+              onChange={(item: AutocompleteItem | null) =>
+                setFilterCategory(item)
+              }
+              value={filterCategory}
+              className='w-56'
+            />
+            <AutocompleteSelect
+              items={users as any}
+              placeholder='Filter by User'
+              searchPlaceholder='Search users...'
+              onChange={(item: AutocompleteItem | null) => setFilterUser(item)}
+              value={filterUser}
+              className='w-56'
+            />
             <Button onClick={() => setIsAddDialogOpen(true)}>
               <Plus className='mr-2 h-4 w-4' /> Add Documents
             </Button>
@@ -218,7 +213,13 @@ const DocumentList: React.FC<DocumentListProps> = ({
 
       <HorizontalAddDocumentDialog
         isOpen={isAddDialogOpen}
-        onClose={() => setIsAddDialogOpen(false)}
+        onClose={() => {
+          setSearchQuery('');
+          setFilterCategory(null);
+          setFilterUser(null);
+          setIsAddDialogOpen(false);
+          onSearch('', {});
+        }}
       />
     </div>
   );

@@ -15,19 +15,19 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 
-type Item = {
+export type AutocompleteItem = {
   value: string;
   label: string;
 };
 
 type AutocompleteProps = {
-  items: Item[];
+  items: AutocompleteItem[];
   placeholder?: string;
   searchPlaceholder?: string;
   emptyMessage?: string;
   className?: string;
-  value?: Item | null;
-  onChange?: (item: Item | null) => void;
+  value?: AutocompleteItem | null;
+  onChange?: (item: AutocompleteItem | null) => void;
   isLoading?: boolean;
   loadingMessage?: string;
   disabled?: boolean; // Added disabled prop
@@ -43,12 +43,11 @@ const AutocompleteSelect = ({
   onChange,
   isLoading = false,
   loadingMessage = 'Loading items...',
-  disabled = false, // Added disabled prop with default value
+  disabled = false,
 }: AutocompleteProps) => {
   const [open, setOpen] = React.useState(false);
-  const [selectedItem, setSelectedItem] = React.useState<Item | null>(
-    initialValue
-  );
+  const [selectedItem, setSelectedItem] =
+    React.useState<AutocompleteItem | null>(initialValue);
 
   React.useEffect(() => {
     setSelectedItem(initialValue);
@@ -59,35 +58,34 @@ const AutocompleteSelect = ({
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
-            variant="outline"
-            role="combobox"
+            variant='outline'
+            role='combobox'
             aria-expanded={open}
-            className="w-full justify-between bg-inherit"
+            className='w-full justify-between bg-inherit'
             disabled={disabled || isLoading}
           >
             {isLoading ? (
-              <div className="flex items-center">
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <div className='flex items-center'>
+                <Loader2 className='mr-2 h-4 w-4 animate-spin' />
                 {loadingMessage}
               </div>
             ) : (
               <>
                 {selectedItem ? selectedItem.label : placeholder}
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
               </>
             )}
           </Button>
         </PopoverTrigger>
         <PopoverContent className={cn('p-0', className)}>
           <Command>
-            <CommandInput 
-              placeholder={searchPlaceholder}
-              disabled={disabled}
-            />
+            <CommandInput placeholder={searchPlaceholder} disabled={disabled} />
             {isLoading ? (
-              <div className="py-6 text-center">
-                <Loader2 className="mx-auto h-4 w-4 animate-spin" />
-                <p className="mt-2 text-sm text-muted-foreground">{loadingMessage}</p>
+              <div className='py-6 text-center'>
+                <Loader2 className='mx-auto h-4 w-4 animate-spin' />
+                <p className='mt-2 text-sm text-muted-foreground'>
+                  {loadingMessage}
+                </p>
               </div>
             ) : (
               <>
