@@ -3,16 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_ENV=development next dev",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "dev:staging": "cross-env NODE_ENV=staging next dev",
-    "build:staging": "cross-env NODE_ENV=staging next build",
-    "start:staging": "cross-env NODE_ENV=staging next start",
-    "dev:prod": "cross-env NODE_ENV=production next dev",
-    "build:prod": "cross-env NODE_ENV=production next build",
-    "start:prod": "cross-env NODE_ENV=production next start"
+    "lint": "next lint"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
