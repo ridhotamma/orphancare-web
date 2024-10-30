@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import DocumentList from '@/components/documents/document-list';
 import { usePageTitle } from '@/hooks/use-page-title';
@@ -104,6 +104,30 @@ const DocumentsPage = () => {
     }
   };
 
+  const handleDeleteDocument = async (doc: Document | null) => {
+    try {
+      setLoading(true);
+      await requests({
+        url: `/public/users/documents/${doc?.id}`,
+        method: 'DELETE',
+      });
+      toast({
+        title: 'Successfully Deleted',
+        description: `${doc?.name} Successfully deleted`,
+        variant: 'success',
+      });
+      fetchDocumentData();
+    } catch (error: any) {
+      toast({
+        title: 'Cannot delete document',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!isInitialized) {
       fetchDocumentTypes();
@@ -125,6 +149,7 @@ const DocumentsPage = () => {
       documents={documents}
       metaData={metaData}
       onSearch={handleSearch}
+      onDelete={handleDeleteDocument}
       loading={loading}
       users={userList}
       documentTypes={documentTypes}

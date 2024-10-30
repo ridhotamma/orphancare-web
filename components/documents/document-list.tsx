@@ -20,7 +20,6 @@ import { DocumentType } from '@/types/document-type';
 import AutocompleteSelect, {
   AutocompleteItem,
 } from '@/components/ui/autocomplete-select';
-import useCurrentUser from '@/stores/current-user';
 
 const getFileTypeFromUrl = (url: string): string => {
   const extension = url.split('.').pop()?.toLowerCase();
@@ -69,6 +68,7 @@ type DocumentListProps = {
   documents: Document[];
   metaData: Record<string, any>;
   onSearch: (searchTerm: string, params: Record<string, any>) => void;
+  onDelete: (document: Document | null) => void;
   loading: boolean;
   users: User[];
   documentTypes: DocumentType[];
@@ -78,6 +78,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
   documents,
   metaData,
   onSearch,
+  onDelete,
   loading,
   users,
   documentTypes,
@@ -91,14 +92,19 @@ const DocumentList: React.FC<DocumentListProps> = ({
     null
   );
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+
   const debounceSearch = useDebounce(searchQuery, 400);
 
-  useEffect(() => {
+  const handleRefresh = () => {
     onSearch(debounceSearch, {
       ownerId: filterUser?.value === 'all' ? null : filterUser?.value,
       documentTypeId:
         filterCategory?.value === 'all' ? null : filterCategory?.value,
     });
+  };
+
+  useEffect(() => {
+    handleRefresh();
   }, [debounceSearch, filterCategory, filterUser]);
 
   return (
@@ -206,7 +212,10 @@ const DocumentList: React.FC<DocumentListProps> = ({
       {selectedDocument && (
         <FullscreenDocumentPreview
           document={selectedDocument}
-          onDelete={() => {}}
+          onDelete={() => {
+            onDelete(selectedDocument);
+            setSelectedDocument(null);
+          }}
           onClose={() => setSelectedDocument(null)}
         />
       )}
