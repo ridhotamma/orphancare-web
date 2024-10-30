@@ -33,11 +33,13 @@ type Credentials = {
 type DetailCredentialsProps = {
   data: Omit<User, 'profile'>;
   isCareTaker: boolean;
+  onRefresh: () => void
 };
 
 export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
   data,
   isCareTaker,
+  onRefresh
 }: DetailCredentialsProps) => {
   const { toast } = useToast();
   const [isEditCredentials, setIsEditCredentials] = useState(false);

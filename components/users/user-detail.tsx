@@ -70,6 +70,42 @@ const UserDetailPage: React.FC<UserDetailProps> = ({
     fetchUserData();
   }, [userId, toast]);
 
+  const refreshUserCredentials = async () => {
+    try {
+      setLoading(true);
+      const response = await requests({
+        url: `/admin/users/${userId}`,
+      });
+      setUserCredential(response.data);
+    } catch (error: any) {
+      toast({
+        title: 'Cannot refresh documents',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const refreshUserProfile = async () => {
+    try {
+      setLoading(true);
+      const response = await requests({
+        url: `/public/profiles/${userId}`,
+      });
+      setUserProfile(response.data);
+    } catch (error: any) {
+      toast({
+        title: 'Cannot refresh documents',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const refreshUserDocuments = async () => {
     try {
       setLoadingSearchDocument(true);
@@ -96,7 +132,7 @@ const UserDetailPage: React.FC<UserDetailProps> = ({
         params: { name: searchTerm },
         method: 'GET',
       });
-      setUserDocuments(response.data)
+      setUserDocuments(response.data);
     } catch (error: any) {
       toast({
         title: 'Failed to search documents',
@@ -116,6 +152,7 @@ const UserDetailPage: React.FC<UserDetailProps> = ({
         <DetailProfile
           data={userProfile as Profile}
           credentials={userCredential as Omit<User, 'profile'>}
+          onRefresh={refreshUserProfile}
         />
       ),
       icon: <UserCircle className='h-5 w-5' />,
@@ -142,6 +179,7 @@ const UserDetailPage: React.FC<UserDetailProps> = ({
         <DetailCredentials
           data={userCredential as Omit<User, 'profile'>}
           isCareTaker={isCareTaker}
+          onRefresh={refreshUserCredentials}
         />
       ),
       icon: <UserIcon className='h-5 w-5' />,

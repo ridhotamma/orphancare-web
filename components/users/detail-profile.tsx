@@ -41,11 +41,13 @@ type AddressState = {
 type DetailProfileProps = {
   data?: Profile;
   credentials: Omit<User, 'profile'>;
+  onRefresh: () => void
 };
 
 export const DetailProfile: React.FC<DetailProfileProps> = ({
   data,
   credentials,
+  onRefresh
 }: DetailProfileProps) => {
   const { toast } = useToast();
   const [isEditProfile, setIsEditProfile] = useState<boolean>(false);
@@ -82,10 +84,6 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
         data: {
           ...profile,
           bedRoomId: profile?.bedRoom?.id,
-          bedRoom: {
-            ...profile?.bedRoom,
-            bedroomTypeId: profile?.bedRoom?.bedRoomType.id,
-          },
           address: {
             ...profile?.address,
             provinceDetail: {
@@ -131,6 +129,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
             : null,
         } as Profile,
       });
+      onRefresh()
       setIsEditProfile(false);
       toast({
         title: 'Profile updated',
@@ -138,10 +137,18 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
         variant: 'success',
       });
     } catch (error: any) {
+      const errorMessage =
+        error.message ||
+        Object.entries(error)
+          .map((entry) => {
+            const [key, value] = entry;
+            const message = `${key} ${value}`;
+            return message;
+          })
+          .join(', ');
       toast({
-        title: 'Error updating profile',
-        description: error.message,
         variant: 'destructive',
+        title: errorMessage,
       });
     } finally {
       setLoadingSave(false);
@@ -323,7 +330,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
   };
 
   const handleProfilePictureChange = (url: string) => {
-    setProfile({ ...profile!, profilePicture: url });
+    setProfile((prev) => ({ ...prev, profilePicture: url } as Profile));
   };
 
   const renderAddress = (address: Address | undefined) => {
@@ -517,7 +524,9 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                 id='fullName'
                 value={profile?.fullName || ''}
                 onChange={(e) =>
-                  setProfile({ ...profile!, fullName: e.target.value })
+                  setProfile(
+                    (prev) => ({ ...prev, fullName: e.target.value } as Profile)
+                  )
                 }
                 disabled={!isEditProfile}
               />
@@ -529,7 +538,9 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                 type='date'
                 value={profile?.birthday || ''}
                 onChange={(e) =>
-                  setProfile({ ...profile!, birthday: e.target.value })
+                  setProfile(
+                    (prev) => ({ ...prev, birthday: e.target.value } as Profile)
+                  )
                 }
                 disabled={!isEditProfile}
               />
@@ -540,7 +551,9 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                 id='bio'
                 value={profile?.bio || ''}
                 onChange={(e) =>
-                  setProfile({ ...profile!, bio: e.target.value })
+                  setProfile(
+                    (prev) => ({ ...prev, bio: e.target.value } as Profile)
+                  )
                 }
                 disabled={!isEditProfile}
               />
@@ -552,7 +565,9 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                 type='date'
                 value={profile?.joinDate || ''}
                 onChange={(e) =>
-                  setProfile({ ...profile!, joinDate: e.target.value })
+                  setProfile(
+                    (prev) => ({ ...prev, joinDate: e.target.value } as Profile)
+                  )
                 }
                 disabled={!isEditProfile}
               />
@@ -564,7 +579,10 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                 type='date'
                 value={profile?.leaveDate || ''}
                 onChange={(e) =>
-                  setProfile({ ...profile!, leaveDate: e.target.value })
+                  setProfile(
+                    (prev) =>
+                      ({ ...prev, leaveDate: e.target.value } as Profile)
+                  )
                 }
                 disabled={!isEditProfile}
               />
@@ -577,7 +595,9 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                 defaultCountry='ID'
                 value={profile?.phoneNumber || ''}
                 onChange={(value) =>
-                  setProfile({ ...profile!, phoneNumber: value || '' })
+                  setProfile(
+                    (prev) => ({ ...prev, phoneNumber: value || '' } as Profile)
+                  )
                 }
                 inputComponent={Input}
                 disabled={!isEditProfile}
@@ -589,7 +609,9 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                 disabled={!isEditProfile}
                 value={profile?.gender}
                 onValueChange={(value) =>
-                  setProfile({ ...profile!, gender: value as Gender })
+                  setProfile(
+                    (prev) => ({ ...prev, gender: value as Gender } as Profile)
+                  )
                 }
               >
                 <SelectTrigger>
@@ -607,10 +629,15 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                 disabled={!isEditProfile}
                 value={profile?.bedRoom?.id}
                 onValueChange={(value) =>
-                  setProfile({
-                    ...profile!,
-                    bedRoom: { ...profile?.bedRoom, id: value } as BedRoom,
-                  })
+                  setProfile(
+                    (prev) =>
+                      ({
+                        ...prev,
+                        bedRoom: bedRooms?.find(
+                          (bedroom: BedRoom) => bedroom?.id === value
+                        ),
+                      } as Profile)
+                  )
                 }
               >
                 <SelectTrigger>
@@ -639,7 +666,13 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                   id='caretaker'
                   checked={profile?.careTaker || false}
                   onCheckedChange={(checked) =>
-                    setProfile({ ...profile!, careTaker: checked as boolean })
+                    setProfile(
+                      (prev) =>
+                        ({
+                          ...prev,
+                          careTaker: checked as boolean,
+                        } as Profile)
+                    )
                   }
                   disabled={!isEditProfile}
                 />
@@ -655,7 +688,13 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                   id='alumni'
                   checked={profile?.alumni || false}
                   onCheckedChange={(checked) =>
-                    setProfile({ ...profile!, alumni: checked as boolean })
+                    setProfile(
+                      (prev) =>
+                        ({
+                          ...prev,
+                          alumni: checked as boolean,
+                        } as Profile)
+                    )
                   }
                   disabled={!isEditProfile}
                 />
@@ -699,13 +738,16 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                     id='guardianFullName'
                     value={profile?.guardian?.fullName || ''}
                     onChange={(e) =>
-                      setProfile({
-                        ...profile!,
-                        guardian: {
-                          ...profile?.guardian,
-                          fullName: e.target.value,
-                        } as Guardian,
-                      })
+                      setProfile(
+                        (prev) =>
+                          ({
+                            ...prev,
+                            guardian: {
+                              ...profile?.guardian,
+                              fullName: e.target.value,
+                            } as Guardian,
+                          } as Profile)
+                      )
                     }
                     disabled={!isEditProfile}
                   />
@@ -720,13 +762,16 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                     defaultCountry='ID'
                     value={profile?.guardian?.phoneNumber || ''}
                     onChange={(value) =>
-                      setProfile({
-                        ...profile!,
-                        guardian: {
-                          ...profile?.guardian,
-                          phoneNumber: value || '',
-                        } as Guardian,
-                      })
+                      setProfile(
+                        (prev) =>
+                          ({
+                            ...prev,
+                            guardian: {
+                              ...profile?.guardian,
+                              phoneNumber: value || '',
+                            } as Guardian,
+                          } as Profile)
+                      )
                     }
                     inputComponent={Input}
                     disabled={!isEditProfile}
