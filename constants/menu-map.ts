@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   LucideIcon,
   LayoutDashboard,
@@ -54,27 +55,27 @@ const menuItems: MenuItem[] = [
     href: '/bedrooms',
     icon: Bed,
   },
-  {
-    id: 'inventories',
-    label: 'Inventories',
-    title: 'Manage Inventories',
-    href: '/inventories',
-    icon: Package,
-  },
-  {
-    id: 'events',
-    label: 'Events',
-    title: 'Events',
-    href: '/events',
-    icon: CalendarDays,
-  },
-  {
-    id: 'donations',
-    label: 'Donations',
-    title: 'Donations',
-    href: '/donations',
-    icon: Gift,
-  },
+  // {
+  //   id: 'inventories',
+  //   label: 'Inventories',
+  //   title: 'Manage Inventories',
+  //   href: '/inventories',
+  //   icon: Package,
+  // },
+  // {
+  //   id: 'events',
+  //   label: 'Events',
+  //   title: 'Events',
+  //   href: '/events',
+  //   icon: CalendarDays,
+  // },
+  // {
+  //   id: 'donations',
+  //   label: 'Donations',
+  //   title: 'Donations',
+  //   href: '/donations',
+  //   icon: Gift,
+  // },
 ];
 
 export default menuItems;
