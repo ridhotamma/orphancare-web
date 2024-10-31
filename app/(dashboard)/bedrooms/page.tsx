@@ -6,7 +6,7 @@ import BedroomFormDialog from '@/components/bedrooms/bedroom-form-dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Users, Search, Plus, Eye } from 'lucide-react';
+import { Users, Search, Plus, Eye, UserX } from 'lucide-react';
 import { Profile } from '@/types/profile';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -66,6 +66,10 @@ const BedRoomPage: React.FC = () => {
       const response = await requests({
         url: '/admin/bedrooms',
         method: 'GET',
+        params: {
+          page: 0,
+          perPage: 50
+        }
       });
 
       setBedrooms(response.data);
@@ -86,6 +90,10 @@ const BedRoomPage: React.FC = () => {
       const response = await requests({
         url: '/admin/users',
         method: 'GET',
+        params: {
+          page: 0,
+          perPage: 150
+        }
       });
 
       setUsers(response.data);
@@ -109,8 +117,8 @@ const BedRoomPage: React.FC = () => {
         data,
       });
       toast({
-        title: "Bedroom succesfully added",
-        content: "created succesfully",
+        title: 'Bedroom successfully added',
+        content: 'created successfully',
         variant: 'success',
       });
       getBedroomData();
@@ -141,6 +149,53 @@ const BedRoomPage: React.FC = () => {
     }))
     .filter((user) => user.label);
 
+  const renderProfileSection = (profiles: Profile[] | undefined) => {
+    if (!profiles || profiles.length === 0) {
+      return (
+        <div className='flex items-center justify-center p-2 bg-gray-50 dark:bg-slate-700 rounded-md'>
+          <UserX className='h-4 w-4 text-gray-400 mr-2' />
+          <span className='text-sm text-gray-500 dark:text-white'>Belum ada penghuni</span>
+        </div>
+      );
+    }
+
+    return (
+      <div className='flex items-center justify-between'>
+        <div className='flex -space-x-4 hover:-space-x-1'>
+          {profiles.map((profile: Profile, index: number) => (
+            <>
+              {index < 5 && (
+                <Avatar
+                  key={profile.id}
+                  className='border-2 border-background transition-all ease-in-out duration-200'
+                >
+                  <AvatarImage
+                    src={profile.profilePicture}
+                    alt={profile.fullName}
+                  />
+                  <AvatarFallback>{profile.fullName?.charAt(0)}</AvatarFallback>
+                </Avatar>
+              )}
+            </>
+          ))}
+          {profiles.length > 5 && (
+            <Avatar className='border-2 border-background'>
+              <AvatarFallback className='bg-blue-400 text-white font-bold'>
+                {profiles.length - 5}+
+              </AvatarFallback>
+            </Avatar>
+          )}
+        </div>
+        <div className='flex items-center space-x-1'>
+          <Users className='h-4 w-4 text-muted-foreground' />
+          <span className='text-sm text-muted-foreground'>
+            {profiles.length}
+          </span>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div>
       <div className='mb-6 space-y-4'>
@@ -164,9 +219,9 @@ const BedRoomPage: React.FC = () => {
       <LoadingContainer loading={loading}>
         {bedrooms.length > 0 ? (
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-            {bedrooms.map((bedroom, index) => (
+            {bedrooms.map((bedroom) => (
               <Card
-                key={index}
+                key={bedroom.id}
                 className='hover:shadow-lg transition-shadow duration-300'
               >
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
@@ -176,46 +231,8 @@ const BedRoomPage: React.FC = () => {
                   <Badge variant='outline'>{bedroom.bedRoomType.name}</Badge>
                 </CardHeader>
                 <CardContent>
-                  <div className='mt-4 flex items-center justify-between'>
-                    <div className='flex -space-x-4 hover:-space-x-1'>
-                      {bedroom.profiles?.map(
-                        (profile: Profile, index: number) => (
-                          <>
-                            {index < 5 && (
-                              <Avatar
-                                key={index}
-                                className='border-2 border-background transition-all ease-in-out duration-200'
-                              >
-                                <AvatarImage
-                                  src={profile.profilePicture}
-                                  alt={profile.fullName}
-                                />
-                                <AvatarFallback>
-                                  {profile.fullName?.charAt(0)}
-                                </AvatarFallback>
-                              </Avatar>
-                            )}
-                          </>
-                        )
-                      )}
-
-                      {bedroom.profiles && bedroom.profiles?.length > 5 && (
-                        <Avatar
-                          key={index}
-                          className='border-2 border-background'
-                        >
-                          <AvatarFallback className='bg-blue-400 text-white font-bold'>
-                            {bedroom.profiles.length - 5}+
-                          </AvatarFallback>
-                        </Avatar>
-                      )}
-                    </div>
-                    <div className='flex items-center space-x-1'>
-                      <Users className='h-4 w-4 text-muted-foreground' />
-                      <span className='text-sm text-muted-foreground'>
-                        {bedroom.profiles?.length}
-                      </span>
-                    </div>
+                  <div className='mt-4'>
+                    {renderProfileSection(bedroom.profiles)}
                   </div>
                   <Button variant='outline' className='w-full mt-8' asChild>
                     <Link href={`/bedrooms/${bedroom.id}`}>

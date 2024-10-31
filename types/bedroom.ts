@@ -5,6 +5,7 @@ export type BedRoom = {
   id: string; 
   name?: string;
   bedRoomType: BedRoomType;
+  bedRoomTypeId: string;
   profiles?: Profile[];
   createdAt: string;
   updatedAt: string;

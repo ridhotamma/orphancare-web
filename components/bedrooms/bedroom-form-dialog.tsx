@@ -19,13 +19,20 @@ interface Bedroom {
   profiles: string[];
 }
 
+interface Payload {
+  id?: string;
+  name: string;
+  bedRoomTypeId: string;
+  profiles: string[];
+}
+
 type AbsoluteBedroomFormProps = {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (bedroom: Bedroom) => void;
   bedRoomTypes: BedRoomType[];
   users: MultiSelectItem[];
-  initialBedroom?: Bedroom;
+  initialBedroom?: Payload;
 };
 
 const AbsoluteBedroomForm: React.FC<AbsoluteBedroomFormProps> = ({
@@ -124,6 +131,7 @@ const AbsoluteBedroomForm: React.FC<AbsoluteBedroomFormProps> = ({
               <MultiSelect
                 options={users}
                 value={bedroom.profiles}
+                defaultValue={bedroom.profiles}
                 onValueChange={(value) =>
                   setBedroom({ ...bedroom, profiles: value })
                 }
@@ -140,7 +148,7 @@ const AbsoluteBedroomForm: React.FC<AbsoluteBedroomFormProps> = ({
           <Button variant='outline' onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit}>
+          <Button onClick={handleSubmit} disabled={!bedroom.name || !bedroom.bedRoomTypeId}>
             {isEditMode ? 'Update Bedroom' : 'Add Bedroom'}
           </Button>
         </div>

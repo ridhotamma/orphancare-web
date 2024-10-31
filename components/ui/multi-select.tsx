@@ -198,11 +198,20 @@ export const MultiSelect = React.forwardRef<
       }
     };
 
-    const renderAvatar = (avatarUrl: string, label: string) => {
+    React.useEffect(() => {
+      setSelectedValues(defaultValue)
+    }, [defaultValue])
+
+    const renderAvatar = (
+      avatarUrl: string | undefined = '',
+      label: string | undefined = ''
+    ) => {
       return (
         <Avatar className='border-2 border-background transition-all ease-in-out duration-200 mr-2 w-8 h-8'>
           <AvatarImage src={avatarUrl as string} alt={label} />
-          <AvatarFallback>{label?.charAt(0)}</AvatarFallback>
+          <AvatarFallback className='bg-gray-400 text-white dark:text-black'>
+            {label?.charAt(0)}
+          </AvatarFallback>
         </Avatar>
       );
     };
@@ -244,7 +253,7 @@ export const MultiSelect = React.forwardRef<
                           <IconComponent className='h-4 w-4 mr-2' />
                         )}
 
-                        {avatarUrl && renderAvatar(avatarUrl, option?.label)}
+                        {renderAvatar(avatarUrl, option?.label)}
 
                         {option?.label}
                         <XCircle
@@ -355,9 +364,8 @@ export const MultiSelect = React.forwardRef<
                       {option.icon && (
                         <option.icon className='mr-2 h-4 w-4 text-muted-foreground' />
                       )}
-                      {option.avatarUrl &&
-                        renderAvatar(option?.avatarUrl, option.label)}
-                        
+                      {renderAvatar(option?.avatarUrl, option.label)}
+
                       <span>{option.label}</span>
                     </CommandItem>
                   );
