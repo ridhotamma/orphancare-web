@@ -1,7 +1,8 @@
 import axios, { AxiosRequestConfig, AxiosInstance, AxiosError } from 'axios';
 import cookieStorage from './storage/cookies';
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL;
+// const baseURL = process.env.NEXT_PUBLIC_API_URL;
+const baseURL = 'https://personwithai.my.id/orphancare/api';
 
 const createAxiosInstance = (): AxiosInstance => {
   const instance = axios.create({
