@@ -16,7 +16,7 @@ interface Bedroom {
   id?: string;
   name: string;
   bedRoomTypeId: string;
-  occupants: string[];
+  profiles: string[];
 }
 
 type AbsoluteBedroomFormProps = {
@@ -39,14 +39,14 @@ const AbsoluteBedroomForm: React.FC<AbsoluteBedroomFormProps> = ({
   const [bedroom, setBedroom] = useState<Bedroom>({
     name: '',
     bedRoomTypeId: '',
-    occupants: [],
+    profiles: [],
   });
 
   useEffect(() => {
     if (isOpen && initialBedroom) {
       setBedroom(initialBedroom);
     } else if (!isOpen) {
-      setBedroom({ name: '', bedRoomTypeId: '', occupants: [] });
+      setBedroom({ name: '', bedRoomTypeId: '', profiles: [] });
     }
   }, [isOpen, initialBedroom]);
 
@@ -118,14 +118,14 @@ const AbsoluteBedroomForm: React.FC<AbsoluteBedroomFormProps> = ({
             </div>
 
             <div className='space-y-2'>
-              <Label htmlFor='occupants' className='text-sm font-medium'>
+              <Label htmlFor='profiles' className='text-sm font-medium'>
                 Occupants
               </Label>
               <MultiSelect
                 options={users}
-                value={bedroom.occupants}
+                value={bedroom.profiles}
                 onValueChange={(value) =>
-                  setBedroom({ ...bedroom, occupants: value })
+                  setBedroom({ ...bedroom, profiles: value })
                 }
                 placeholder='Select Occupants'
                 variant='default'

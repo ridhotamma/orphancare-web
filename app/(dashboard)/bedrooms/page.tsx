@@ -1,64 +1,145 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import BedroomFormDialog from '@/components/bedrooms/bedroom-form-dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { BedDouble, Users, Search, Plus, Eye } from 'lucide-react';
-import { mockBedRooms } from '@/data/mockup/bedroom-mockup';
+import { Users, Search, Plus, Eye } from 'lucide-react';
 import { Profile } from '@/types/profile';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { usePageTitle } from '@/hooks/use-page-title';
-import Link from 'next/link';
-import mockUsers from '@/data/mockup/users-mockup';
 import { BedRoomType, MultiSelectItem } from '@/types/bedroom-type';
-import BedroomFormDialog from '@/components/bedrooms/bedroom-form-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { requests } from '@/lib/api';
+import { BedRoom } from '@/types/bedroom';
+import { User } from '@/types/user';
+import EmptyContainer from '@/components/container/empty-container';
+import NotFoundImage from '@/images/not-found-dashboard.png';
+import Image from 'next/image';
+import LoadingContainer from '@/components/container/loading-container';
+
+interface Payload {
+  id?: string;
+  name: string;
+  bedRoomTypeId: string;
+  profiles: string[];
+}
 
 const BedRoomPage: React.FC = () => {
+  usePageTitle('Bed Rooms');
+
   const [searchQuery, setSearchQuery] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [bedRoomTypes, setBedRoomTypes] = useState<BedRoomType[]>([]);
+  const [bedrooms, setBedrooms] = useState<BedRoom[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const userDropdownList: MultiSelectItem[] = mockUsers
-    .map((user) => ({
-      id: user.id as string,
+  const { toast } = useToast();
+
+  const getBedRoomTypes = async () => {
+    setLoading(true);
+    try {
+      const data = await requests({
+        url: '/admin/bedroom-types',
+        method: 'GET',
+      });
+
+      setBedRoomTypes(data);
+    } catch (error: any) {
+      toast({
+        title: error.error,
+        content: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getBedroomData = async () => {
+    setLoading(true);
+    try {
+      const response = await requests({
+        url: '/admin/bedrooms',
+        method: 'GET',
+      });
+
+      setBedrooms(response.data);
+    } catch (error: any) {
+      toast({
+        title: error.error,
+        content: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getUserData = async () => {
+    setLoading(true);
+    try {
+      const response = await requests({
+        url: '/admin/users',
+        method: 'GET',
+      });
+
+      setUsers(response.data);
+    } catch (error: any) {
+      toast({
+        title: error.error,
+        content: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddBedroom = async (data: Payload) => {
+    setLoading(true);
+    try {
+      await requests({
+        url: '/admin/bedrooms',
+        method: 'POST',
+        data,
+      });
+      toast({
+        title: "Bedroom succesfully added",
+        content: "created succesfully",
+        variant: 'success',
+      });
+      getBedroomData();
+    } catch (error: any) {
+      toast({
+        title: error.error,
+        content: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getBedRoomTypes();
+    getBedroomData();
+    getUserData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const userDropdownList: MultiSelectItem[] = users
+    ?.map((user) => ({
+      id: user.profile?.id as string,
       label: user.profile?.fullName as string,
       value: user.profile?.id as string,
       avatarUrl: user.profile?.profilePicture as string,
     }))
     .filter((user) => user.label);
-
-  const handleAddBedroom = () => {
-    console.log('add bed room');
-  };
-
-  const { toast } = useToast();
-
-  useEffect(() => {
-    const getBedRoomTypes = async () => {
-      try {
-        const data = await requests({
-          url: '/admin/bedroom-types',
-          method: 'GET',
-        });
-
-        setBedRoomTypes(data);
-      } catch (error: any) {
-        toast({
-          title: error.error,
-          content: error.message,
-          variant: 'destructive',
-        });
-      }
-    };
-
-    getBedRoomTypes();
-  }, [toast]);
-
-  usePageTitle('Bed Rooms');
 
   return (
     <div>
@@ -79,68 +160,86 @@ const BedRoomPage: React.FC = () => {
           </Button>
         </div>
       </div>
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-        {mockBedRooms.map((bedroom, index) => (
-          <Card
-            key={index}
-            className='hover:shadow-lg transition-shadow duration-300'
-          >
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>
-                {bedroom.name || `Room ${bedroom.id}`}
-              </CardTitle>
-              <Badge variant='outline'>{bedroom.bedRoomType.name}</Badge>
-            </CardHeader>
-            <CardContent>
-              <div className='flex items-center space-x-4 text-sm text-muted-foreground'>
-                <BedDouble className='h-4 w-4' />
-                <span>{bedroom.bedRoomType.type}</span>
-              </div>
-              <div className='mt-4 flex items-center justify-between'>
-                <div className='flex -space-x-4 hover:-space-x-1'>
-                  {bedroom.profiles?.map((profile: Profile, index: number) => (
-                    <>
-                      {index < 5 && (
+
+      <LoadingContainer loading={loading}>
+        {bedrooms.length > 0 ? (
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+            {bedrooms.map((bedroom, index) => (
+              <Card
+                key={index}
+                className='hover:shadow-lg transition-shadow duration-300'
+              >
+                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                  <CardTitle className='text-sm font-medium'>
+                    {bedroom.name || `Room ${bedroom.id}`}
+                  </CardTitle>
+                  <Badge variant='outline'>{bedroom.bedRoomType.name}</Badge>
+                </CardHeader>
+                <CardContent>
+                  <div className='mt-4 flex items-center justify-between'>
+                    <div className='flex -space-x-4 hover:-space-x-1'>
+                      {bedroom.profiles?.map(
+                        (profile: Profile, index: number) => (
+                          <>
+                            {index < 5 && (
+                              <Avatar
+                                key={index}
+                                className='border-2 border-background transition-all ease-in-out duration-200'
+                              >
+                                <AvatarImage
+                                  src={profile.profilePicture}
+                                  alt={profile.fullName}
+                                />
+                                <AvatarFallback>
+                                  {profile.fullName?.charAt(0)}
+                                </AvatarFallback>
+                              </Avatar>
+                            )}
+                          </>
+                        )
+                      )}
+
+                      {bedroom.profiles && bedroom.profiles?.length > 5 && (
                         <Avatar
                           key={index}
-                          className='border-2 border-background transition-all ease-in-out duration-200'
+                          className='border-2 border-background'
                         >
-                          <AvatarImage
-                            src={profile.profilePicture}
-                            alt={profile.fullName}
-                          />
-                          <AvatarFallback>
-                            {profile.fullName?.charAt(0)}
+                          <AvatarFallback className='bg-blue-400 text-white font-bold'>
+                            {bedroom.profiles.length - 5}+
                           </AvatarFallback>
                         </Avatar>
                       )}
-                    </>
-                  ))}
-
-                  {bedroom.profiles && bedroom.profiles?.length > 5 && (
-                    <Avatar key={index} className='border-2 border-background'>
-                      <AvatarFallback className='bg-blue-400 text-white font-bold'>
-                        {bedroom.profiles.length - 5}+
-                      </AvatarFallback>
-                    </Avatar>
-                  )}
-                </div>
-                <div className='flex items-center space-x-1'>
-                  <Users className='h-4 w-4 text-muted-foreground' />
-                  <span className='text-sm text-muted-foreground'>
-                    {bedroom.profiles?.length}
-                  </span>
-                </div>
-              </div>
-              <Button variant='outline' className='w-full mt-8' asChild>
-                <Link href={`/bedrooms/${bedroom.id}`}>
-                  <Eye className='mr-2 h-4 w-4' /> View Details
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                    </div>
+                    <div className='flex items-center space-x-1'>
+                      <Users className='h-4 w-4 text-muted-foreground' />
+                      <span className='text-sm text-muted-foreground'>
+                        {bedroom.profiles?.length}
+                      </span>
+                    </div>
+                  </div>
+                  <Button variant='outline' className='w-full mt-8' asChild>
+                    <Link href={`/bedrooms/${bedroom.id}`}>
+                      <Eye className='mr-2 h-4 w-4' /> View Details
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <EmptyContainer
+            image={
+              <Image
+                width={300}
+                height={300}
+                src={NotFoundImage}
+                alt='not found users'
+              />
+            }
+            text='Bedrooms not found'
+          />
+        )}
+      </LoadingContainer>
 
       <BedroomFormDialog
         isOpen={isDialogOpen}
