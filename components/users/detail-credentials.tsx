@@ -17,29 +17,21 @@ import {
 } from '@/components/ui/alert-dialog';
 import { PasswordChangeDialog } from '@/components/users/password-change-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { User } from '@/types/user';
+import { Credentials, User } from '@/types/user';
 import { RoleType } from '@/types/enums';
 import { requests } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 
-type Credentials = {
-  id: string;
-  email: string;
-  username: string;
-  active: boolean;
-  isAdmin: boolean;
-};
-
 type DetailCredentialsProps = {
   data: Omit<User, 'profile'>;
   isCareTaker: boolean;
-  onRefresh: () => void
+  onRefresh: () => void;
 };
 
 export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
   data,
   isCareTaker,
-  onRefresh
+  onRefresh,
 }: DetailCredentialsProps) => {
   const { toast } = useToast();
   const [isEditCredentials, setIsEditCredentials] = useState(false);
@@ -52,7 +44,7 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
   const [loadingAction, setLoadingAction] = useState(false);
   const [credentials, setCredentials] = useState<
     Credentials & Omit<User, 'profile'>
-  >({ ...data, isAdmin: data.roles.includes(RoleType.ADMIN) } as Credentials &
+  >({ ...data, isAdmin: data?.roles?.includes(RoleType.ADMIN) } as Credentials &
     Omit<User, 'profile'>);
 
   const router = useRouter();
@@ -75,10 +67,21 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
         description: 'Your credentials have been successfully updated.',
         variant: 'success',
       });
+      onRefresh();
     } catch (error: any) {
+      const errorMessage =
+        error.message ||
+        Object.entries(error)
+          .map((entry) => {
+            const [key, value] = entry;
+            const message = `${key}: ${value}`;
+            return message;
+          })
+          .join(', ');
+
       toast({
         title: 'Something went wrong',
-        description: error.message,
+        description: errorMessage,
         variant: 'destructive',
       });
     } finally {

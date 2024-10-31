@@ -6,6 +6,7 @@ export const mockBedRooms: BedRoom[] = [
   {
     id: '1',
     name: 'Sunshine Room',
+    bedRoomTypeId: 'bedroom-id',
     bedRoomType: {
       id: '52ecb46a-860c-42e0-aa75-a5e77b50b5c1',
       name: 'Double',
@@ -23,6 +24,7 @@ export const mockBedRooms: BedRoom[] = [
       },
       {
         id: '2',
+        bedRoomId: 'bedroom-id',
         fullName: 'Jane Doe',
         profilePicture: 'https://randomuser.me/api/portraits/men/19.jpg',
         createdAt: new Date().toLocaleDateString(),
@@ -30,6 +32,7 @@ export const mockBedRooms: BedRoom[] = [
       },
       {
         id: '3',
+        bedRoomId: 'bedroom-id',
         fullName: 'Ridho Tamma',
         profilePicture: 'https://randomuser.me/api/portraits/men/18.jpg',
         createdAt: new Date().toLocaleDateString(),
@@ -37,6 +40,7 @@ export const mockBedRooms: BedRoom[] = [
       },
       {
         id: '4',
+        bedRoomId: 'bedroom-id',
         fullName: 'Ridho Tamma',
         profilePicture: 'https://randomuser.me/api/portraits/men/18.jpg',
         gender: Gender.FEMALE,
@@ -45,6 +49,7 @@ export const mockBedRooms: BedRoom[] = [
       },
       {
         id: '5',
+        bedRoomId: 'bedroom-id',
         fullName: 'Ridho Tamma',
         profilePicture: 'https://randomuser.me/api/portraits/men/18.jpg',
         gender: Gender.FEMALE,
@@ -53,6 +58,7 @@ export const mockBedRooms: BedRoom[] = [
       },
       {
         id: '6',
+        bedRoomId: 'bedroom-id',
         fullName: 'Ridho Tamma',
         profilePicture: 'https://randomuser.me/api/portraits/men/18.jpg',
         gender: Gender.FEMALE,
@@ -61,6 +67,7 @@ export const mockBedRooms: BedRoom[] = [
       },
       {
         id: '7',
+        bedRoomId: 'bedroom-id',
         fullName: 'Ridho Tamma',
         profilePicture: 'https://randomuser.me/api/portraits/men/18.jpg',
         createdAt: new Date().toLocaleDateString(),
@@ -68,6 +75,7 @@ export const mockBedRooms: BedRoom[] = [
       },
       {
         id: '8',
+        bedRoomId: 'bedroom-id',
         fullName: 'Ridho Tamma',
 
         gender: Gender.FEMALE,
@@ -76,6 +84,7 @@ export const mockBedRooms: BedRoom[] = [
       },
       {
         id: '9',
+        bedRoomId: 'bedroom-id',
         fullName: 'Ridho Tamma',
         profilePicture: 'https://randomuser.me/api/portraits/men/18.jpg',
         createdAt: new Date().toLocaleDateString(),
@@ -88,6 +97,7 @@ export const mockBedRooms: BedRoom[] = [
   {
     id: '2',
     name: 'Sunshine Room',
+    bedRoomTypeId: 'bedroom-type-id',
     bedRoomType: {
       id: '52ecb46a-860c-42e0-aa75-a5e77b50b5c1',
       name: 'Double',
@@ -127,6 +137,7 @@ export const mockBedRooms: BedRoom[] = [
   {
     id: '3',
     name: 'Sunshine Room',
+    bedRoomTypeId: 'bedroom-type-id',
     bedRoomType: {
       id: '1',
       name: 'Double',
@@ -166,6 +177,7 @@ export const mockBedRooms: BedRoom[] = [
   {
     id: '4',
     name: 'Sunshine Room',
+    bedRoomTypeId: 'bedroom-type-id',
     bedRoomType: {
       id: '52ecb46a-860c-42e0-aa75-a5e77b50b5c1',
       name: 'Double',
@@ -205,6 +217,7 @@ export const mockBedRooms: BedRoom[] = [
   {
     id: '5',
     name: 'Sunshine Room',
+    bedRoomTypeId: 'bedroom-type-id',
     bedRoomType: {
       id: '52ecb46a-860c-42e0-aa75-a5e77b50b5c1',
       name: 'Double',
@@ -244,6 +257,7 @@ export const mockBedRooms: BedRoom[] = [
   {
     id: '6',
     name: 'Sunshine Room',
+    bedRoomTypeId: 'bedroom-type-id',
     bedRoomType: {
       id: '52ecb46a-860c-42e0-aa75-a5e77b50b5c1',
       name: 'Double',
@@ -283,6 +297,7 @@ export const mockBedRooms: BedRoom[] = [
   {
     id: '7',
     name: 'Sunshine Room',
+    bedRoomTypeId: 'bedroom-type-id',
     bedRoomType: {
       id: '52ecb46a-860c-42e0-aa75-a5e77b50b5c1',
       name: 'Double',
@@ -322,6 +337,7 @@ export const mockBedRooms: BedRoom[] = [
   {
     id: '8',
     name: 'Sunshine Room',
+    bedRoomTypeId: 'bedroom-type-id',
     bedRoomType: {
       id: '52ecb46a-860c-42e0-aa75-a5e77b50b5c1',
       name: 'Double',

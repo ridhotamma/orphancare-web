@@ -71,6 +71,7 @@ function AutocompleteSearch<T extends object>({
         clearTimeout(searchTimeout.current);
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
   const defaultRenderItem = (item: T, isSelected: boolean) => (

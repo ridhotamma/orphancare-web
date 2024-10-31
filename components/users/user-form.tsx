@@ -372,7 +372,7 @@ const UserForm = <T extends Partial<FormValues>>({
         Object.entries(error)
           .map((entry) => {
             const [key, value] = entry;
-            const message = `${key} ${value}`;
+            const message = `${key}: ${value}`;
             return message;
           })
           .join(', ');

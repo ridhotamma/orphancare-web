@@ -14,3 +14,11 @@ export type User = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type Credentials = {
+  id: string;
+  email: string;
+  username: string;
+  active: boolean;
+  isAdmin: boolean;
+};

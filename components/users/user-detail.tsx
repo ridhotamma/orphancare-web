@@ -76,7 +76,7 @@ const UserDetailPage: React.FC<UserDetailProps> = ({
       const response = await requests({
         url: `/admin/users/${userId}`,
       });
-      setUserCredential(response.data);
+      setUserCredential(response);
     } catch (error: any) {
       toast({
         title: 'Cannot refresh documents',
