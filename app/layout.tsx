@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 
 import './globals.css';
 import NProgressProvider from '@/provider/nprogress.provider';
+import Script from 'next/script';
 
 const nunito = Nunito({
   subsets: ['latin'],
@@ -14,6 +15,9 @@ const nunito = Nunito({
 export const metadata: Metadata = {
   title: 'Orphancare - PSAA Annajah Database Management System',
   description: 'PSAA Annajah Database Management System Dashboard',
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({
@@ -23,10 +27,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en' suppressHydrationWarning>
-      <head>
-        <script src='https://smallpdf.com/api/embed-widget.js' async></script>
-      </head>
       <body className={`${nunito.className} antialiased overflow-hidden`}>
+        <Script
+          src='https://smallpdf.com/api/embed-widget.js'
+          strategy='afterInteractive'
+        />
         <NProgressProvider>
           <ThemeProvider
             attribute='class'
