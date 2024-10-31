@@ -308,6 +308,7 @@ const HorizontalAddDocumentDialog = ({
                   className='w-full'
                   placeholder='Search users'
                   searchPlaceholder='Search users...'
+                  emptyMessage='User not found'
                   renderItem={(user) => {
                     return (
                       <div className='flex items-center gap-4'>
