@@ -90,16 +90,16 @@ const AutocompleteSelect = ({
             ) : (
               <>
                 <CommandEmpty>{emptyMessage}</CommandEmpty>
-                <CommandList>
-                  {items.map((item) => (
+                <CommandList className='w-full lg:min-w-[300px]'>
+                  {items.map((item, index) => (
                     <CommandItem
-                      key={item.value}
+                      key={index}
                       onSelect={() => {
                         setSelectedItem(item);
                         onChange?.(item);
                         setOpen(false);
                       }}
-                      disabled={disabled} // Added disabled to CommandItem
+                      disabled={disabled}
                     >
                       <Check
                         className={cn(

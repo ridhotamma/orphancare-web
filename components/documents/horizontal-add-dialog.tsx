@@ -8,11 +8,14 @@ import { useToast } from '@/hooks/use-toast';
 import { requests } from '@/lib/api';
 import { DocumentType } from '@/types/document-type';
 import { User } from '@/types/user';
-import AutocompleteSelect from '../ui/autocomplete-select';
+import AutocompleteSelect from '@/components/ui/autocomplete-select';
+import AutocompleteSearch from '@/components/ui/autocomplete-search';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface HorizontalAddDocumentDialogProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess: () => void;
 }
 
 type SelectItem = {
@@ -29,15 +32,14 @@ type DocumentPayload = {
 const HorizontalAddDocumentDialog = ({
   isOpen,
   onClose,
+  onSuccess
 }: HorizontalAddDocumentDialogProps) => {
   const [selectedDocumentType, setSelectedDocumentType] =
     useState<SelectItem | null>(null);
-  const [selectedUser, setSelectedUser] = useState<SelectItem | null>(null);
-  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [loadingDocumentTypes, setLoadingDocumentTypes] = useState(false);
   const [loadingUpload, setLoadingUpload] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
-  const [userList, setUserList] = useState<SelectItem[]>([]);
   const [documentTypes, setDocumentTypes] = useState<SelectItem[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [documentPayload, setDocumentPayload] =
@@ -45,6 +47,8 @@ const HorizontalAddDocumentDialog = ({
 
   const dialogRef = React.useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  const UserAutoComplete = AutocompleteSearch<User>;
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
@@ -86,7 +90,7 @@ const HorizontalAddDocumentDialog = ({
     try {
       setLoadingSubmit(true);
       await requests({
-        url: `/public/users/${selectedUser?.value}/documents`,
+        url: `/public/users/${selectedUser?.id}/documents`,
         method: 'POST',
         data: documentPayload,
       });
@@ -97,7 +101,7 @@ const HorizontalAddDocumentDialog = ({
         variant: 'success',
       });
       handleBeforeClose();
-      onClose();
+      onSuccess();
     } catch (error: any) {
       toast({
         title: 'Cannot submit document',
@@ -119,7 +123,6 @@ const HorizontalAddDocumentDialog = ({
 
   const handleUserSearch = async (searchTerm: string) => {
     try {
-      setLoadingUsers(true);
       const response = await requests({
         url: '/admin/users',
         method: 'GET',
@@ -128,12 +131,7 @@ const HorizontalAddDocumentDialog = ({
         },
       });
 
-      setUserList(
-        response.data.map((user: User) => ({
-          value: user.id,
-          label: user.profile?.fullName,
-        }))
-      );
+      return response.data;
     } catch (error: any) {
       if (error.status !== 404) {
         toast({
@@ -142,8 +140,6 @@ const HorizontalAddDocumentDialog = ({
           variant: 'destructive',
         });
       }
-    } finally {
-      setLoadingUsers(false);
     }
   };
 
@@ -244,7 +240,7 @@ const HorizontalAddDocumentDialog = ({
       {/* Dialog */}
       <div
         ref={dialogRef}
-        className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full lg:w-[70%] max-h-[90vh] bg-white dark:bg-gray-900 rounded-lg shadow-xl z-50 overflow-hidden'
+        className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full lg:w-[70%] max-h-[90vh] bg-white dark:bg-gray-900 rounded-lg shadow-xl z-50 overflow-auto'
       >
         <div className='flex flex-col md:flex-row h-full'>
           {/* Left side - File preview */}
@@ -303,14 +299,36 @@ const HorizontalAddDocumentDialog = ({
               </div>
               <div className='space-y-2'>
                 <Label htmlFor='user'>Assign User</Label>
-                <AutocompleteSelect
-                  items={userList}
+                <UserAutoComplete
+                  onSearch={handleUserSearch}
+                  getId={(user) => user.id}
+                  renderValue={(user) => user.profile?.fullName as string}
                   value={selectedUser}
-                  onChange={setSelectedUser}
-                  isLoading={loadingUsers}
-                  searchPlaceholder='Search user...'
-                  placeholder='Select user'
+                  onChange={(user) => setSelectedUser(user)}
                   className='w-full'
+                  placeholder='Search users'
+                  searchPlaceholder='Search users...'
+                  renderItem={(user) => {
+                    return (
+                      <div className='flex items-center gap-4'>
+                        <Avatar className='h-8 w-8'>
+                          <AvatarImage
+                            src={user.profile?.profilePicture}
+                            alt={user.username}
+                          />
+                          <AvatarFallback>
+                            {user.profile?.fullName?.[0].toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className='flex flex-col'>
+                          <span>{user.profile?.fullName}</span>
+                          <span className='text-gray-500 text-xs'>
+                            {user.email}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  }}
                 />
               </div>
               <div className='space-y-2'>

@@ -223,10 +223,12 @@ const DocumentList: React.FC<DocumentListProps> = ({
       <HorizontalAddDocumentDialog
         isOpen={isAddDialogOpen}
         onClose={() => {
+          setIsAddDialogOpen(false);
+        }}
+        onSuccess={() => {
           setSearchQuery('');
           setFilterCategory(null);
           setFilterUser(null);
-          setIsAddDialogOpen(false);
           onSearch('', {});
         }}
       />
