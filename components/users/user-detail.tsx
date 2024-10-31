@@ -94,7 +94,7 @@ const UserDetailPage: React.FC<UserDetailProps> = ({
       const response = await requests({
         url: `/public/profiles/${userId}`,
       });
-      setUserProfile(response.data);
+      setUserProfile(response);
     } catch (error: any) {
       toast({
         title: 'Cannot refresh documents',
