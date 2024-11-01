@@ -127,6 +127,8 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
         description: error?.message,
         variant: 'destructive',
       });
+    } finally {
+      setLoadingAction(false)
     }
   };
 

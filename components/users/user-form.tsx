@@ -153,12 +153,136 @@ const UserForm = <T extends Partial<FormValues>>({
     value: AutocompleteItem | null
   ) => {
     if (addressType === 'user') {
-      setUserAddress((prev) => ({ ...prev, [field]: value }));
+      switch (field) {
+        case 'province':
+          setUserAddress((prev) => ({
+            ...prev,
+            province: value,
+            regency: null,
+            district: null,
+            village: null
+          }));
+          form.setValue('address.regency', '');
+          form.setValue('address.district', '');
+          form.setValue('address.village', '');
+          setRegencies([]);
+          setDistricts([]);
+          setVillages([]);
+          break;
+        case 'regency':
+          setUserAddress((prev) => ({
+            ...prev,
+            regency: value,
+            district: null,
+            village: null
+          }));
+          form.setValue('address.district', '');
+          form.setValue('address.village', '');
+          setDistricts([]);
+          setVillages([]);
+          break;
+        case 'district':
+          setUserAddress((prev) => ({
+            ...prev,
+            district: value,
+            village: null
+          }));
+          form.setValue('address.village', '');
+          setVillages([]);
+          break;
+        case 'village':
+          setUserAddress((prev) => ({
+            ...prev,
+            village: value
+          }));
+          break;
+      }
+  
       if (useChildAddress) {
-        setGuardianAddress((prev) => ({ ...prev, [field]: value }));
+        switch (field) {
+          case 'province':
+            setGuardianAddress((prev) => ({
+              ...prev,
+              province: value,
+              regency: null,
+              district: null,
+              village: null
+            }));
+            form.setValue('guardianAddress.regency', '');
+            form.setValue('guardianAddress.district', '');
+            form.setValue('guardianAddress.village', '');
+            break;
+          case 'regency':
+            setGuardianAddress((prev) => ({
+              ...prev,
+              regency: value,
+              district: null,
+              village: null
+            }));
+            form.setValue('guardianAddress.district', '');
+            form.setValue('guardianAddress.village', '');
+            break;
+          case 'district':
+            setGuardianAddress((prev) => ({
+              ...prev,
+              district: value,
+              village: null
+            }));
+            form.setValue('guardianAddress.village', '');
+            break;
+          case 'village':
+            setGuardianAddress((prev) => ({
+              ...prev,
+              village: value
+            }));
+            break;
+        }
       }
     } else {
-      setGuardianAddress((prev) => ({ ...prev, [field]: value }));
+      switch (field) {
+        case 'province':
+          setGuardianAddress((prev) => ({
+            ...prev,
+            province: value,
+            regency: null,
+            district: null,
+            village: null
+          }));
+          form.setValue('guardianAddress.regency', '');
+          form.setValue('guardianAddress.district', '');
+          form.setValue('guardianAddress.village', '');
+          setRegencies([]);
+          setDistricts([]);
+          setVillages([]);
+          break;
+        case 'regency':
+          setGuardianAddress((prev) => ({
+            ...prev,
+            regency: value,
+            district: null,
+            village: null
+          }));
+          form.setValue('guardianAddress.district', '');
+          form.setValue('guardianAddress.village', '');
+          setDistricts([]);
+          setVillages([]);
+          break;
+        case 'district':
+          setGuardianAddress((prev) => ({
+            ...prev,
+            district: value,
+            village: null
+          }));
+          form.setValue('guardianAddress.village', '');
+          setVillages([]);
+          break;
+        case 'village':
+          setGuardianAddress((prev) => ({
+            ...prev,
+            village: value
+          }));
+          break;
+      }
     }
   };
 
