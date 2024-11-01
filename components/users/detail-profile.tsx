@@ -41,13 +41,13 @@ type AddressState = {
 type DetailProfileProps = {
   data?: Profile;
   credentials: Omit<User, 'profile'>;
-  onRefresh: () => void
+  onRefresh: () => void;
 };
 
 export const DetailProfile: React.FC<DetailProfileProps> = ({
   data,
   credentials,
-  onRefresh
+  onRefresh,
 }: DetailProfileProps) => {
   const { toast } = useToast();
   const [isEditProfile, setIsEditProfile] = useState<boolean>(false);
@@ -129,7 +129,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
             : null,
         } as Profile,
       });
-      onRefresh()
+      onRefresh();
       setIsEditProfile(false);
       toast({
         title: 'Profile updated',
@@ -306,26 +306,177 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
     value: AutocompleteItem | null
   ) => {
     if (addressType === 'user') {
-      setUserAddress((prev) => ({ ...prev, [field]: value }));
-      setProfile((prev) => ({
-        ...prev!,
-        address: {
-          ...prev?.address,
-          [field]: value?.label || '',
-        },
-      }));
+      // Reset child fields based on which field changed
+      switch (field) {
+        case 'province':
+          setUserAddress((prev) => ({
+            ...prev,
+            province: value,
+            regency: null,
+            district: null,
+            village: null,
+          }));
+          setProfile((prev) => ({
+            ...prev!,
+            address: {
+              ...prev?.address,
+              province: value?.label || '',
+              regency: '',
+              district: '',
+              village: '',
+            },
+          }));
+          // Clear options
+          setRegencies([]);
+          setDistricts([]);
+          setVillages([]);
+          break;
+
+        case 'regency':
+          setUserAddress((prev) => ({
+            ...prev,
+            regency: value,
+            district: null,
+            village: null,
+          }));
+          setProfile((prev) => ({
+            ...prev!,
+            address: {
+              ...prev?.address,
+              regency: value?.label || '',
+              district: '',
+              village: '',
+            },
+          }));
+          // Clear options
+          setDistricts([]);
+          setVillages([]);
+          break;
+
+        case 'district':
+          setUserAddress((prev) => ({
+            ...prev,
+            district: value,
+            village: null,
+          }));
+          setProfile((prev) => ({
+            ...prev!,
+            address: {
+              ...prev?.address,
+              district: value?.label || '',
+              village: '',
+            },
+          }));
+          // Clear options
+          setVillages([]);
+          break;
+
+        case 'village':
+          setUserAddress((prev) => ({
+            ...prev,
+            village: value,
+          }));
+          setProfile((prev) => ({
+            ...prev!,
+            address: {
+              ...prev?.address,
+              village: value?.label || '',
+            },
+          }));
+          break;
+      }
     } else {
-      setGuardianAddress((prev) => ({ ...prev, [field]: value }));
-      setProfile((prev) => ({
-        ...prev!,
-        guardian: {
-          ...prev?.guardian,
-          address: {
-            ...prev?.guardian!.address,
-            [field]: value?.label || '',
-          },
-        } as Guardian,
-      }));
+      // Guardian address changes
+      switch (field) {
+        case 'province':
+          setGuardianAddress((prev) => ({
+            ...prev,
+            province: value,
+            regency: null,
+            district: null,
+            village: null,
+          }));
+          setProfile((prev) => ({
+            ...prev!,
+            guardian: {
+              ...prev?.guardian,
+              address: {
+                ...prev?.guardian!.address,
+                province: value?.label || '',
+                regency: '',
+                district: '',
+                village: '',
+              },
+            } as Guardian,
+          }));
+          // Clear options
+          setRegencies([]);
+          setDistricts([]);
+          setVillages([]);
+          break;
+
+        case 'regency':
+          setGuardianAddress((prev) => ({
+            ...prev,
+            regency: value,
+            district: null,
+            village: null,
+          }));
+          setProfile((prev) => ({
+            ...prev!,
+            guardian: {
+              ...prev?.guardian,
+              address: {
+                ...prev?.guardian!.address,
+                regency: value?.label || '',
+                district: '',
+                village: '',
+              },
+            } as Guardian,
+          }));
+          // Clear options
+          setDistricts([]);
+          setVillages([]);
+          break;
+
+        case 'district':
+          setGuardianAddress((prev) => ({
+            ...prev,
+            district: value,
+            village: null,
+          }));
+          setProfile((prev) => ({
+            ...prev!,
+            guardian: {
+              ...prev?.guardian,
+              address: {
+                ...prev?.guardian!.address,
+                district: value?.label || '',
+                village: '',
+              },
+            } as Guardian,
+          }));
+          // Clear options
+          setVillages([]);
+          break;
+
+        case 'village':
+          setGuardianAddress((prev) => ({
+            ...prev,
+            village: value,
+          }));
+          setProfile((prev) => ({
+            ...prev!,
+            guardian: {
+              ...prev?.guardian,
+              address: {
+                ...prev?.guardian!.address,
+                village: value?.label || '',
+              },
+            } as Guardian,
+          }));
+          break;
+      }
     }
   };
 

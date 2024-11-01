@@ -175,7 +175,7 @@ const DashboardPage = () => {
               <Home className='h-4 w-4 text-purple-500' />
             </CardHeader>
             <CardContent>
-              <div className='text-3xl font-bold'>{profile.adminCount}</div>
+              <div className='text-3xl font-bold'>{profile.careTakerCount}</div>
               <p className='text-xs text-gray-500 mt-1'>
                 {profile.careTakerAdminCount} Orang Sebagai Administrator
               </p>
