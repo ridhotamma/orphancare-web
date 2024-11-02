@@ -37,6 +37,7 @@ import { GuardianType } from '@/types/guardian-type';
 import { BedRoom } from '@/types/bedroom';
 import { RoleType } from '@/types/enums';
 import AutocompleteSelect from '../ui/autocomplete-select';
+import { OrphanType } from '@/types/user';
 
 const addressSchema = z.object({
   street: z.string().optional(),
@@ -48,7 +49,11 @@ const addressSchema = z.object({
 });
 
 const formSchema = z.object({
-  username: z.string().min(3).max(20),
+  username: z
+    .string()
+    .min(3, 'Username must be at least 3 characters')
+    .max(20, 'Username must not exceed 20 characters')
+    .regex(/^[^\s]+$/, 'Username cannot contain spaces'),
   password: z
     .string({
       message: 'Password is required',
@@ -75,6 +80,23 @@ const formSchema = z.object({
   guardianPhoneNumber: z.string().optional(),
   address: addressSchema.optional(),
   guardianAddress: addressSchema.optional(),
+  kkNumber: z
+    .string()
+    .length(16, { message: 'KK Number must be exactly 16 digits' }),
+  nikNumber: z
+    .string()
+    .length(16, { message: 'NIK must be exactly 16 digits' }),
+  orphanStatus: z.enum(
+    [
+      OrphanType.FATHERLESS,
+      OrphanType.MOTHERLESS,
+      OrphanType.BOTH_DECEASED,
+      OrphanType.POOR,
+    ],
+    {
+      required_error: 'Please select an orphan status',
+    }
+  ),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -139,6 +161,13 @@ const UserForm = <T extends Partial<FormValues>>({
     village: null,
   });
 
+  const orphanStatusOptions = [
+    { value: OrphanType.FATHERLESS, label: 'Yatim' },
+    { value: OrphanType.MOTHERLESS, label: 'Piatu' },
+    { value: OrphanType.BOTH_DECEASED, label: 'Yatim Piatu' },
+    { value: OrphanType.POOR, label: 'Dhuafa' },
+  ] as const;
+
   const { toast } = useToast();
   const router = useRouter();
   const params = useParams();
@@ -160,7 +189,7 @@ const UserForm = <T extends Partial<FormValues>>({
             province: value,
             regency: null,
             district: null,
-            village: null
+            village: null,
           }));
           form.setValue('address.regency', '');
           form.setValue('address.district', '');
@@ -174,7 +203,7 @@ const UserForm = <T extends Partial<FormValues>>({
             ...prev,
             regency: value,
             district: null,
-            village: null
+            village: null,
           }));
           form.setValue('address.district', '');
           form.setValue('address.village', '');
@@ -185,7 +214,7 @@ const UserForm = <T extends Partial<FormValues>>({
           setUserAddress((prev) => ({
             ...prev,
             district: value,
-            village: null
+            village: null,
           }));
           form.setValue('address.village', '');
           setVillages([]);
@@ -193,11 +222,11 @@ const UserForm = <T extends Partial<FormValues>>({
         case 'village':
           setUserAddress((prev) => ({
             ...prev,
-            village: value
+            village: value,
           }));
           break;
       }
-  
+
       if (useChildAddress) {
         switch (field) {
           case 'province':
@@ -206,7 +235,7 @@ const UserForm = <T extends Partial<FormValues>>({
               province: value,
               regency: null,
               district: null,
-              village: null
+              village: null,
             }));
             form.setValue('guardianAddress.regency', '');
             form.setValue('guardianAddress.district', '');
@@ -217,7 +246,7 @@ const UserForm = <T extends Partial<FormValues>>({
               ...prev,
               regency: value,
               district: null,
-              village: null
+              village: null,
             }));
             form.setValue('guardianAddress.district', '');
             form.setValue('guardianAddress.village', '');
@@ -226,14 +255,14 @@ const UserForm = <T extends Partial<FormValues>>({
             setGuardianAddress((prev) => ({
               ...prev,
               district: value,
-              village: null
+              village: null,
             }));
             form.setValue('guardianAddress.village', '');
             break;
           case 'village':
             setGuardianAddress((prev) => ({
               ...prev,
-              village: value
+              village: value,
             }));
             break;
         }
@@ -246,7 +275,7 @@ const UserForm = <T extends Partial<FormValues>>({
             province: value,
             regency: null,
             district: null,
-            village: null
+            village: null,
           }));
           form.setValue('guardianAddress.regency', '');
           form.setValue('guardianAddress.district', '');
@@ -260,7 +289,7 @@ const UserForm = <T extends Partial<FormValues>>({
             ...prev,
             regency: value,
             district: null,
-            village: null
+            village: null,
           }));
           form.setValue('guardianAddress.district', '');
           form.setValue('guardianAddress.village', '');
@@ -271,7 +300,7 @@ const UserForm = <T extends Partial<FormValues>>({
           setGuardianAddress((prev) => ({
             ...prev,
             district: value,
-            village: null
+            village: null,
           }));
           form.setValue('guardianAddress.village', '');
           setVillages([]);
@@ -279,7 +308,7 @@ const UserForm = <T extends Partial<FormValues>>({
         case 'village':
           setGuardianAddress((prev) => ({
             ...prev,
-            village: value
+            village: value,
           }));
           break;
       }
@@ -434,6 +463,7 @@ const UserForm = <T extends Partial<FormValues>>({
         ...data,
         roles: roles,
         careTaker: careTakerForm,
+        guardianTypeId: data.guardianTypeId,
         address: {
           ...data.address,
           provinceDetail: {
@@ -475,7 +505,6 @@ const UserForm = <T extends Partial<FormValues>>({
             },
           },
           phoneNumber: data.guardianPhoneNumber,
-          guardianTypeId: data.guardianTypeId,
         },
       };
 
@@ -794,6 +823,96 @@ const UserForm = <T extends Partial<FormValues>>({
                   </FormItem>
                 )}
               />
+              {!careTakerForm && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name='kkNumber'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>KK Number</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder='Enter 16-digit KK Number'
+                            {...field}
+                            maxLength={16}
+                            pattern='\d*'
+                            onChange={(e) => {
+                              const value = e.target.value.replace(
+                                /[^\d]/g,
+                                ''
+                              );
+                              if (value.length <= 16) {
+                                field.onChange(value);
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name='nikNumber'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>NIK</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder='Enter 16-digit NIK'
+                            {...field}
+                            maxLength={16}
+                            pattern='\d*'
+                            onChange={(e) => {
+                              const value = e.target.value.replace(
+                                /[^\d]/g,
+                                ''
+                              );
+                              if (value.length <= 16) {
+                                field.onChange(value);
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name='orphanStatus'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Orphan Status</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder='Select orphan status' />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {orphanStatusOptions.map((status) => {
+                              return (
+                                <SelectItem
+                                  key={status.value}
+                                  value={status.value}
+                                >
+                                  {status.label}
+                                </SelectItem>
+                              );
+                            })}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
               <FormField
                 control={form.control}
                 name='birthday'

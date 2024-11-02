@@ -22,3 +22,10 @@ export type Credentials = {
   active: boolean;
   isAdmin: boolean;
 };
+
+export enum OrphanType {
+  FATHERLESS = 'FATHERLESS',
+  MOTHERLESS = 'MOTHERLESS',
+  BOTH_DECEASED = 'BOTH_DECEASED',
+  POOR = 'POOR',
+}
