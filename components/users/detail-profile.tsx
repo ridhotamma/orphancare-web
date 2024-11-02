@@ -23,8 +23,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { requests } from '@/lib/api';
 import { BedRoom } from '@/types/bedroom';
-import { User } from '@/types/user';
+import { OrphanType, User } from '@/types/user';
 import { Guardian } from '@/types/guardian';
+import { GuardianType } from '@/types/guardian-type';
 
 type AutocompleteItem = {
   value: string;
@@ -58,6 +59,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
   const [districts, setDistricts] = useState<AutocompleteItem[]>([]);
   const [villages, setVillages] = useState<AutocompleteItem[]>([]);
   const [bedRooms, setBedrooms] = useState([]);
+  const [guardianTypes, setGuardianTypes] = useState([]);
 
   const [userAddress, setUserAddress] = useState<AddressState>({
     province: null,
@@ -74,6 +76,13 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
   });
 
   const [profile, setProfile] = useState<Profile | null>(data as Profile);
+
+  const orphanStatusOptions = [
+    { value: OrphanType.FATHERLESS, label: 'Yatim' },
+    { value: OrphanType.MOTHERLESS, label: 'Piatu' },
+    { value: OrphanType.BOTH_DECEASED, label: 'Yatim Piatu' },
+    { value: OrphanType.POOR, label: 'Dhuafa' },
+  ] as const;
 
   const handleSaveProfile = async () => {
     try {
@@ -161,7 +170,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
       const data = await requests({
         url: `/address/provinces/${provinceId}/regencies`,
       });
-      const result = data.map((item: Record<string, any>) => ({
+      const result = data?.map((item: Record<string, any>) => ({
         value: item.id,
         label: item.name,
       }));
@@ -182,7 +191,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
       const data = await requests({
         url: `/address/regencies/${regencyId}/districts`,
       });
-      const result = data.map((item: Record<string, any>) => ({
+      const result = data?.map((item: Record<string, any>) => ({
         value: item.id,
         label: item.name,
       }));
@@ -203,7 +212,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
       const data = await requests({
         url: `/address/districts/${districtId}/villages`,
       });
-      const result = data.map((item: Record<string, any>) => ({
+      const result = data?.map((item: Record<string, any>) => ({
         value: item.id,
         label: item.name,
       }));
@@ -219,6 +228,20 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
   };
 
   useEffect(() => {
+    const getGuardianTypes = async () => {
+      try {
+        const data = await requests({
+          url: '/admin/guardian-types',
+        });
+        setGuardianTypes(data);
+      } catch (error: any) {
+        toast({
+          title: error.message,
+          variant: 'destructive',
+        });
+      }
+    };
+
     const getBedRooms = async () => {
       try {
         const data = await requests({
@@ -241,7 +264,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
         const data = await requests({
           url: '/address/provinces',
         });
-        const result = data.map((item: Record<string, any>) => ({
+        const result = data?.map((item: Record<string, any>) => ({
           value: item.id,
           label: item.name,
         }));
@@ -256,6 +279,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
 
     getProvinces();
     getBedRooms();
+    getGuardianTypes();
   }, [toast]);
 
   useEffect(() => {
@@ -774,6 +798,75 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                 </SelectContent>
               </Select>
             </div>
+            {!data?.careTaker && (
+              <>
+                <div>
+                  <Label htmlFor='kkNumber'>KK Number</Label>
+                  <Input
+                    id='kkNumber'
+                    value={profile?.kkNumber || ''}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^\d]/g, '');
+                      if (value.length <= 16) {
+                        setProfile(
+                          (prev) => ({ ...prev, kkNumber: value } as Profile)
+                        );
+                      }
+                    }}
+                    maxLength={16}
+                    pattern='\d*'
+                    disabled={!isEditProfile}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor='nikNumber'>NIK</Label>
+                  <Input
+                    id='nikNumber'
+                    value={profile?.nikNumber || ''}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^\d]/g, '');
+                      if (value.length <= 16) {
+                        setProfile(
+                          (prev) => ({ ...prev, nikNumber: value } as Profile)
+                        );
+                      }
+                    }}
+                    maxLength={16}
+                    pattern='\d*'
+                    disabled={!isEditProfile}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor='orphanStatus'>Orphan Status</Label>
+                  <Select
+                    disabled={!isEditProfile}
+                    value={profile?.orphanStatus}
+                    onValueChange={(value) =>
+                      setProfile(
+                        (prev) =>
+                          ({
+                            ...prev,
+                            orphanStatus: value as OrphanType,
+                          } as Profile)
+                      )
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder='Select orphan status' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {orphanStatusOptions.map((status) => (
+                        <SelectItem key={status.value} value={status.value}>
+                          {status.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            )}
             <div>
               <Label htmlFor='bedroom'>Bedroom</Label>
               <Select
@@ -927,6 +1020,38 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                     inputComponent={Input}
                     disabled={!isEditProfile}
                   />
+                </div>
+                <div>
+                  <Label htmlFor='guardianType'>Guardian Type</Label>
+                  <Select
+                    disabled={!isEditProfile}
+                    value={profile?.guardianTypeId}
+                    onValueChange={(value) =>
+                      setProfile(
+                        (prev) =>
+                          ({
+                            ...prev,
+                            guardian: {
+                              ...prev?.guardian,
+                              guardianType: guardianTypes.find(
+                                (type: GuardianType) => type.id === value
+                              ),
+                            } as Guardian,
+                          } as Profile)
+                      )
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder='Select guardian type' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {guardianTypes.map((type: GuardianType) => (
+                        <SelectItem key={type.id} value={type.id}>
+                          {type.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </CardContent>

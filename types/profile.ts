@@ -29,4 +29,5 @@ export type Profile = {
   createdAt?: string;
   updatedAt?: string;
   orphanTypeText?: string;
+  orphanStatus: OrphanType;
 };

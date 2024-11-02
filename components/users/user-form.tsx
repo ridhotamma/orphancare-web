@@ -82,10 +82,12 @@ const formSchema = z.object({
   guardianAddress: addressSchema.optional(),
   kkNumber: z
     .string()
-    .length(16, { message: 'KK Number must be exactly 16 digits' }),
+    .length(16, { message: 'KK Number must be exactly 16 digits' })
+    .optional(),
   nikNumber: z
     .string()
-    .length(16, { message: 'NIK must be exactly 16 digits' }),
+    .length(16, { message: 'NIK must be exactly 16 digits' })
+    .optional(),
   orphanStatus: z.enum(
     [
       OrphanType.FATHERLESS,
@@ -96,7 +98,7 @@ const formSchema = z.object({
     {
       required_error: 'Please select an orphan status',
     }
-  ),
+  ).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -330,7 +332,7 @@ const UserForm = <T extends Partial<FormValues>>({
       const data = await requests({
         url: `/address/provinces/${provinceId}/regencies`,
       });
-      const result = data.map((item: Record<string, any>) => ({
+      const result = data?.map((item: Record<string, any>) => ({
         value: item.id,
         label: item.name,
       }));
@@ -351,7 +353,7 @@ const UserForm = <T extends Partial<FormValues>>({
       const data = await requests({
         url: `/address/regencies/${regencyId}/districts`,
       });
-      const result = data.map((item: Record<string, any>) => ({
+      const result = data?.map((item: Record<string, any>) => ({
         value: item.id,
         label: item.name,
       }));
@@ -372,7 +374,7 @@ const UserForm = <T extends Partial<FormValues>>({
       const data = await requests({
         url: `/address/districts/${districtId}/villages`,
       });
-      const result = data.map((item: Record<string, any>) => ({
+      const result = data?.map((item: Record<string, any>) => ({
         value: item.id,
         label: item.name,
       }));
@@ -388,7 +390,7 @@ const UserForm = <T extends Partial<FormValues>>({
   };
 
   useEffect(() => {
-    const getGuardians = async () => {
+    const getGuardianTypes = async () => {
       try {
         const data = await requests({
           url: '/admin/guardian-types',
@@ -424,7 +426,7 @@ const UserForm = <T extends Partial<FormValues>>({
         const data = await requests({
           url: '/address/provinces',
         });
-        const result = data.map((item: Record<string, any>) => ({
+        const result = data?.map((item: Record<string, any>) => ({
           value: item.id,
           label: item.name,
         }));
@@ -438,7 +440,7 @@ const UserForm = <T extends Partial<FormValues>>({
     };
 
     getBedRooms();
-    getGuardians();
+    getGuardianTypes();
     getProvinces();
   }, [toast]);
 
