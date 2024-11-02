@@ -176,6 +176,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
                       <AvatarImage
                         src={doc.owner?.profilePicture}
                         alt={doc.owner?.fullName}
+                        className='object-cover'
                       />
                       <AvatarFallback className='text-xs'>
                         {doc.owner?.fullName?.slice(0, 2).toUpperCase()}

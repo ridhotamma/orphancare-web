@@ -7,7 +7,8 @@ import { useToast } from '@/hooks/use-toast';
 import { requests } from '@/lib/api';
 import { BedRoom } from '@/types/bedroom';
 import { User } from '@/types/user';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 interface Payload {
   id?: string;
@@ -22,6 +23,8 @@ const BedRoomDetailPage = ({ params }: { params: { id: string } }) => {
   const [loading, setLoading] = useState(false);
   const [bedroomDetails, setBedroomDetails] = useState<BedRoom | null>(null);
   const [users, setUsers] = useState<User[]>([]);
+
+  const router = useRouter();
   const { toast } = useToast();
 
   const handleEditBedroom = async (payload: Payload) => {
@@ -78,6 +81,32 @@ const BedRoomDetailPage = ({ params }: { params: { id: string } }) => {
     }
   };
 
+  const deleteBedroom = async (bedRoom: BedRoom | null) => {
+    setLoading(true);
+    try {
+      await requests({
+        url: `/admin/bedrooms/${bedRoom?.id}`,
+        method: 'DELETE',
+      });
+
+      toast({
+        title: 'Bedroom deleted succesfully',
+        description: 'Bedroom deletion is success',
+        variant: 'success',
+      });
+
+      router.replace('/bedrooms');
+    } catch (error: any) {
+      toast({
+        title: error.error,
+        content: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getUserData = async () => {
     setLoading(true);
     try {
@@ -114,6 +143,7 @@ const BedRoomDetailPage = ({ params }: { params: { id: string } }) => {
         bedRoom={bedroomDetails}
         onEdit={handleEditBedroom}
         users={users}
+        onDelete={deleteBedroom}
       />
     </LoadingContainer>
   );

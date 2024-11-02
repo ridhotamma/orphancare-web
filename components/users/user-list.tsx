@@ -259,6 +259,7 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
                         <AvatarImage
                           src={user.profile?.profilePicture}
                           alt={user.username}
+                          className='object-cover'
                         />
                         <AvatarFallback>
                           {user.username.slice(0, 2).toUpperCase()}

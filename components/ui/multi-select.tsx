@@ -208,7 +208,7 @@ export const MultiSelect = React.forwardRef<
     ) => {
       return (
         <Avatar className='border-2 border-background transition-all ease-in-out duration-200 mr-2 w-8 h-8'>
-          <AvatarImage src={avatarUrl as string} alt={label} />
+          <AvatarImage className='object-cover' src={avatarUrl as string} alt={label} />
           <AvatarFallback className='bg-gray-400 text-white dark:text-black'>
             {label?.charAt(0)}
           </AvatarFallback>

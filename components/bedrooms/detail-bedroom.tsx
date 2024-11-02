@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Edit2, Users } from 'lucide-react';
+import { ArrowLeft, Edit2, Trash2, Users } from 'lucide-react';
 import { BedRoom } from '@/types/bedroom';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -11,11 +11,22 @@ import { BedRoomType, MultiSelectItem } from '@/types/bedroom-type';
 import { requests } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { User } from '@/types/user';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface BedRoomDetailProps {
   bedRoom: BedRoom | null;
-  onEdit: (bedroom: Payload) => void
-  users: User[]
+  onEdit: (bedroom: Payload) => void;
+  users: User[];
+  onDelete: (bedRoom: BedRoom | null) => void;
 }
 
 interface Payload {
@@ -25,9 +36,15 @@ interface Payload {
   profiles: string[];
 }
 
-const BedRoomDetail = ({ bedRoom, onEdit, users }: BedRoomDetailProps) => {
+const BedRoomDetail = ({
+  bedRoom,
+  onEdit,
+  users,
+  onDelete,
+}: BedRoomDetailProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [bedRoomTypes, setBedRoomTypes] = useState<BedRoomType[]>([]);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const userDropdownList: MultiSelectItem[] = users
     .map((user) => ({
@@ -77,10 +94,17 @@ const BedRoomDetail = ({ bedRoom, onEdit, users }: BedRoomDetailProps) => {
           </Link>
         </Button>
 
-        <Button onClick={() => setIsDialogOpen(true)}>
-          <Edit2 className='h-4 w-4 mr-2' />
-          Edit Bedroom
-        </Button>
+        <div className='flex items-center gap-4'>
+          <Button variant={'destructive'} onClick={() => setShowDeleteDialog(true)}>
+            <Trash2 className='h-4 w-4 mr-2' />
+            Delete Bedroom
+          </Button>
+
+          <Button onClick={() => setIsDialogOpen(true)}>
+            <Edit2 className='h-4 w-4 mr-2' />
+            Edit Bedroom
+          </Button>
+        </div>
       </div>
 
       <Card className='mb-8 shadow-lg'>
@@ -134,6 +158,7 @@ const BedRoomDetail = ({ bedRoom, onEdit, users }: BedRoomDetailProps) => {
                 <AvatarImage
                   src={profile.profilePicture}
                   alt={profile.fullName}
+                  className='object-cover'
                 />
                 <AvatarFallback className='bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-100'>
                   {profile?.fullName?.charAt(0)}
@@ -159,6 +184,29 @@ const BedRoomDetail = ({ bedRoom, onEdit, users }: BedRoomDetailProps) => {
         users={userDropdownList}
         initialBedroom={initialBedroom}
       />
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Are you sure you want to delete this bedroom?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              bedroom and remove all associated data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => onDelete(bedRoom)}
+              className='bg-red-500 hover:bg-red-600'
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

@@ -316,6 +316,7 @@ const HorizontalAddDocumentDialog = ({
                           <AvatarImage
                             src={user.profile?.profilePicture}
                             alt={user.username}
+                            className='object-cover'
                           />
                           <AvatarFallback>
                             {user.profile?.fullName?.[0].toUpperCase()}

@@ -65,7 +65,7 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
   return (
     <div className='flex flex-col items-center space-y-4'>
       <Avatar className='w-32 h-32'>
-        <AvatarImage className='object-cover' src={imageUrl} alt='Profile picture' />
+        <AvatarImage  className='object-cover' src={imageUrl} alt='Profile picture' />
         <AvatarFallback>
           <Camera className='w-12 h-12 text-gray-400' />
         </AvatarFallback>

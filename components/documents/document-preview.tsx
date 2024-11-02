@@ -294,6 +294,7 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
                   <AvatarImage
                     src={document?.owner?.profilePicture}
                     alt={document?.owner?.fullName}
+                    className='object-cover'
                   />
                   <AvatarFallback className='text-base md:text-lg'>
                     {document.owner?.fullName?.slice(0, 2).toUpperCase()}

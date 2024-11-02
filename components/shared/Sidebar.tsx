@@ -65,6 +65,7 @@ const Sidebar: React.FC<SidebarProps> = ({ menuItems, user, onClose }) => {
               <AvatarImage
                 src={user?.profile?.profilePicture}
                 alt='User avatar'
+                className='object-cover'
               />
               <AvatarFallback>
                 {user?.profile?.fullName!.charAt(0)}

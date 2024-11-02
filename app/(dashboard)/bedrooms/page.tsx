@@ -6,7 +6,7 @@ import BedroomFormDialog from '@/components/bedrooms/bedroom-form-dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Users, Search, Plus, Eye, UserX } from 'lucide-react';
+import { Users, Search, Plus, Eye, UserX, Bed } from 'lucide-react';
 import { Profile } from '@/types/profile';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +20,16 @@ import EmptyContainer from '@/components/container/empty-container';
 import NotFoundImage from '@/images/not-found-dashboard.png';
 import Image from 'next/image';
 import LoadingContainer from '@/components/container/loading-container';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useDebounce } from '@/hooks/use-debounce';
 
 interface Payload {
   id?: string;
@@ -37,6 +47,8 @@ const BedRoomPage: React.FC = () => {
   const [bedrooms, setBedrooms] = useState<BedRoom[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
+  const [bedroomTypeFilter, setBedroomTypeFilter] = useState<string>();
+  const [isMounted, setIsMounted] = useState(false);
 
   const { toast } = useToast();
 
@@ -60,7 +72,7 @@ const BedRoomPage: React.FC = () => {
     }
   };
 
-  const getBedroomData = async () => {
+  const getBedroomData = async (params: Record<string, any> = {}) => {
     setLoading(true);
     try {
       const response = await requests({
@@ -68,8 +80,9 @@ const BedRoomPage: React.FC = () => {
         method: 'GET',
         params: {
           page: 0,
-          perPage: 50
-        }
+          perPage: 50,
+          ...params,
+        },
       });
 
       setBedrooms(response.data);
@@ -92,8 +105,8 @@ const BedRoomPage: React.FC = () => {
         method: 'GET',
         params: {
           page: 0,
-          perPage: 150
-        }
+          perPage: 150,
+        },
       });
 
       setUsers(response.data);
@@ -133,12 +146,26 @@ const BedRoomPage: React.FC = () => {
     }
   };
 
+  const debounceSearch = useDebounce(searchQuery, 400);
+
   useEffect(() => {
     getBedRoomTypes();
     getBedroomData();
     getUserData();
+    setIsMounted(true);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (isMounted) {
+      getBedroomData({
+        name: debounceSearch,
+        bedRoomTypeId: bedroomTypeFilter === 'all' ? null : bedroomTypeFilter,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debounceSearch, bedroomTypeFilter, isMounted]);
 
   const userDropdownList: MultiSelectItem[] = users
     ?.map((user) => ({
@@ -154,7 +181,9 @@ const BedRoomPage: React.FC = () => {
       return (
         <div className='flex items-center justify-center p-2 bg-gray-50 dark:bg-slate-700 rounded-md'>
           <UserX className='h-4 w-4 text-gray-400 mr-2' />
-          <span className='text-sm text-gray-500 dark:text-white'>Belum ada penghuni</span>
+          <span className='text-sm text-gray-500 dark:text-white'>
+            Belum ada penghuni
+          </span>
         </div>
       );
     }
@@ -172,6 +201,7 @@ const BedRoomPage: React.FC = () => {
                   <AvatarImage
                     src={profile.profilePicture}
                     alt={profile.fullName}
+                    className='object-cover'
                   />
                   <AvatarFallback>{profile.fullName?.charAt(0)}</AvatarFallback>
                 </Avatar>
@@ -205,10 +235,35 @@ const BedRoomPage: React.FC = () => {
             <Input
               type='text'
               placeholder='Search bedrooms...'
-              className='pl-10'
+              className='pl-10 flex-grow'
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
+          </div>
+          <div className='w-40'>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant='outline' className='w-full'>
+                  <Bed className='mr-2 h-4 w-4' />
+                  Type
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className='w-56'>
+                <DropdownMenuLabel>Filter type</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioGroup
+                  value={bedroomTypeFilter}
+                  onValueChange={setBedroomTypeFilter}
+                >
+                  <DropdownMenuRadioItem value='all'>All</DropdownMenuRadioItem>
+                  {bedRoomTypes.map((bedRoom) => (
+                    <DropdownMenuRadioItem key={bedRoom.id} value={bedRoom.id}>
+                      {bedRoom.name}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <Button onClick={() => setIsDialogOpen(true)}>
             <Plus className='mr-2 h-4 w-4' /> Add Bedroom
@@ -224,11 +279,11 @@ const BedRoomPage: React.FC = () => {
                 key={bedroom.id}
                 className='hover:shadow-lg transition-shadow duration-300'
               >
-                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                  <CardTitle className='text-sm font-medium'>
+                <CardHeader className='flex flex-col items-center justify-between space-y-2 pb-2'>
+                  <CardTitle className='text-lg font-medium'>
                     {bedroom.name || `Room ${bedroom.id}`}
                   </CardTitle>
-                  <Badge variant='outline'>{bedroom.bedRoomType.name}</Badge>
+                  <Badge variant='secondary'>{bedroom.bedRoomType.name}</Badge>
                 </CardHeader>
                 <CardContent>
                   <div className='mt-4'>
