@@ -21,6 +21,7 @@ import { Credentials, User } from '@/types/user';
 import { RoleType } from '@/types/enums';
 import { requests } from '@/lib/api';
 import { useRouter } from 'next/navigation';
+import useCurrentUser from '@/stores/current-user';
 
 type DetailCredentialsProps = {
   data: Omit<User, 'profile'>;
@@ -48,8 +49,19 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
     Omit<User, 'profile'>);
 
   const router = useRouter();
+  const { userDetail } = useCurrentUser();
 
   const handleSaveCredentials = async () => {
+    // temporary solution to prevent delete super user
+    if (userDetail?.username === 'adminpsaa') {
+      toast({
+        title: 'Cannot Edit Admin PSAA Annajah',
+        description: 'Super user cannot be edited',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     try {
       setLoadingAction(true);
       const roles = [RoleType.USER];
@@ -103,6 +115,16 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
   };
 
   const handleChangePassword = async () => {
+    // temporary solution to prevent delete super user
+    if (userDetail?.username === 'adminpsaa') {
+      toast({
+        title: 'Cannot Change Password Admin PSAA Annajah',
+        description: 'Super user password cannot be changed',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     try {
       setLoadingAction(true);
       await requests({
@@ -128,7 +150,7 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
         variant: 'destructive',
       });
     } finally {
-      setLoadingAction(false)
+      setLoadingAction(false);
     }
   };
 
@@ -145,6 +167,16 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
   };
 
   const handleDeleteUser = async () => {
+    // temporary solution to prevent delete super user
+    if (userDetail?.username === 'adminpsaa') {
+      toast({
+        title: 'Cannot Delete Admin PSAA Annajah',
+        description: 'Super user cannot be deleted',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     try {
       setLoadingAction(true);
       await requests({
