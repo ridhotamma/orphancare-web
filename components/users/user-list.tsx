@@ -262,7 +262,7 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
                           className='object-cover'
                         />
                         <AvatarFallback>
-                          {user.username.slice(0, 2).toUpperCase()}
+                          {user.profile?.fullName?.slice(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <span>{user.profile?.fullName || user.username}</span>
