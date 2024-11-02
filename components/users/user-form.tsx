@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import PhoneInput from 'react-phone-number-input';
-import 'react-phone-number-input/style.css';
-import { format } from 'date-fns';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,9 +20,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import ProfilePictureUpload from '@/components/users/profile-picture-upload';
@@ -49,29 +47,10 @@ const addressSchema = z.object({
 });
 
 const formSchema = z.object({
-  username: z
-    .string()
-    .min(3, 'Username must be at least 3 characters')
-    .max(20, 'Username must not exceed 20 characters')
-    .regex(/^[^\s]+$/, 'Username cannot contain spaces'),
-  password: z
-    .string({
-      message: 'Password is required',
-    })
-    .min(6)
-    .regex(
-      /^(?=.*[A-Z])(?=.*\d).*$/,
-      'Password must contain at least one uppercase letter and one number'
-    ),
-  email: z.string().email(),
-  fullName: z.string().min(2),
+  fullName: z.string().min(2, 'Full name is required'),
   gender: z.enum(['MALE', 'FEMALE']),
-  birthday: z.string(),
-  bedRoomId: z.string().uuid(),
+  bedRoomId: z.string().uuid().optional(),
   profilePicture: z.string().url().optional(),
-  joinDate: z.string(),
-  phoneNumber: z.string().optional(),
-  bio: z.string().max(500).optional(),
   alumni: z.boolean().optional(),
   active: z.boolean().optional(),
   admin: z.boolean().optional(),
@@ -132,12 +111,6 @@ const UserForm = <T extends Partial<FormValues>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       ...initialData,
-      birthday: initialData?.birthday
-        ? format(new Date(initialData.birthday), 'yyyy-MM-dd')
-        : '',
-      joinDate: initialData?.joinDate
-        ? format(new Date(initialData.joinDate), 'yyyy-MM-dd')
-        : '',
     },
   });
 
@@ -447,7 +420,6 @@ const UserForm = <T extends Partial<FormValues>>({
   }, [toast]);
 
   const onSubmit = async (data: FormValues) => {
-    console.log('on submit');
     setSubmitting(true);
 
     try {
@@ -717,61 +689,6 @@ const UserForm = <T extends Partial<FormValues>>({
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
           <Card>
             <CardHeader>
-              <CardTitle className='text-xl'>Data Akun</CardTitle>
-            </CardHeader>
-            <CardContent className='space-y-6'>
-              <FormField
-                control={form.control}
-                name='username'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Username</FormLabel>
-                    <FormControl>
-                      <Input placeholder='Username' {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='password'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Kata Sandi</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Kata Sandi'
-                        type='password'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='email'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='email@contoh.com'
-                        type='email'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
               <CardTitle className='text-xl'>Profil</CardTitle>
             </CardHeader>
             <CardContent className='space-y-6'>
@@ -795,7 +712,9 @@ const UserForm = <T extends Partial<FormValues>>({
                 name='fullName'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nama Lengkap</FormLabel>
+                    <FormLabel>
+                      Nama Lengkap <span className='text-red-500'>*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder='Nama Lengkap' {...field} />
                     </FormControl>
@@ -808,7 +727,9 @@ const UserForm = <T extends Partial<FormValues>>({
                 name='gender'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Jenis Kelamin</FormLabel>
+                    <FormLabel>
+                      Jenis Kelamin <span className='text-red-500'>*</span>
+                    </FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
@@ -917,62 +838,6 @@ const UserForm = <T extends Partial<FormValues>>({
               )}
               <FormField
                 control={form.control}
-                name='birthday'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tanggal Lahir</FormLabel>
-                    <FormControl>
-                      <Input
-                        type='date'
-                        className='w-full px-3 py-2 rounded-md focus:outline-none'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='phoneNumber'
-                render={() => (
-                  <FormItem>
-                    <FormLabel>Nomor Telepon</FormLabel>
-                    <FormControl>
-                      <Controller
-                        name='phoneNumber'
-                        control={form.control}
-                        render={({ field }) => (
-                          <PhoneInput
-                            international
-                            countryCallingCodeEditable={false}
-                            defaultCountry='ID'
-                            placeholder='Masukkan nomor telepon'
-                            inputComponent={Input}
-                            {...field}
-                          />
-                        )}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='bio'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Biografi</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder='Deskripsi biografi' {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
                 name='bedRoomId'
                 render={({ field }) => (
                   <FormItem>
@@ -994,23 +859,6 @@ const UserForm = <T extends Partial<FormValues>>({
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='joinDate'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tanggal Bergabung</FormLabel>
-                    <FormControl>
-                      <Input
-                        type='date'
-                        className='w-full px-3 py-2 rounded-md focus:outline-none'
-                        {...field}
-                      />
-                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -1208,14 +1056,25 @@ const UserForm = <T extends Partial<FormValues>>({
             </>
           )}
 
-          <Button
-            onClick={() => onSubmit}
-            className='w-full md:w-auto'
-            type='submit'
-          >
-            {submitting && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
-            {submitting ? 'Mohon Tunggu..' : 'Simpan'}
-          </Button>
+          <div className='flex justify-end space-x-4'>
+            <Button
+              variant='outline'
+              onClick={() => router.back()}
+              type='button'
+            >
+              Batal
+            </Button>
+            <Button type='submit' disabled={submitting}>
+              {submitting ? (
+                <>
+                  <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                  Mohon Tunggu..
+                </>
+              ) : (
+                'Simpan'
+              )}
+            </Button>
+          </div>
         </form>
       </Form>
     </div>

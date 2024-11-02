@@ -247,7 +247,7 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
                 <TableHead>Kamar Tidur</TableHead>
                 <TableHead>Tanggal Bergabung</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className='text-right'>Aksi</TableHead>
+                <TableHead className='text-center'>Aksi</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -278,7 +278,7 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
                   <TableCell>
                     {user.profile?.gender === 'MALE' ? 'Laki-laki' : 'Perempuan'}
                   </TableCell>
-                  <TableCell>{user.profile?.bedRoom?.name}</TableCell>
+                  <TableCell>{user.profile?.bedRoom?.name || '-'}</TableCell>
                   <TableCell>
                     {user.profile?.joinDate
                       ? format(new Date(user.profile.joinDate), 'dd MMM yyyy')
@@ -294,7 +294,7 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
                       <span>{user.active ? 'Aktif' : 'Tidak Aktif'}</span>
                     </div>
                   </TableCell>
-                  <TableCell className='text-right'>
+                  <TableCell className='text-center'>
                     <Button variant='outline' size='sm' asChild>
                       <Link
                         href={
