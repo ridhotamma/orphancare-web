@@ -258,7 +258,7 @@ const BedRoomPage: React.FC = () => {
               {bedrooms.map((bedroom) => (
                 <div
                   key={bedroom.id}
-                  className='flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50'
+                  className='flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900'
                 >
                   <div className='flex items-center space-x-4'>
                     <div>
