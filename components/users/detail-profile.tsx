@@ -1031,12 +1031,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                         (prev) =>
                           ({
                             ...prev,
-                            guardian: {
-                              ...prev?.guardian,
-                              guardianType: guardianTypes.find(
-                                (type: GuardianType) => type.id === value
-                              ),
-                            } as Guardian,
+                            guardianTypeId: value,
                           } as Profile)
                       )
                     }
