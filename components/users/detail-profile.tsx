@@ -112,7 +112,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
               name: userAddress.village?.label,
             },
           },
-          guardian: !profile?.guardian?.fullName
+          guardian: profile?.guardian?.fullName
             ? {
                 ...profile?.guardian,
                 address: {
