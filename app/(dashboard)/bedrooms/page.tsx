@@ -39,7 +39,7 @@ interface Payload {
 }
 
 const BedRoomPage: React.FC = () => {
-  usePageTitle('Bed Rooms');
+  usePageTitle('Kamar Tidur');
 
   const [searchQuery, setSearchQuery] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -130,8 +130,8 @@ const BedRoomPage: React.FC = () => {
         data,
       });
       toast({
-        title: 'Bedroom successfully added',
-        content: 'created successfully',
+        title: 'Kamar berhasil ditambahkan',
+        content: 'berhasil dibuat',
         variant: 'success',
       });
       getBedroomData();
@@ -234,7 +234,7 @@ const BedRoomPage: React.FC = () => {
             <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400' />
             <Input
               type='text'
-              placeholder='Search bedrooms...'
+              placeholder='Cari kamar tidur...'
               className='pl-10 flex-grow'
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -245,17 +245,19 @@ const BedRoomPage: React.FC = () => {
               <DropdownMenuTrigger asChild>
                 <Button variant='outline' className='w-full'>
                   <Bed className='mr-2 h-4 w-4' />
-                  Type
+                  Kategori Kamar
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className='w-56'>
-                <DropdownMenuLabel>Filter type</DropdownMenuLabel>
+                <DropdownMenuLabel>Filter tipe</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioGroup
                   value={bedroomTypeFilter}
                   onValueChange={setBedroomTypeFilter}
                 >
-                  <DropdownMenuRadioItem value='all'>All</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value='all'>
+                    Semua
+                  </DropdownMenuRadioItem>
                   {bedRoomTypes.map((bedRoom) => (
                     <DropdownMenuRadioItem key={bedRoom.id} value={bedRoom.id}>
                       {bedRoom.name}
@@ -266,7 +268,7 @@ const BedRoomPage: React.FC = () => {
             </DropdownMenu>
           </div>
           <Button onClick={() => setIsDialogOpen(true)}>
-            <Plus className='mr-2 h-4 w-4' /> Add Bedroom
+            <Plus className='mr-2 h-4 w-4' /> Tambah Kamar
           </Button>
         </div>
       </div>
@@ -281,7 +283,7 @@ const BedRoomPage: React.FC = () => {
               >
                 <CardHeader className='flex flex-col items-center justify-between space-y-2 pb-2'>
                   <CardTitle className='text-lg font-medium'>
-                    {bedroom.name || `Room ${bedroom.id}`}
+                    {bedroom.name || `Kamar ${bedroom.id}`}
                   </CardTitle>
                   <Badge variant='secondary'>{bedroom.bedRoomType.name}</Badge>
                 </CardHeader>
@@ -291,7 +293,7 @@ const BedRoomPage: React.FC = () => {
                   </div>
                   <Button variant='outline' className='w-full mt-8' asChild>
                     <Link href={`/bedrooms/${bedroom.id}`}>
-                      <Eye className='mr-2 h-4 w-4' /> View Details
+                      <Eye className='mr-2 h-4 w-4' /> Lihat Detail
                     </Link>
                   </Button>
                 </CardContent>
@@ -305,10 +307,10 @@ const BedRoomPage: React.FC = () => {
                 width={300}
                 height={300}
                 src={NotFoundImage}
-                alt='not found users'
+                alt='kamar tidak ditemukan'
               />
             }
-            text='Bedrooms not found'
+            text='Kamar tidak ditemukan'
           />
         )}
       </LoadingContainer>

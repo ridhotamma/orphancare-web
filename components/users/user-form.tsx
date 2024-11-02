@@ -88,17 +88,19 @@ const formSchema = z.object({
     .string()
     .length(16, { message: 'NIK must be exactly 16 digits' })
     .optional(),
-  orphanStatus: z.enum(
-    [
-      OrphanType.FATHERLESS,
-      OrphanType.MOTHERLESS,
-      OrphanType.BOTH_DECEASED,
-      OrphanType.POOR,
-    ],
-    {
-      required_error: 'Please select an orphan status',
-    }
-  ).optional(),
+  orphanStatus: z
+    .enum(
+      [
+        OrphanType.FATHERLESS,
+        OrphanType.MOTHERLESS,
+        OrphanType.BOTH_DECEASED,
+        OrphanType.POOR,
+      ],
+      {
+        required_error: 'Please select an orphan status',
+      }
+    )
+    .optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -551,10 +553,10 @@ const UserForm = <T extends Partial<FormValues>>({
         name={`${prefix}.street`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Street</FormLabel>
+            <FormLabel>Alamat Jalan</FormLabel>
             <FormControl>
               <Input
-                placeholder='Street'
+                placeholder='Alamat Jalan'
                 {...field}
                 onChange={(e) => {
                   field.onChange(e);
@@ -574,7 +576,7 @@ const UserForm = <T extends Partial<FormValues>>({
         name={`${prefix}.province`}
         render={() => (
           <FormItem>
-            <FormLabel>Province</FormLabel>
+            <FormLabel>Provinsi</FormLabel>
             <FormControl>
               <AutocompleteSelect
                 items={provinces}
@@ -586,8 +588,8 @@ const UserForm = <T extends Partial<FormValues>>({
                   }
                 }}
                 isLoading={loadingAddress}
-                searchPlaceholder='Select Province...'
-                placeholder='Select Province'
+                searchPlaceholder='Pilih Provinsi...'
+                placeholder='Pilih Provinsi'
                 className='w-full'
                 disabled={addressType === 'guardian' && useChildAddress}
               />
@@ -601,7 +603,7 @@ const UserForm = <T extends Partial<FormValues>>({
         name={`${prefix}.regency`}
         render={() => (
           <FormItem>
-            <FormLabel>Regency</FormLabel>
+            <FormLabel>Kabupaten/Kota</FormLabel>
             <FormControl>
               <AutocompleteSelect
                 items={regencies}
@@ -613,8 +615,8 @@ const UserForm = <T extends Partial<FormValues>>({
                   }
                 }}
                 isLoading={loadingAddress}
-                searchPlaceholder='Select Regency...'
-                placeholder='Select Regency'
+                searchPlaceholder='Pilih Kabupaten/Kota...'
+                placeholder='Pilih Kabupaten/Kota'
                 className='w-full'
                 disabled={addressType === 'guardian' && useChildAddress}
               />
@@ -628,7 +630,7 @@ const UserForm = <T extends Partial<FormValues>>({
         name={`${prefix}.district`}
         render={() => (
           <FormItem>
-            <FormLabel>District</FormLabel>
+            <FormLabel>Kecamatan</FormLabel>
             <FormControl>
               <AutocompleteSelect
                 items={districts}
@@ -640,8 +642,8 @@ const UserForm = <T extends Partial<FormValues>>({
                   }
                 }}
                 isLoading={loadingAddress}
-                searchPlaceholder='Select District...'
-                placeholder='Select District'
+                searchPlaceholder='Pilih Kecamatan...'
+                placeholder='Pilih Kecamatan'
                 className='w-full'
                 disabled={addressType === 'guardian' && useChildAddress}
               />
@@ -655,7 +657,7 @@ const UserForm = <T extends Partial<FormValues>>({
         name={`${prefix}.village`}
         render={() => (
           <FormItem>
-            <FormLabel>Village</FormLabel>
+            <FormLabel>Desa/Kelurahan</FormLabel>
             <FormControl>
               <AutocompleteSelect
                 items={villages}
@@ -664,8 +666,8 @@ const UserForm = <T extends Partial<FormValues>>({
                   handleAddressChange(addressType, 'village', item);
                 }}
                 isLoading={loadingAddress}
-                searchPlaceholder='Select Village...'
-                placeholder='Select Village'
+                searchPlaceholder='Pilih Desa/Kelurahan...'
+                placeholder='Pilih Desa/Kelurahan'
                 className='w-full'
                 disabled={addressType === 'guardian' && useChildAddress}
               />
@@ -679,10 +681,10 @@ const UserForm = <T extends Partial<FormValues>>({
         name={`${prefix}.postalCode`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Postal Code</FormLabel>
+            <FormLabel>Kode Pos</FormLabel>
             <FormControl>
               <Input
-                placeholder='Postal Code'
+                placeholder='Kode Pos'
                 {...field}
                 onChange={(e) => {
                   field.onChange(e);
@@ -706,7 +708,7 @@ const UserForm = <T extends Partial<FormValues>>({
         <Button variant='link' className='p-0' asChild>
           <Link href={careTakerForm ? '/users/caretakers' : '/users/children'}>
             <ArrowLeft className='h-4 w-4 mr-2' />
-            Back to {careTakerForm ? 'Caretaker' : 'Children'} List
+            Kembali ke Daftar {careTakerForm ? 'Pengasuh' : 'Anak'}
           </Link>
         </Button>
       </div>
@@ -715,7 +717,7 @@ const UserForm = <T extends Partial<FormValues>>({
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
           <Card>
             <CardHeader>
-              <CardTitle className='text-xl'>Credentials</CardTitle>
+              <CardTitle className='text-xl'>Data Akun</CardTitle>
             </CardHeader>
             <CardContent className='space-y-6'>
               <FormField
@@ -736,10 +738,10 @@ const UserForm = <T extends Partial<FormValues>>({
                 name='password'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>Kata Sandi</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder='Password'
+                        placeholder='Kata Sandi'
                         type='password'
                         {...field}
                       />
@@ -756,7 +758,7 @@ const UserForm = <T extends Partial<FormValues>>({
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder='email@example.com'
+                        placeholder='email@contoh.com'
                         type='email'
                         {...field}
                       />
@@ -770,7 +772,7 @@ const UserForm = <T extends Partial<FormValues>>({
 
           <Card>
             <CardHeader>
-              <CardTitle className='text-xl'>Profile</CardTitle>
+              <CardTitle className='text-xl'>Profil</CardTitle>
             </CardHeader>
             <CardContent className='space-y-6'>
               <FormField
@@ -778,7 +780,7 @@ const UserForm = <T extends Partial<FormValues>>({
                 name='profilePicture'
                 render={() => (
                   <FormItem>
-                    <FormLabel>Profile Picture</FormLabel>
+                    <FormLabel>Foto Profil</FormLabel>
                     <FormControl>
                       <ProfilePictureUpload
                         onImageUrlChange={handleProfilePictureChange}
@@ -793,9 +795,9 @@ const UserForm = <T extends Partial<FormValues>>({
                 name='fullName'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel>Nama Lengkap</FormLabel>
                     <FormControl>
-                      <Input placeholder='Full Name' {...field} />
+                      <Input placeholder='Nama Lengkap' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -806,19 +808,19 @@ const UserForm = <T extends Partial<FormValues>>({
                 name='gender'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Gender</FormLabel>
+                    <FormLabel>Jenis Kelamin</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder='Select gender' />
+                          <SelectValue placeholder='Pilih jenis kelamin' />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value='MALE'>Male</SelectItem>
-                        <SelectItem value='FEMALE'>Female</SelectItem>
+                        <SelectItem value='MALE'>Laki-laki</SelectItem>
+                        <SelectItem value='FEMALE'>Perempuan</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -832,10 +834,10 @@ const UserForm = <T extends Partial<FormValues>>({
                     name='kkNumber'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>KK Number</FormLabel>
+                        <FormLabel>Nomor KK</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder='Enter 16-digit KK Number'
+                            placeholder='Masukkan 16 digit Nomor KK'
                             {...field}
                             maxLength={16}
                             pattern='\d*'
@@ -862,7 +864,7 @@ const UserForm = <T extends Partial<FormValues>>({
                         <FormLabel>NIK</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder='Enter 16-digit NIK'
+                            placeholder='Masukkan 16 digit NIK'
                             {...field}
                             maxLength={16}
                             pattern='\d*'
@@ -886,27 +888,25 @@ const UserForm = <T extends Partial<FormValues>>({
                     name='orphanStatus'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Orphan Status</FormLabel>
+                        <FormLabel>Status Anak</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder='Select orphan status' />
+                              <SelectValue placeholder='Pilih status anak' />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {orphanStatusOptions.map((status) => {
-                              return (
-                                <SelectItem
-                                  key={status.value}
-                                  value={status.value}
-                                >
-                                  {status.label}
-                                </SelectItem>
-                              );
-                            })}
+                            {orphanStatusOptions.map((status) => (
+                              <SelectItem
+                                key={status.value}
+                                value={status.value}
+                              >
+                                {status.label}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -920,7 +920,7 @@ const UserForm = <T extends Partial<FormValues>>({
                 name='birthday'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Birthday</FormLabel>
+                    <FormLabel>Tanggal Lahir</FormLabel>
                     <FormControl>
                       <Input
                         type='date'
@@ -937,7 +937,7 @@ const UserForm = <T extends Partial<FormValues>>({
                 name='phoneNumber'
                 render={() => (
                   <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
+                    <FormLabel>Nomor Telepon</FormLabel>
                     <FormControl>
                       <Controller
                         name='phoneNumber'
@@ -947,7 +947,7 @@ const UserForm = <T extends Partial<FormValues>>({
                             international
                             countryCallingCodeEditable={false}
                             defaultCountry='ID'
-                            placeholder='Enter phone number'
+                            placeholder='Masukkan nomor telepon'
                             inputComponent={Input}
                             {...field}
                           />
@@ -963,9 +963,9 @@ const UserForm = <T extends Partial<FormValues>>({
                 name='bio'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Bio</FormLabel>
+                    <FormLabel>Biografi</FormLabel>
                     <FormControl>
-                      <Textarea placeholder='Bio Description' {...field} />
+                      <Textarea placeholder='Deskripsi biografi' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -976,14 +976,14 @@ const UserForm = <T extends Partial<FormValues>>({
                 name='bedRoomId'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Bedroom</FormLabel>
+                    <FormLabel>Kamar</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder='Select bedroom' />
+                          <SelectValue placeholder='Pilih kamar' />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -1003,7 +1003,7 @@ const UserForm = <T extends Partial<FormValues>>({
                 name='joinDate'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Join Date</FormLabel>
+                    <FormLabel>Tanggal Bergabung</FormLabel>
                     <FormControl>
                       <Input
                         type='date'
@@ -1020,7 +1020,7 @@ const UserForm = <T extends Partial<FormValues>>({
 
           <Card>
             <CardHeader>
-              <CardTitle className='text-xl'>User Status</CardTitle>
+              <CardTitle className='text-xl'>Status Pengguna</CardTitle>
             </CardHeader>
             <CardContent>
               <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
@@ -1038,7 +1038,7 @@ const UserForm = <T extends Partial<FormValues>>({
                       <div className='space-y-1 leading-none'>
                         <FormLabel>Admin</FormLabel>
                         <FormDescription>
-                          Is this user an Admin?
+                          Apakah pengguna ini Admin?
                         </FormDescription>
                       </div>
                     </FormItem>
@@ -1058,7 +1058,7 @@ const UserForm = <T extends Partial<FormValues>>({
                       <div className='space-y-1 leading-none'>
                         <FormLabel>Alumni</FormLabel>
                         <FormDescription>
-                          Is this user an alumnus?
+                          Apakah pengguna ini alumni?
                         </FormDescription>
                       </div>
                     </FormItem>
@@ -1076,9 +1076,9 @@ const UserForm = <T extends Partial<FormValues>>({
                         />
                       </FormControl>
                       <div className='space-y-1 leading-none'>
-                        <FormLabel>Active</FormLabel>
+                        <FormLabel>Aktif</FormLabel>
                         <FormDescription>
-                          Is this user account active?
+                          Apakah akun pengguna ini aktif?
                         </FormDescription>
                       </div>
                     </FormItem>
@@ -1090,7 +1090,7 @@ const UserForm = <T extends Partial<FormValues>>({
 
           <Card>
             <CardHeader>
-              <CardTitle className='text-xl'>User Address</CardTitle>
+              <CardTitle className='text-xl'>Alamat Pengguna</CardTitle>
             </CardHeader>
             <CardContent>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
@@ -1103,9 +1103,7 @@ const UserForm = <T extends Partial<FormValues>>({
             <>
               <Card>
                 <CardHeader>
-                  <CardTitle className='text-xl'>
-                    Guardian Information
-                  </CardTitle>
+                  <CardTitle className='text-xl'>Informasi Wali</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
@@ -1114,12 +1112,9 @@ const UserForm = <T extends Partial<FormValues>>({
                       name='guardianFullName'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Guardian Full Name</FormLabel>
+                          <FormLabel>Nama Lengkap Wali</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder='Guardian Full Name'
-                              {...field}
-                            />
+                            <Input placeholder='Nama Lengkap Wali' {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -1130,14 +1125,14 @@ const UserForm = <T extends Partial<FormValues>>({
                       name='guardianTypeId'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Guardian Type</FormLabel>
+                          <FormLabel>Jenis Wali</FormLabel>
                           <Select
                             onValueChange={field.onChange}
                             defaultValue={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder='Select guardian type' />
+                                <SelectValue placeholder='Pilih jenis wali' />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -1162,7 +1157,7 @@ const UserForm = <T extends Partial<FormValues>>({
                       name='guardianPhoneNumber'
                       render={() => (
                         <FormItem>
-                          <FormLabel>Guardian Phone Number</FormLabel>
+                          <FormLabel>Nomor Telepon Wali</FormLabel>
                           <FormControl>
                             <Controller
                               name='guardianPhoneNumber'
@@ -1172,7 +1167,7 @@ const UserForm = <T extends Partial<FormValues>>({
                                   international
                                   countryCallingCodeEditable={false}
                                   defaultCountry='ID'
-                                  placeholder='Enter guardian phone number'
+                                  placeholder='Masukkan nomor telepon wali'
                                   inputComponent={Input}
                                   {...field}
                                 />
@@ -1189,7 +1184,7 @@ const UserForm = <T extends Partial<FormValues>>({
 
               <Card>
                 <CardHeader>
-                  <CardTitle className='text-xl'>Guardian Address</CardTitle>
+                  <CardTitle className='text-xl'>Alamat Wali</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className='mb-6 flex items-center space-x-2'>
@@ -1198,7 +1193,7 @@ const UserForm = <T extends Partial<FormValues>>({
                       onCheckedChange={handleUseChildAddressChange}
                     />
                     <FormLabel className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
-                      Use same address as child
+                      Gunakan alamat yang sama dengan anak
                     </FormLabel>
                   </div>
                   <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
@@ -1219,7 +1214,7 @@ const UserForm = <T extends Partial<FormValues>>({
             type='submit'
           >
             {submitting && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
-            {submitting ? 'Please Wait..' : 'Submit'}
+            {submitting ? 'Mohon Tunggu..' : 'Simpan'}
           </Button>
         </form>
       </Form>

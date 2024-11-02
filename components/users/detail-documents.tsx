@@ -49,7 +49,7 @@ import {
   AlertDialogHeader,
 } from '@/components/ui/alert-dialog';
 
-// Utility function to check document type based on URL
+// Fungsi utilitas untuk memeriksa tipe dokumen berdasarkan URL
 const getDocumentType = (url: string): string => {
   const extension = url.split('.').pop()?.toLowerCase();
   if (['jpg', 'jpeg', 'png', 'webp', 'avif'].includes(extension!))
@@ -59,7 +59,7 @@ const getDocumentType = (url: string): string => {
   return 'unknown';
 };
 
-// File preview component
+// Komponen pratinjau file
 const FilePreview: React.FC<{ url: string }> = ({ url }) => {
   const [hasError, setHasError] = React.useState(false);
   const type = getDocumentType(url);
@@ -68,7 +68,7 @@ const FilePreview: React.FC<{ url: string }> = ({ url }) => {
     <div className='h-40 w-full flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-800'>
       <File className='h-12 w-12 text-gray-400 mb-2' />
       <p className='text-sm text-gray-500 dark:text-gray-400'>
-        Preview not available
+        Pratinjau tidak tersedia
       </p>
     </div>
   );
@@ -84,7 +84,7 @@ const FilePreview: React.FC<{ url: string }> = ({ url }) => {
         <div className='relative h-40 w-full'>
           <Image
             src={url}
-            alt='Document preview'
+            alt='Pratinjau dokumen'
             fill
             className='object-cover'
             onError={() => setHasError(true)}
@@ -161,8 +161,8 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
 
     if (!file) {
       toast({
-        title: 'Failed to upload a file',
-        description: 'Check your device permission to continue',
+        title: 'Gagal mengunggah file',
+        description: 'Periksa izin perangkat Anda untuk melanjutkan',
         variant: 'destructive',
       });
     }
@@ -188,7 +188,7 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
       }
     } catch (error: any) {
       toast({
-        title: 'Something went wrong',
+        title: 'Terjadi kesalahan',
         description: error.message,
         variant: 'destructive',
       });
@@ -205,14 +205,14 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
         method: 'DELETE',
       });
       toast({
-        title: 'Successfully Deleted',
-        description: `${documentToBeDeleted?.name} Successfully deleted`,
+        title: 'Berhasil Dihapus',
+        description: `${documentToBeDeleted?.name} berhasil dihapus`,
         variant: 'success',
       });
       onRefresh();
     } catch (error: any) {
       toast({
-        title: 'Cannot delete document',
+        title: 'Tidak dapat menghapus dokumen',
         description: error.message,
         variant: 'destructive',
       });
@@ -247,9 +247,9 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
       onRefresh();
 
       toast({
-        title: 'Document added',
+        title: 'Dokumen ditambahkan',
         description:
-          'Your new document has been successfully uploaded and added.',
+          'Dokumen baru Anda telah berhasil diunggah dan ditambahkan.',
         variant: 'success',
       });
     } catch (error: any) {
@@ -274,7 +274,7 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
         setDocumentTypes(data);
       } catch (error: any) {
         toast({
-          title: 'Something went wrong',
+          title: 'Terjadi kesalahan',
           description: error.message,
           variant: 'destructive',
         });
@@ -314,7 +314,7 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
           <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400' />
           <Input
             type='text'
-            placeholder='Search Documents'
+            placeholder='Cari Dokumen'
             className='pl-10'
             value={searchQuery}
             onChange={(e) => handleSearchDocuments(e.target.value)}
@@ -324,7 +324,7 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
           onClick={() => setIsAddDocumentModalOpen(true)}
           className='bg-blue-600 hover:bg-blue-700'
         >
-          <Plus className='mr-2 h-4 w-4' /> Add Document
+          <Plus className='mr-2 h-4 w-4' /> Tambah Dokumen
         </Button>
       </div>
       {documents?.length === 0 ? (
@@ -334,10 +334,10 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
               src={EmptyImage}
               width={300}
               height={300}
-              alt='empty image'
+              alt='gambar kosong'
             />
           }
-          text="You haven't added any documents yet. Click 'Add Document' to get started."
+          text="Anda belum menambahkan dokumen apapun. Klik 'Tambah Dokumen' untuk memulai."
         />
       ) : (
         <LoadingContainer loading={loading}>
@@ -364,7 +364,7 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
                     {doc.name}
                   </h2>
                   <p className='flex-grow-0 text-sm text-gray-600 dark:text-gray-300'>
-                    Created: {format(new Date(doc.createdAt), 'PP')}
+                    Dibuat: {format(new Date(doc.createdAt), 'PP')}
                   </p>
                 </CardContent>
                 <CardFooter className='bg-gray-50 dark:bg-gray-800 p-4 flex justify-between'>
@@ -373,7 +373,7 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
                     variant='outline'
                     size='sm'
                   >
-                    <Eye className='mr-2 h-4 w-4' /> Preview
+                    <Eye className='mr-2 h-4 w-4' /> Pratinjau
                   </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -385,12 +385,12 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
                       <DropdownMenuItem
                         onClick={() => handleDownloadDocument(doc)}
                       >
-                        <Download className='mr-2 h-4 w-4' /> Download
+                        <Download className='mr-2 h-4 w-4' /> Unduh
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => handleOpenDeleteDialog(doc)}
                       >
-                        <Trash2 className='mr-2 h-4 w-4' /> Delete
+                        <Trash2 className='mr-2 h-4 w-4' /> Hapus
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -413,29 +413,29 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
         submitting={loadingSubmit}
       />
 
-      {/* Delete Dialog */}
+      {/* Dialog Hapus */}
       <AlertDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              document &quot;{documentToBeDeleted?.name}&quot; and remove it
-              from our servers.
+              Tindakan ini tidak dapat dibatalkan. Ini akan menghapus dokumen
+              &quot;{documentToBeDeleted?.name}&quot; secara permanen dan
+              menghapusnya dari server kami.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={loadingDelete}>
-              Cancel
+              Batal
             </AlertDialogCancel>
             <AlertDialogAction
               disabled={loadingDelete}
               onClick={handleDeleteDocument}
             >
-              Delete
+              Hapus
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

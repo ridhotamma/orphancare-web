@@ -509,7 +509,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
   };
 
   const renderAddress = (address: Address | undefined) => {
-    if (!address) return 'Not specified';
+    if (!address) return 'Belum ditentukan';
     const parts = [
       address.street,
       address.village,
@@ -518,7 +518,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
       address.province,
       address.postalCode,
     ].filter(Boolean);
-    return parts.length > 0 ? parts.join(', ') : 'Not specified';
+    return parts.length > 0 ? parts.join(', ') : 'Belum ditentukan';
   };
 
   const renderEditableAddress = (
@@ -527,7 +527,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
   ) => (
     <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
       <div>
-        <Label htmlFor='street'>Street</Label>
+        <Label htmlFor='street'>Jalan</Label>
         <Input
           id='street'
           value={
@@ -558,7 +558,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
         />
       </div>
       <div>
-        <Label>Province</Label>
+        <Label>Provinsi</Label>
         <AutocompleteSelect
           items={provinces}
           value={addressState.province}
@@ -569,14 +569,14 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
             }
           }}
           isLoading={loadingAddress}
-          searchPlaceholder='Select Province...'
-          placeholder='Select Province'
+          searchPlaceholder='Pilih Provinsi...'
+          placeholder='Pilih Provinsi'
           className='w-full'
           disabled={!isEditProfile}
         />
       </div>
       <div>
-        <Label>Regency</Label>
+        <Label>Kabupaten/Kota</Label>
         <AutocompleteSelect
           items={regencies}
           value={addressState.regency}
@@ -587,14 +587,14 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
             }
           }}
           isLoading={loadingAddress}
-          searchPlaceholder='Select Regency...'
-          placeholder='Select Regency'
+          searchPlaceholder='Pilih Kabupaten/Kota...'
+          placeholder='Pilih Kabupaten/Kota'
           className='w-full'
           disabled={!isEditProfile}
         />
       </div>
       <div>
-        <Label>District</Label>
+        <Label>Kecamatan</Label>
         <AutocompleteSelect
           items={districts}
           value={addressState.district}
@@ -605,14 +605,14 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
             }
           }}
           isLoading={loadingAddress}
-          searchPlaceholder='Select District...'
-          placeholder='Select District'
+          searchPlaceholder='Pilih Kecamatan...'
+          placeholder='Pilih Kecamatan'
           className='w-full'
           disabled={!isEditProfile}
         />
       </div>
       <div>
-        <Label>Village</Label>
+        <Label>Desa/Kelurahan</Label>
         <AutocompleteSelect
           items={villages}
           value={addressState.village}
@@ -620,14 +620,14 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
             handleAddressChange(addressType, 'village', item);
           }}
           isLoading={loadingAddress}
-          searchPlaceholder='Select Village...'
-          placeholder='Select Village'
+          searchPlaceholder='Pilih Desa/Kelurahan...'
+          placeholder='Pilih Desa/Kelurahan'
           className='w-full'
           disabled={!isEditProfile}
         />
       </div>
       <div>
-        <Label htmlFor='postalCode'>Postal Code</Label>
+        <Label htmlFor='postalCode'>Kode Pos</Label>
         <Input
           id='postalCode'
           value={
@@ -666,15 +666,15 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
         {isEditProfile ? (
           <div className='space-x-2'>
             <Button variant='outline' onClick={() => setIsEditProfile(false)}>
-              <X className='h-4 w-4 mr-2' /> Cancel
+              <X className='h-4 w-4 mr-2' /> Batal
             </Button>
             <Button onClick={handleSaveProfile} disabled={loadingSave}>
-              <Save className='h-4 w-4 mr-2' /> Save
+              <Save className='h-4 w-4 mr-2' /> Simpan
             </Button>
           </div>
         ) : (
           <Button onClick={() => setIsEditProfile(true)}>
-            <Edit2 className='h-4 w-4 mr-2' /> Edit
+            <Edit2 className='h-4 w-4 mr-2' /> Ubah
           </Button>
         )}
       </div>
@@ -682,11 +682,11 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
       <form className='space-y-8'>
         <Card>
           <CardHeader>
-            <CardTitle className='text-xl'>Profile</CardTitle>
+            <CardTitle className='text-xl'>Profil</CardTitle>
           </CardHeader>
           <CardContent className='space-y-6'>
             <div>
-              <Label htmlFor='profilePicture'>Profile Picture</Label>
+              <Label htmlFor='profilePicture'>Foto Profil</Label>
               <ProfilePictureUpload
                 onImageUrlChange={handleProfilePictureChange}
                 disabled={!isEditProfile}
@@ -694,7 +694,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
               />
             </div>
             <div>
-              <Label htmlFor='fullName'>Full Name</Label>
+              <Label htmlFor='fullName'>Nama Lengkap</Label>
               <Input
                 id='fullName'
                 value={profile?.fullName || ''}
@@ -707,7 +707,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
               />
             </div>
             <div>
-              <Label htmlFor='birthday'>Birthday</Label>
+              <Label htmlFor='birthday'>Tanggal Lahir</Label>
               <Input
                 id='birthday'
                 type='date'
@@ -721,7 +721,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
               />
             </div>
             <div>
-              <Label htmlFor='bio'>Bio</Label>
+              <Label htmlFor='bio'>Biografi</Label>
               <Textarea
                 id='bio'
                 value={profile?.bio || ''}
@@ -734,7 +734,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
               />
             </div>
             <div>
-              <Label htmlFor='joinDate'>Join Date</Label>
+              <Label htmlFor='joinDate'>Tanggal Bergabung</Label>
               <Input
                 id='joinDate'
                 type='date'
@@ -748,7 +748,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
               />
             </div>
             <div>
-              <Label htmlFor='joinDate'>Leave Date</Label>
+              <Label htmlFor='joinDate'>Tanggal Keluar</Label>
               <Input
                 id='leaveDate'
                 type='date'
@@ -763,7 +763,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
               />
             </div>
             <div>
-              <Label htmlFor='phoneNumber'>Phone Number</Label>
+              <Label htmlFor='phoneNumber'>Nomor Telepon</Label>
               <PhoneInput
                 international
                 countryCallingCodeEditable={false}
@@ -779,7 +779,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
               />
             </div>
             <div>
-              <Label htmlFor='gender'>Gender</Label>
+              <Label htmlFor='gender'>Jenis Kelamin</Label>
               <Select
                 disabled={!isEditProfile}
                 value={profile?.gender}
@@ -790,18 +790,18 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder='Select gender' />
+                  <SelectValue placeholder='Pilih jenis kelamin' />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={Gender.MALE}>Male</SelectItem>
-                  <SelectItem value={Gender.FEMALE}>Female</SelectItem>
+                  <SelectItem value={Gender.MALE}>Laki-laki</SelectItem>
+                  <SelectItem value={Gender.FEMALE}>Perempuan</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             {!data?.careTaker && (
               <>
                 <div>
-                  <Label htmlFor='kkNumber'>KK Number</Label>
+                  <Label htmlFor='kkNumber'>Nomor KK</Label>
                   <Input
                     id='kkNumber'
                     value={profile?.kkNumber || ''}
@@ -839,7 +839,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                 </div>
 
                 <div>
-                  <Label htmlFor='orphanStatus'>Orphan Status</Label>
+                  <Label htmlFor='orphanStatus'>Status Anak</Label>
                   <Select
                     disabled={!isEditProfile}
                     value={profile?.orphanStatus}
@@ -854,7 +854,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                     }
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder='Select orphan status' />
+                      <SelectValue placeholder='Pilih status anak' />
                     </SelectTrigger>
                     <SelectContent>
                       {orphanStatusOptions.map((status) => (
@@ -868,7 +868,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
               </>
             )}
             <div>
-              <Label htmlFor='bedroom'>Bedroom</Label>
+              <Label htmlFor='bedroom'>Kamar</Label>
               <Select
                 disabled={!isEditProfile}
                 value={profile?.bedRoom?.id}
@@ -885,7 +885,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder='Select bedroom' />
+                  <SelectValue placeholder='Pilih kamar' />
                 </SelectTrigger>
                 <SelectContent>
                   {bedRooms?.map((bedRoom: BedRoom) => (
@@ -901,7 +901,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
 
         <Card>
           <CardHeader>
-            <CardTitle className='text-xl'>User Status</CardTitle>
+            <CardTitle className='text-xl'>Status Pengguna</CardTitle>
           </CardHeader>
           <CardContent>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
@@ -921,9 +921,9 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                   disabled={!isEditProfile}
                 />
                 <div className='space-y-1 leading-none'>
-                  <Label htmlFor='caretaker'>Caretaker</Label>
+                  <Label htmlFor='caretaker'>Pengasuh</Label>
                   <p className='text-sm text-gray-600'>
-                    Is this user a Caretaker?
+                    Apakah pengguna ini Pengasuh?
                   </p>
                 </div>
               </div>
@@ -945,7 +945,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                 <div className='space-y-1 leading-none'>
                   <Label htmlFor='alumni'>Alumni</Label>
                   <p className='text-sm text-gray-600'>
-                    Is this user an alumnus?
+                    Apakah pengguna ini alumni?
                   </p>
                 </div>
               </div>
@@ -955,14 +955,14 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
 
         <Card>
           <CardHeader>
-            <CardTitle className='text-xl'>User Address</CardTitle>
+            <CardTitle className='text-xl'>Alamat Pengguna</CardTitle>
           </CardHeader>
           <CardContent>
             {isEditProfile ? (
               renderEditableAddress('user', userAddress)
             ) : (
               <div>
-                <Label>Address</Label>
+                <Label>Alamat</Label>
                 <p>{renderAddress(profile?.address)}</p>
               </div>
             )}
@@ -972,12 +972,12 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
         {!data?.careTaker && (
           <Card>
             <CardHeader>
-              <CardTitle className='text-xl'>Guardian Information</CardTitle>
+              <CardTitle className='text-xl'>Informasi Wali</CardTitle>
             </CardHeader>
             <CardContent>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                 <div>
-                  <Label htmlFor='guardianFullName'>Guardian Full Name</Label>
+                  <Label htmlFor='guardianFullName'>Nama Lengkap Wali</Label>
                   <Input
                     id='guardianFullName'
                     value={profile?.guardian?.fullName || ''}
@@ -998,7 +998,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                 </div>
                 <div>
                   <Label htmlFor='guardianPhoneNumber'>
-                    Guardian Phone Number
+                    Nomor Telepon Wali
                   </Label>
                   <PhoneInput
                     international
@@ -1022,7 +1022,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                   />
                 </div>
                 <div>
-                  <Label htmlFor='guardianType'>Guardian Type</Label>
+                  <Label htmlFor='guardianType'>Jenis Wali</Label>
                   <Select
                     disabled={!isEditProfile}
                     value={profile?.guardianTypeId}
@@ -1037,7 +1037,7 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
                     }
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder='Select guardian type' />
+                      <SelectValue placeholder='Pilih jenis wali' />
                     </SelectTrigger>
                     <SelectContent>
                       {guardianTypes.map((type: GuardianType) => (
@@ -1056,14 +1056,14 @@ export const DetailProfile: React.FC<DetailProfileProps> = ({
         {!data?.careTaker && (
           <Card>
             <CardHeader>
-              <CardTitle className='text-xl'>Guardian Address</CardTitle>
+              <CardTitle className='text-xl'>Alamat Wali</CardTitle>
             </CardHeader>
             <CardContent>
               {isEditProfile ? (
                 renderEditableAddress('guardian', guardianAddress)
               ) : (
                 <div>
-                  <Label>Address</Label>
+                  <Label>Alamat</Label>
                   <p>{renderAddress(profile?.guardian?.address)}</p>
                 </div>
               )}

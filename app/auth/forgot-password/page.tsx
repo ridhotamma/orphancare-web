@@ -15,19 +15,19 @@ const ForgotPasswordPage = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const subject = encodeURIComponent('Reset Password Request');
-    const body = encodeURIComponent(`Dear PSAA Admin,
+    const subject = encodeURIComponent('Permintaan Reset Kata Sandi');
+    const body = encodeURIComponent(`Yth. Admin PSAA,
 
-I am requesting a password reset for my account.
+Saya mengajukan permintaan reset kata sandi untuk akun saya.
 
-Email/Username: ${email}
+Email/Nama Pengguna: ${email}
 
-Additional Message:
+Pesan Tambahan:
 ${message}
 
-Thank you for your assistance.
+Terima kasih atas bantuannya.
 
-Best regards,
+Hormat saya,
 ${email}`);
 
     window.location.href = `mailto:admin.psaa@gmail.com?subject=${subject}&body=${body}`;
@@ -38,7 +38,7 @@ ${email}`);
       <div className='hidden lg:block lg:w-1/2 relative'>
         <Image
           src={BackgroundImage}
-          alt='Forgot password background'
+          alt='Latar belakang lupa kata sandi'
           layout='fill'
           objectFit='cover'
         />
@@ -47,15 +47,15 @@ ${email}`);
       <div className='w-full lg:w-1/2 flex items-center justify-center p-8'>
         <div className='w-full max-w-md'>
           <h2 className='text-3xl font-bold mb-6 text-primary text-center'>
-            Forgot Password
+            Lupa Kata Sandi
           </h2>
           <p className='text-muted-foreground mb-6 text-center'>
-            To reset your password, you should send a request to
+            Untuk mengatur ulang kata sandi, Anda harus mengirim permintaan ke
             psaa.admin@gmail.com
           </p>
           <form onSubmit={handleSubmit} className='space-y-6'>
             <div className='space-y-2'>
-              <Label htmlFor='email'>Your Email or Username</Label>
+              <Label htmlFor='email'>Email atau Nama Pengguna Anda</Label>
               <Input
                 type='text'
                 id='email'
@@ -65,7 +65,7 @@ ${email}`);
               />
             </div>
             <div className='space-y-2'>
-              <Label htmlFor='message'>Message</Label>
+              <Label htmlFor='message'>Pesan</Label>
               <Textarea
                 id='message'
                 value={message}
@@ -74,7 +74,7 @@ ${email}`);
               />
             </div>
             <Button type='submit' className='w-full'>
-              Send Email
+              Kirim Email
             </Button>
           </form>
           <div className='mt-8 text-center'>
@@ -82,7 +82,7 @@ ${email}`);
               href='/auth/login'
               className='text-sm text-primary hover:text-secondary'
             >
-              Remember your password? Sign in
+              Ingat kata sandi? Masuk
             </Link>
           </div>
         </div>

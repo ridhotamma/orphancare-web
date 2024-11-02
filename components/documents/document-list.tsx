@@ -116,7 +116,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
             <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400' />
             <Input
               type='text'
-              placeholder='Search documents...'
+              placeholder='Cari dokumen...'
               className='pl-10 min-w-56'
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -125,8 +125,8 @@ const DocumentList: React.FC<DocumentListProps> = ({
           <div className='flex items-center gap-4'>
             <AutocompleteSelect
               items={documentTypes as any}
-              placeholder='Filter by type'
-              searchPlaceholder='Search document type...'
+              placeholder='Filter berdasarkan jenis'
+              searchPlaceholder='Cari jenis dokumen...'
               onChange={(item: AutocompleteItem | null) =>
                 setFilterCategory(item)
               }
@@ -135,21 +135,21 @@ const DocumentList: React.FC<DocumentListProps> = ({
             />
             <AutocompleteSelect
               items={users as any}
-              placeholder='Filter by User'
-              searchPlaceholder='Search users...'
+              placeholder='Filter berdasarkan pengguna'
+              searchPlaceholder='Cari pengguna...'
               onChange={(item: AutocompleteItem | null) => setFilterUser(item)}
               value={filterUser}
               className='w-56'
             />
             <Button onClick={() => setIsAddDialogOpen(true)}>
-              <Plus className='mr-2 h-4 w-4' /> Add Documents
+              <Plus className='mr-2 h-4 w-4' /> Tambah Dokumen
             </Button>
           </div>
         </div>
       </div>
 
       <LoadingContainer loading={loading}>
-        {/* Documents Grid */}
+        {/* Grid Dokumen */}
         {documents.length > 0 ? (
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
             {documents.map((doc) => (
@@ -203,10 +203,10 @@ const DocumentList: React.FC<DocumentListProps> = ({
                 width={300}
                 height={300}
                 src={NotFoundImage}
-                alt='not found users'
+                alt='dokumen tidak ditemukan'
               />
             }
-            text='Document not found'
+            text='Dokumen tidak ditemukan'
           />
         )}
       </LoadingContainer>

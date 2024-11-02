@@ -18,7 +18,7 @@ interface Payload {
 }
 
 const BedRoomDetailPage = ({ params }: { params: { id: string } }) => {
-  usePageTitle('Bedroom Detail');
+  usePageTitle('Detail Kamar Tidur');
 
   const [loading, setLoading] = useState(false);
   const [bedroomDetails, setBedroomDetails] = useState<BedRoom | null>(null);
@@ -42,8 +42,8 @@ const BedRoomDetailPage = ({ params }: { params: { id: string } }) => {
 
       getBedroomDetails();
       toast({
-        title: 'Bedroom Updated',
-        description: 'The bedroom details have been successfully saved',
+        title: 'Kamar Tidur Diperbarui',
+        description: 'Detail kamar tidur telah berhasil disimpan',
         variant: 'success',
       });
     } catch (error: any) {
@@ -90,8 +90,8 @@ const BedRoomDetailPage = ({ params }: { params: { id: string } }) => {
       });
 
       toast({
-        title: 'Bedroom deleted succesfully',
-        description: 'Bedroom deletion is success',
+        title: 'Kamar tidur berhasil dihapus',
+        description: 'Penghapusan kamar tidur berhasil',
         variant: 'success',
       });
 

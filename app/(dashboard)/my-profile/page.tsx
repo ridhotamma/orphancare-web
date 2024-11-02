@@ -5,7 +5,7 @@ import { usePageTitle } from '@/hooks/use-page-title';
 import useCurrentUser from '@/stores/current-user';
 
 const MyProfilePage = () => {
-  usePageTitle('My Profile');
+  usePageTitle('Profile Saya');
 
   const { userDetail } = useCurrentUser();
 

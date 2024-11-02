@@ -38,6 +38,7 @@ interface FullscreenDocumentPreviewProps {
   onDelete: () => void;
 }
 
+// File type helper functions remain unchanged
 const getFileTypeFromUrl = (url: string): string => {
   const extension = url.split('.').pop()?.toLowerCase();
   switch (extension) {
@@ -109,7 +110,7 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
       await navigator.clipboard.writeText(document.url as string);
       setIsCopied(true);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      console.error('Gagal menyalin:', err);
     }
   };
 
@@ -122,25 +123,14 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
       return (
         <FallbackPreview
           icon={<FileIcon className='h-24 w-24' />}
-          message='Preview not available'
-          subMessage='The document could not be loaded'
+          message='Pratinjau tidak tersedia'
+          subMessage='Dokumen tidak dapat dimuat'
         />
       );
     }
 
     switch (fileType) {
       case 'image/gif':
-        return (
-          <div className='relative w-full h-full'>
-            <Image
-              src={document.url}
-              alt={document.name as string}
-              className='object-contain rounded-lg'
-              fill={true}
-              onError={() => setHasError(true)}
-            />
-          </div>
-        );
       case 'image/jpeg':
       case 'image/jpg':
       case 'image/png':
@@ -169,24 +159,24 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
         return (
           <FallbackPreview
             icon={<FileSpreadsheetIcon className='h-24 w-24' />}
-            message='Excel document preview not available'
-            subMessage='Please download the file to view its contents'
+            message='Pratinjau dokumen Excel tidak tersedia'
+            subMessage='Silakan unduh berkas untuk melihat isinya'
           />
         );
       case 'application/msword':
         return (
           <FallbackPreview
             icon={<FileTypeIcon className='h-24 w-24' />}
-            message='Word document preview not available'
-            subMessage='Please download the file to view its contents'
+            message='Pratinjau dokumen Word tidak tersedia'
+            subMessage='Silakan unduh berkas untuk melihat isinya'
           />
         );
       default:
         return (
           <FallbackPreview
             icon={<FileIcon className='h-24 w-24' />}
-            message='Preview not available'
-            subMessage='This file type is not supported for preview'
+            message='Pratinjau tidak tersedia'
+            subMessage='Jenis berkas ini tidak didukung untuk pratinjau'
           />
         );
     }
@@ -246,7 +236,7 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
           {renderDocumentPreview()}
         </div>
 
-        {/* Info Toggle Button (visible on mobile and tablet) */}
+        {/* Info Toggle Button */}
         <Button
           variant='ghost'
           size='icon'
@@ -271,7 +261,7 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
           <div className='sticky top-0 bg-white dark:bg-gray-900 z-10 p-4 md:p-6 border-b border-gray-200 dark:border-gray-700'>
             <div className='flex items-center justify-between'>
               <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
-                Document Details
+                Detail Dokumen
               </h3>
               <Button
                 variant='ghost'
@@ -287,7 +277,7 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
           <div className='p-4 md:p-6 space-y-6'>
             <div>
               <h3 className='font-semibold mb-3 text-gray-700 dark:text-gray-300'>
-                Owner
+                Pemilik
               </h3>
               <div className='flex items-center space-x-3'>
                 <Avatar className='h-10 w-10 md:h-12 md:w-12'>
@@ -316,7 +306,7 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <div>
                 <h3 className='font-semibold mb-1 text-gray-700 dark:text-gray-300'>
-                  Created
+                  Dibuat
                 </h3>
                 <p className='text-sm text-gray-600 dark:text-gray-400'>
                   {format(new Date(document.createdAt), 'PPpp')}
@@ -324,7 +314,7 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
               </div>
               <div>
                 <h3 className='font-semibold mb-1 text-gray-700 dark:text-gray-300'>
-                  Updated
+                  Diperbarui
                 </h3>
                 <p className='text-sm text-gray-600 dark:text-gray-400'>
                   {format(new Date(document.createdAt), 'PPpp')}
@@ -339,14 +329,14 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
                 onClick={handleShare}
               >
                 <Share2 className='mr-2 h-4 w-4' />
-                Share document
+                Bagikan dokumen
               </Button>
               <Button
                 variant='destructive'
                 className='w-full'
                 onClick={() => setIsDeleteDialogOpen(true)}
               >
-                <Trash2 className='mr-2 h-4 w-4' /> Delete
+                <Trash2 className='mr-2 h-4 w-4' /> Hapus
               </Button>
             </div>
           </div>
@@ -359,10 +349,10 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
           <AlertDialogHeader>
             <AlertDialogTitle className='flex items-center gap-2'>
               <Share2 className='h-5 w-5' />
-              Share Document
+              Bagikan Dokumen
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Copy the link below to share this document
+              Salin tautan di bawah untuk membagikan dokumen ini
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className='flex items-center space-x-2 my-4'>
@@ -383,7 +373,7 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
             </div>
           </div>
           <AlertDialogFooter>
-            <AlertDialogCancel>Close</AlertDialogCancel>
+            <AlertDialogCancel>Tutup</AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -395,16 +385,16 @@ const FullscreenDocumentPreview: React.FC<FullscreenDocumentPreviewProps> = ({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              document &quot;{document.name}&quot; and remove it from our
-              servers.
+              Tindakan ini tidak dapat dibatalkan. Ini akan menghapus dokumen
+              &quot;{document.name}&quot; secara permanen dan menghapusnya dari
+              server kami.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>Hapus</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

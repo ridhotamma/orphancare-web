@@ -60,26 +60,28 @@ const Header: React.FC<HeaderProps> = ({
           </h2>
         </div>
 
-        {/* Desktop version */}
+        {/* Versi Desktop */}
         <div className='hidden lg:flex items-center gap-2'>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='outline' size='icon'>
                 <Sun className='h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0' />
                 <Moon className='absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100' />
-                <span className='sr-only'>Toggle theme</span>
+                <span className='sr-only'>Ganti tema</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className='w-56'>
-              <DropdownMenuLabel>Theme Settings</DropdownMenuLabel>
+              <DropdownMenuLabel>Pengaturan Tema</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
                 <DropdownMenuRadioItem value='light'>
-                  Light
+                  Terang
                 </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value='dark'>Dark</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value='dark'>
+                  Gelap
+                </DropdownMenuRadioItem>
                 <DropdownMenuRadioItem value='system'>
-                  System
+                  Sistem
                 </DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
@@ -91,28 +93,28 @@ const Header: React.FC<HeaderProps> = ({
                 className='flex items-center text-gray-600 hover:text-primary transition-colors duration-200 dark:bg-slate-200 dark:hover:bg-slate-400 dark:hover:text-white'
               >
                 <LogOut className='h-5 w-5 mr-2' />
-                <span className='font-medium'>Logout</span>
+                <span className='font-medium'>Keluar</span>
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>
-                  Are you sure you want to logout?
+                  Apakah Anda yakin ingin keluar?
                 </AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action will end your current session. You&apos;ll need to
-                  log in again to access your account.
+                  Tindakan ini akan mengakhiri sesi Anda saat ini. Anda perlu
+                  masuk kembali untuk mengakses akun Anda.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={onLogout}>Logout</AlertDialogAction>
+                <AlertDialogCancel>Batal</AlertDialogCancel>
+                <AlertDialogAction onClick={onLogout}>Keluar</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
         </div>
 
-        {/* Mobile version */}
+        {/* Versi Mobile */}
         <div className='lg:hidden'>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -121,34 +123,34 @@ const Header: React.FC<HeaderProps> = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
-              <DropdownMenuLabel>Options</DropdownMenuLabel>
+              <DropdownMenuLabel>Pilihan</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onSelect={onOpenThemeDialog}>
                 <Sun className='h-4 w-4 mr-2 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0' />
                 <Moon className='absolute h-4 w-4 mr-2 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100' />
-                <span>Theme Settings</span>
+                <span>Pengaturan Tema</span>
               </DropdownMenuItem>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                     <LogOut className='h-4 w-4 mr-2' />
-                    Logout
+                    Keluar
                   </DropdownMenuItem>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>
-                      Are you sure you want to logout?
+                      Apakah Anda yakin ingin keluar?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                      This action will end your current session. You&apos;ll
-                      need to log in again to access your account.
+                      Tindakan ini akan mengakhiri sesi Anda saat ini. Anda
+                      perlu masuk kembali untuk mengakses akun Anda.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>Batal</AlertDialogCancel>
                     <AlertDialogAction onClick={onLogout}>
-                      Logout
+                      Keluar
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>

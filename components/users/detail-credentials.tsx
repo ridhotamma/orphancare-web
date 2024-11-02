@@ -52,11 +52,11 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
   const { userDetail } = useCurrentUser();
 
   const handleSaveCredentials = async () => {
-    // temporary solution to prevent delete super user
+    // solusi sementara untuk mencegah penghapusan super user
     if (userDetail?.username === 'adminpsaa') {
       toast({
-        title: 'Cannot Edit Admin PSAA Annajah',
-        description: 'Super user cannot be edited',
+        title: 'Tidak Dapat Mengedit Admin PSAA Annajah',
+        description: 'Super user tidak dapat diedit',
         variant: 'destructive',
       });
       return;
@@ -75,8 +75,8 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
       });
       setIsEditCredentials(false);
       toast({
-        title: 'Credentials updated',
-        description: 'Your credentials have been successfully updated.',
+        title: 'Kredensial diperbarui',
+        description: 'Kredensial Anda telah berhasil diperbarui.',
         variant: 'success',
       });
       onRefresh();
@@ -92,7 +92,7 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
           .join(', ');
 
       toast({
-        title: 'Something went wrong',
+        title: 'Terjadi kesalahan',
         description: errorMessage,
         variant: 'destructive',
       });
@@ -108,18 +108,18 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
     } else {
       toast({
         title: 'Error',
-        description: "Email address doesn't match. Deletion cancelled.",
+        description: 'Alamat email tidak cocok. Penghapusan dibatalkan.',
         variant: 'destructive',
       });
     }
   };
 
   const handleChangePassword = async () => {
-    // temporary solution to prevent delete super user
+    // solusi sementara untuk mencegah perubahan password super user
     if (userDetail?.username === 'adminpsaa') {
       toast({
-        title: 'Cannot Change Password Admin PSAA Annajah',
-        description: 'Super user password cannot be changed',
+        title: 'Tidak Dapat Mengubah Password Admin PSAA Annajah',
+        description: 'Password super user tidak dapat diubah',
         variant: 'destructive',
       });
       return;
@@ -139,13 +139,13 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
       setNewPassword('');
       setConfirmPassword('');
       toast({
-        title: 'Password changed',
-        description: 'Your password has been successfully changed.',
+        title: 'Password diubah',
+        description: 'Password Anda telah berhasil diubah.',
         variant: 'success',
       });
     } catch (error: any) {
       toast({
-        title: 'Something went wrong',
+        title: 'Terjadi kesalahan',
         description: error?.message,
         variant: 'destructive',
       });
@@ -167,11 +167,11 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
   };
 
   const handleDeleteUser = async () => {
-    // temporary solution to prevent delete super user
+    // solusi sementara untuk mencegah penghapusan super user
     if (userDetail?.username === 'adminpsaa') {
       toast({
-        title: 'Cannot Delete Admin PSAA Annajah',
-        description: 'Super user cannot be deleted',
+        title: 'Tidak Dapat Menghapus Admin PSAA Annajah',
+        description: 'Super user tidak dapat dihapus',
         variant: 'destructive',
       });
       return;
@@ -184,14 +184,14 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
         method: 'DELETE',
       });
       toast({
-        title: 'User deleted',
-        description: 'The user has been successfully deleted.',
+        title: 'Pengguna dihapus',
+        description: 'Pengguna telah berhasil dihapus.',
         variant: 'success',
       });
       router.push(isCareTaker ? '/users/caretakers' : '/users/children');
     } catch (error: any) {
       toast({
-        title: 'Something went wrong',
+        title: 'Terjadi kesalahan',
         description: error?.message,
         variant: 'destructive',
       });
@@ -203,7 +203,7 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
   const renderCredentialsForm = () => (
     <Card>
       <CardHeader>
-        <CardTitle className='text-xl'>Credentials</CardTitle>
+        <CardTitle className='text-xl'>Kredensial</CardTitle>
       </CardHeader>
       <CardContent className='space-y-6'>
         <div>
@@ -218,7 +218,7 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
           />
         </div>
         <div>
-          <Label htmlFor='username'>Username</Label>
+          <Label htmlFor='username'>Nama Pengguna</Label>
           <Input
             id='username'
             value={credentials.username}
@@ -237,9 +237,9 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
               disabled={!isEditCredentials}
             />
             <div>
-              <Label htmlFor='active'>Active</Label>
+              <Label htmlFor='active'>Aktif</Label>
               <p className='text-xs text-gray-500'>
-                When active, the user can log in and access the system.
+                Saat aktif, pengguna dapat masuk dan mengakses sistem.
               </p>
             </div>
           </div>
@@ -253,8 +253,8 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
             <div>
               <Label htmlFor='admin'>Admin</Label>
               <p className='text-xs text-gray-500'>
-                Admins have full access to all features and can manage other
-                users.
+                Admin memiliki akses penuh ke semua fitur dan dapat mengelola
+                pengguna lain.
               </p>
             </div>
           </div>
@@ -266,17 +266,17 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
   const renderUserActions = () => (
     <Card>
       <CardHeader>
-        <CardTitle className='text-xl'>User Actions</CardTitle>
+        <CardTitle className='text-xl'>Aksi Pengguna</CardTitle>
       </CardHeader>
       <CardContent className='flex items-center gap-4 flex-wrap'>
         <Button
           variant={'outline'}
           onClick={() => setIsPasswordModalOpen(true)}
         >
-          <KeyRound className='h-4 w-4 mr-2' /> Change Password
+          <KeyRound className='h-4 w-4 mr-2' /> Ubah Password
         </Button>
         <Button variant={'outline'} onClick={() => setShowDeleteAlert(true)}>
-          <Trash2 className='h-4 w-4 mr-2' /> Delete User
+          <Trash2 className='h-4 w-4 mr-2' /> Hapus Pengguna
         </Button>
       </CardContent>
     </Card>
@@ -292,10 +292,10 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
               onClick={() => setIsEditCredentials(false)}
               disabled={loadingAction}
             >
-              <X className='h-4 w-4 mr-2' /> Cancel
+              <X className='h-4 w-4 mr-2' /> Batal
             </Button>
             <Button onClick={handleSaveCredentials} disabled={loadingAction}>
-              <Save className='h-4 w-4 mr-2' /> Save
+              <Save className='h-4 w-4 mr-2' /> Simpan
             </Button>
           </div>
         ) : (
@@ -313,22 +313,22 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
       <AlertDialog open={showInactiveAlert} onOpenChange={setShowInactiveAlert}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Inactive Account Warning</AlertDialogTitle>
+            <AlertDialogTitle>Peringatan Akun Tidak Aktif</AlertDialogTitle>
             <AlertDialogDescription>
-              You are setting this account to inactive. An inactive user will
-              not be able to log in to the app. Are you sure you want to
-              proceed?
+              Anda akan mengatur akun ini menjadi tidak aktif. Pengguna yang
+              tidak aktif tidak akan dapat masuk ke aplikasi. Apakah Anda yakin
+              ingin melanjutkan?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 setCredentials({ ...credentials, active: false });
                 setShowInactiveAlert(false);
               }}
             >
-              Yes, proceed
+              Ya, lanjutkan
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -337,19 +337,19 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
       <AlertDialog open={showDeleteAlert} onOpenChange={setShowDeleteAlert}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete User</AlertDialogTitle>
+            <AlertDialogTitle>Hapus Pengguna</AlertDialogTitle>
             <AlertDialogDescription>
               <div className='space-y-4'>
                 <p>
-                  Are you sure you want to delete this user? This action cannot
-                  be undone. Please type the user&apos;s email address to
-                  confirm deletion.
+                  Apakah Anda yakin ingin menghapus pengguna ini? Tindakan ini
+                  tidak dapat dibatalkan. Silakan ketik alamat email pengguna
+                  untuk mengkonfirmasi penghapusan.
                 </p>
                 <p>
                   <b>{credentials.email}</b>
                 </p>
                 <Input
-                  placeholder="Enter user's email address"
+                  placeholder='Masukkan alamat email pengguna'
                   value={deleteConfirmEmail}
                   onChange={(e) => setDeleteConfirmEmail(e.target.value)}
                 />
@@ -357,7 +357,7 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirmation}
               className='bg-red-600 hover:bg-red-700'
@@ -365,7 +365,7 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
                 deleteConfirmEmail !== credentials.email || loadingAction
               }
             >
-              Yes, delete user
+              Ya, hapus pengguna
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

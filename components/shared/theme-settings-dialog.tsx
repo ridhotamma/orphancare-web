@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React from 'react';
 import { Sun, Moon, MonitorSmartphone } from 'lucide-react';
@@ -37,40 +37,40 @@ const ThemeSettingsDialog: React.FC<ThemeSettingsDialogProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Choose a theme</DialogTitle>
+          <DialogTitle>Pilih tema</DialogTitle>
           <DialogDescription>
-            Select your preferred theme option.
+            Pilih opsi tema yang Anda inginkan.
           </DialogDescription>
         </DialogHeader>
         <div className='py-4'>
           <Select value={theme} onValueChange={setTheme}>
             <SelectTrigger className='w-full'>
-              <SelectValue placeholder='Select a theme' />
+              <SelectValue placeholder='Pilih tema' />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value='light'>
                 <div className='flex items-center'>
                   <Sun className='mr-2 h-4 w-4' />
-                  Light
+                  Terang
                 </div>
               </SelectItem>
               <SelectItem value='dark'>
                 <div className='flex items-center'>
                   <Moon className='mr-2 h-4 w-4' />
-                  Dark
+                  Gelap
                 </div>
               </SelectItem>
               <SelectItem value='system'>
                 <div className='flex items-center'>
                   <MonitorSmartphone className='mr-2 h-4 w-4' />
-                  System
+                  Sistem
                 </div>
               </SelectItem>
             </SelectContent>
           </Select>
         </div>
         <DialogFooter>
-          <Button onClick={() => onOpenChange(false)}>Close</Button>
+          <Button onClick={() => onOpenChange(false)}>Tutup</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

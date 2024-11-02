@@ -80,7 +80,7 @@ const LoginPage: React.FC = () => {
       router.push('/dashboard');
 
       toast({
-        title: 'Login Success',
+        title: 'Berhasil Masuk',
         variant: 'success',
       });
     } catch (error: any) {
@@ -98,7 +98,7 @@ const LoginPage: React.FC = () => {
       <div className='hidden lg:block lg:w-1/2 relative'>
         <Image
           src={BackgroundImage}
-          alt='Login background'
+          alt='Latar belakang login'
           layout='fill'
           objectFit='cover'
         />
@@ -107,16 +107,16 @@ const LoginPage: React.FC = () => {
       <div className='w-full lg:w-1/2 flex items-center justify-center p-8'>
         <div className='w-full max-w-md'>
           <h2 className='text-3xl font-bold mb-6 text-primary text-center'>
-            Welcome Back
+            Selamat Datang Kembali
           </h2>
           <form className='space-y-6' onSubmit={handleSubmit}>
             <div className='space-y-2'>
-              <Label htmlFor='username'>Username</Label>
+              <Label htmlFor='username'>Nama Pengguna</Label>
               <Input
                 type='username'
                 id='username'
                 name='username'
-                placeholder='Enter your username'
+                placeholder='Masukkan nama pengguna'
                 required
                 value={formData.username}
                 onChange={handleInputChange}
@@ -124,12 +124,12 @@ const LoginPage: React.FC = () => {
               />
             </div>
             <div className='space-y-2'>
-              <Label htmlFor='password'>Password</Label>
+              <Label htmlFor='password'>Kata Sandi</Label>
               <Input
                 type='password'
                 id='password'
                 name='password'
-                placeholder='Enter your password'
+                placeholder='Masukkan kata sandi'
                 required
                 value={formData.password}
                 onChange={handleInputChange}
@@ -147,7 +147,7 @@ const LoginPage: React.FC = () => {
                   htmlFor='remember-me'
                   className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
                 >
-                  Remember me
+                  Ingat saya
                 </Label>
               </div>
               <div className='text-sm'>
@@ -155,13 +155,13 @@ const LoginPage: React.FC = () => {
                   href='/auth/forgot-password'
                   className='font-medium text-primary hover:text-secondary'
                 >
-                  Forgot your password?
+                  Lupa kata sandi?
                 </Link>
               </div>
             </div>
             <Button disabled={loading} type='submit' className='w-full'>
               {loading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
-              {loading ? 'Please Wait..' : 'Sign In'}
+              {loading ? 'Mohon Tunggu..' : 'Masuk'}
             </Button>
           </form>
         </div>

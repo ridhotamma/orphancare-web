@@ -23,13 +23,13 @@ export const UnauthorizedDialog: React.FC = () => {
     <AlertDialog open={isUnauthorized} onOpenChange={setUnauthorized}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Session Expired</AlertDialogTitle>
+          <AlertDialogTitle>Sesi Berakhir</AlertDialogTitle>
           <AlertDialogDescription>
-            Your session has expired. Please log in again to continue.
+            Sesi Anda telah berakhir. Silakan masuk kembali untuk melanjutkan.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogAction onClick={handleLogout}>Log Out</AlertDialogAction>
+          <AlertDialogAction onClick={handleLogout}>Keluar</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

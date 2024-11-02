@@ -32,7 +32,7 @@ type DocumentPayload = {
 const HorizontalAddDocumentDialog = ({
   isOpen,
   onClose,
-  onSuccess
+  onSuccess,
 }: HorizontalAddDocumentDialogProps) => {
   const [selectedDocumentType, setSelectedDocumentType] =
     useState<SelectItem | null>(null);
@@ -72,7 +72,7 @@ const HorizontalAddDocumentDialog = ({
       }
     } catch (error: any) {
       toast({
-        title: 'Cannot upload document',
+        title: 'Tidak dapat mengunggah dokumen',
         description: error.message,
         variant: 'destructive',
       });
@@ -95,16 +95,16 @@ const HorizontalAddDocumentDialog = ({
         data: documentPayload,
       });
       toast({
-        title: 'Document added',
+        title: 'Dokumen ditambahkan',
         description:
-          'Your new document has been successfully uploaded and added.',
+          'Dokumen baru Anda telah berhasil diunggah dan ditambahkan.',
         variant: 'success',
       });
       handleBeforeClose();
       onSuccess();
     } catch (error: any) {
       toast({
-        title: 'Cannot submit document',
+        title: 'Tidak dapat mengirim dokumen',
         description: error.message,
         variant: 'destructive',
       });
@@ -135,7 +135,7 @@ const HorizontalAddDocumentDialog = ({
     } catch (error: any) {
       if (error.status !== 404) {
         toast({
-          title: 'Something went wrong',
+          title: 'Terjadi kesalahan',
           description: error.message,
           variant: 'destructive',
         });
@@ -159,7 +159,7 @@ const HorizontalAddDocumentDialog = ({
       );
     } catch (error: any) {
       toast({
-        title: 'Something went wrong',
+        title: 'Terjadi kesalahan',
         description: error.message,
         variant: 'destructive',
       });
@@ -187,7 +187,7 @@ const HorizontalAddDocumentDialog = ({
         <div className='flex flex-col items-center justify-center'>
           <Loader2 className='h-12 w-12 animate-spin text-gray-400' />
           <p className='mt-2 text-sm text-gray-500 dark:text-gray-400'>
-            Uploading document...
+            Mengunggah dokumen...
           </p>
         </div>
       );
@@ -199,7 +199,7 @@ const HorizontalAddDocumentDialog = ({
           <div className='relative w-full h-full flex items-center justify-center'>
             <Image
               src={documentPayload.url}
-              alt='Document preview'
+              alt='Pratinjau dokumen'
               className='max-w-full max-h-full object-contain'
               layout='fill'
             />
@@ -221,7 +221,7 @@ const HorizontalAddDocumentDialog = ({
       <div className='text-center'>
         <Upload className='mx-auto h-12 w-12 text-gray-400' />
         <p className='mt-2 text-sm text-gray-500 dark:text-gray-400'>
-          Upload a document to preview
+          Unggah dokumen untuk pratinjau
         </p>
       </div>
     );
@@ -231,7 +231,7 @@ const HorizontalAddDocumentDialog = ({
 
   return (
     <>
-      {/* Backdrop */}
+      {/* Latar Belakang */}
       <div
         className='fixed inset-0 bg-black/70 z-40'
         onClick={handleBeforeClose}
@@ -243,7 +243,7 @@ const HorizontalAddDocumentDialog = ({
         className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full lg:w-[70%] max-h-[90vh] bg-white dark:bg-gray-900 rounded-lg shadow-xl z-50 overflow-auto'
       >
         <div className='flex flex-col md:flex-row h-full'>
-          {/* Left side - File preview */}
+          {/* Sisi kiri - Pratinjau file */}
           <div className='w-full h-[400px] md:h-[600px] md:w-1/2 bg-gray-100 dark:bg-gray-800 flex flex-col items-center justify-center p-6 relative'>
             {renderPreview()}
             {documentPayload?.url && !loadingUpload && (
@@ -253,17 +253,17 @@ const HorizontalAddDocumentDialog = ({
                 onClick={handleRemoveFile}
               >
                 <Trash2 className='h-4 w-4 mr-2' />
-                Remove
+                Hapus
               </Button>
             )}
           </div>
 
-          {/* Right side - Form */}
+          {/* Sisi kanan - Formulir */}
           <div className='w-full md:w-1/2 p-6 flex flex-col overflow-y-auto'>
-            <h2 className='text-2xl font-bold mb-6'>Add New Document</h2>
+            <h2 className='text-2xl font-bold mb-6'>Tambah Dokumen Baru</h2>
             <form onSubmit={handleSubmit} className='space-y-6 flex-grow'>
               <div className='space-y-2'>
-                <Label htmlFor='name'>Document Name</Label>
+                <Label htmlFor='name'>Nama Dokumen</Label>
                 <Input
                   id='name'
                   value={documentPayload?.name}
@@ -273,12 +273,12 @@ const HorizontalAddDocumentDialog = ({
                         ({ ...prev, name: e.target.value } as DocumentPayload)
                     )
                   }
-                  placeholder='Enter document name'
+                  placeholder='Masukkan nama dokumen'
                   required
                 />
               </div>
               <div className='space-y-2'>
-                <Label htmlFor='documentType'>Document Type</Label>
+                <Label htmlFor='documentType'>Jenis Dokumen</Label>
                 <AutocompleteSelect
                   items={documentTypes}
                   value={selectedDocumentType}
@@ -292,13 +292,13 @@ const HorizontalAddDocumentDialog = ({
                     )
                   }
                   isLoading={loadingDocumentTypes}
-                  searchPlaceholder='Search document type...'
-                  placeholder='Select document type'
+                  searchPlaceholder='Cari jenis dokumen...'
+                  placeholder='Pilih jenis dokumen'
                   className='w-full'
                 />
               </div>
               <div className='space-y-2'>
-                <Label htmlFor='user'>Assign User</Label>
+                <Label htmlFor='user'>Pilih Pengguna</Label>
                 <UserAutoComplete
                   onSearch={handleUserSearch}
                   getId={(user) => user.id}
@@ -306,9 +306,9 @@ const HorizontalAddDocumentDialog = ({
                   value={selectedUser}
                   onChange={(user) => setSelectedUser(user)}
                   className='w-full'
-                  placeholder='Search users'
-                  searchPlaceholder='Search users...'
-                  emptyMessage='User not found'
+                  placeholder='Cari pengguna'
+                  searchPlaceholder='Cari pengguna...'
+                  emptyMessage='Pengguna tidak ditemukan'
                   renderItem={(user) => {
                     return (
                       <div className='flex items-center gap-4'>
@@ -334,7 +334,7 @@ const HorizontalAddDocumentDialog = ({
                 />
               </div>
               <div className='space-y-2'>
-                <Label htmlFor='file'>Upload File</Label>
+                <Label htmlFor='file'>Unggah Berkas</Label>
                 <div className='flex items-center space-x-2'>
                   <Button
                     type='button'
@@ -344,10 +344,10 @@ const HorizontalAddDocumentDialog = ({
                     }
                     disabled={loadingUpload}
                   >
-                    Choose file
+                    Pilih berkas
                   </Button>
                   <span className='text-sm text-gray-500 dark:text-gray-400 truncate'>
-                    {file?.name || 'No file chosen'}
+                    {file?.name || 'Belum ada berkas dipilih'}
                   </span>
                   <input
                     id='file-upload'
@@ -367,7 +367,7 @@ const HorizontalAddDocumentDialog = ({
                 onClick={handleBeforeClose}
                 disabled={loadingSubmit}
               >
-                Cancel
+                Batal
               </Button>
               <Button
                 type='submit'
@@ -382,10 +382,10 @@ const HorizontalAddDocumentDialog = ({
                 {loadingSubmit ? (
                   <>
                     <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                    Submitting
+                    Mengirim
                   </>
                 ) : (
-                  'Submit'
+                  'Kirim'
                 )}
               </Button>
             </div>

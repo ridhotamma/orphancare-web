@@ -77,7 +77,9 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({
       return (
         <div className='text-center'>
           <CloudUpload className='mx-auto h-12 w-12 text-gray-400' />
-          <p className='mt-2 text-sm text-gray-600'>Click to upload a file</p>
+          <p className='mt-2 text-sm text-gray-600'>
+            Klik untuk mengunggah berkas
+          </p>
         </div>
       );
     }
@@ -87,13 +89,13 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({
         <div className='relative w-full h-full'>
           <Image
             src={previewUrl}
-            alt='Preview'
+            alt='Pratinjau'
             className='absolute inset-0 w-full h-full object-contain'
             style={{ width: '100%', height: '100%' }}
             fill={true}
           />
           <p className='absolute bottom-2 left-0 right-0 text-xs text-gray-500 text-center'>
-            Click to change file
+            Klik untuk mengganti berkas
           </p>
         </div>
       );
@@ -103,9 +105,11 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({
       <div className='text-center'>
         <FileText className='mx-auto h-12 w-12 text-gray-400' />
         <p className='mt-2 text-sm text-gray-600'>
-          {fileInputRef.current?.files?.[0]?.name || 'Document uploaded'}
+          {fileInputRef.current?.files?.[0]?.name || 'Dokumen telah diunggah'}
         </p>
-        <p className='text-xs text-gray-500 mt-1'>Click to change file</p>
+        <p className='text-xs text-gray-500 mt-1'>
+          Klik untuk mengganti berkas
+        </p>
       </div>
     );
   };
@@ -115,7 +119,7 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
           <DialogTitle className='text-2xl font-semibold'>
-            Add New Document
+            Tambah Dokumen Baru
           </DialogTitle>
         </DialogHeader>
         <div className='space-y-6 py-4'>
@@ -134,7 +138,7 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({
           />
           <div className='space-y-2'>
             <Label htmlFor='document-name' className='text-sm font-medium'>
-              Document Name
+              Nama Dokumen
             </Label>
             <Input
               id='document-name'
@@ -147,7 +151,7 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({
           </div>
           <div className='space-y-2'>
             <Label htmlFor='document-type' className='text-sm font-medium'>
-              Document Type
+              Jenis Dokumen
             </Label>
             <Select
               onValueChange={(value) =>
@@ -155,7 +159,7 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({
               }
             >
               <SelectTrigger className='w-full'>
-                <SelectValue placeholder='Select document type' />
+                <SelectValue placeholder='Pilih jenis dokumen' />
               </SelectTrigger>
               <SelectContent>
                 {documentTypes.map((type) => (
@@ -169,7 +173,7 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({
         </div>
         <div className='flex justify-end space-x-2 pt-4'>
           <Button variant='outline' onClick={onClose}>
-            Cancel
+            Batal
           </Button>
           <Button
             disabled={
@@ -180,7 +184,7 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({
             }
             onClick={onAddDocument}
           >
-            Add Document
+            Tambah Dokumen
           </Button>
         </div>
       </DialogContent>

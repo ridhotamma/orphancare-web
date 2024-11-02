@@ -159,7 +159,7 @@ const UserDetailPage: React.FC<UserDetailProps> = ({
     },
     {
       id: 'documents',
-      label: 'Documents',
+      label: 'Dokumen',
       content: (
         <DetailDocuments
           data={userDocuments as Document[]}
@@ -174,7 +174,7 @@ const UserDetailPage: React.FC<UserDetailProps> = ({
     },
     {
       id: 'credentials',
-      label: 'Credentials',
+      label: 'Kredensial',
       content: (
         <DetailCredentials
           data={userCredential as Omit<User, 'profile'>}
@@ -192,7 +192,7 @@ const UserDetailPage: React.FC<UserDetailProps> = ({
         <Button variant='link' className='p-0' asChild>
           <Link href={isCareTaker ? '/users/caretakers' : '/users/children'}>
             <ArrowLeft className='h-4 w-4 mr-2' />
-            Back to {isCareTaker ? 'Caretaker' : 'Children'} List
+            Kembali ke Daftar {isCareTaker ? 'pengasuh' : 'Anak Asuh'}
           </Link>
         </Button>
       </div>

@@ -202,7 +202,7 @@ const DashboardPage = () => {
           <Card className='hover:shadow-lg transition-shadow duration-300'>
             <CardHeader>
               <CardTitle className='flex items-center'>
-                <ShoppingBag className='mr-2' /> Donation Type Distribution
+                <ShoppingBag className='mr-2' /> Distribusi Tipe Donasi
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -250,7 +250,7 @@ const DashboardPage = () => {
           <Card className='hover:shadow-lg transition-shadow duration-300'>
             <CardHeader>
               <CardTitle className='flex items-center'>
-                <TrendingUp className='mr-2' /> Donation Trends
+                <TrendingUp className='mr-2' /> Tren Donasi
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -314,7 +314,7 @@ const DashboardPage = () => {
           <Card className='hover:shadow-lg transition-shadow duration-300'>
             <CardHeader>
               <CardTitle className='flex items-center'>
-                <DollarSign className='mr-2' /> Recent Donations
+                <DollarSign className='mr-2' /> Donasi Terbaru
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -352,7 +352,7 @@ const DashboardPage = () => {
           <Card className='hover:shadow-lg transition-shadow duration-300'>
             <CardHeader>
               <CardTitle className='flex items-center'>
-                <Calendar className='mr-2' /> Upcoming Events
+                <Calendar className='mr-2' /> Event Yang Akan Datang
               </CardTitle>
             </CardHeader>
             <CardContent>

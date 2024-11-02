@@ -11,7 +11,7 @@ import { DocumentType } from '@/types/document-type';
 import { User } from '@/types/user';
 
 const DocumentsPage = () => {
-  usePageTitle('Documents');
+  usePageTitle('Dokumen');
 
   const [loading, setLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -41,7 +41,7 @@ const DocumentsPage = () => {
       setMetaData(response.meta);
     } catch (error: any) {
       toast({
-        title: 'Error fetching user data',
+        title: 'Gagal mengambil data dokumen',
         description: error.message,
         variant: 'destructive',
       });
@@ -59,7 +59,7 @@ const DocumentsPage = () => {
       });
 
       setDocumentTypes([
-        { id: 'all', label: 'All Documents' },
+        { id: 'all', label: 'Semua Dokumen' },
         ...data.map((type: DocumentType) => ({
           value: type.id,
           label: type.name,
@@ -67,7 +67,7 @@ const DocumentsPage = () => {
       ]);
     } catch (error: any) {
       toast({
-        title: 'Something went wrong',
+        title: 'Terjadi kesalahan',
         description: error.message,
         variant: 'destructive',
       });
@@ -86,7 +86,7 @@ const DocumentsPage = () => {
       });
 
       setUserList([
-        { id: 'all', label: 'All Users' },
+        { id: 'all', label: 'Semua Pengguna' },
         ...response.data.map((user: User) => ({
           value: user.id,
           label: user.profile?.fullName,
@@ -95,7 +95,7 @@ const DocumentsPage = () => {
     } catch (error: any) {
       if (error.status !== 404) {
         toast({
-          title: 'Something went wrong',
+          title: 'Terjadi kesalahan',
           description: error.message,
           variant: 'destructive',
         });
@@ -113,14 +113,14 @@ const DocumentsPage = () => {
         method: 'DELETE',
       });
       toast({
-        title: 'Successfully Deleted',
-        description: `${doc?.name} Successfully deleted`,
+        title: 'Berhasil Dihapus',
+        description: `${doc?.name} berhasil dihapus`,
         variant: 'success',
       });
       fetchDocumentData();
     } catch (error: any) {
       toast({
-        title: 'Cannot delete document',
+        title: 'Tidak dapat menghapus dokumen',
         description: error.message,
         variant: 'destructive',
       });

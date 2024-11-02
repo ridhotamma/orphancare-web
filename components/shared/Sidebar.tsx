@@ -86,13 +86,13 @@ const Sidebar: React.FC<SidebarProps> = ({ menuItems, user, onClose }) => {
               <DropdownMenuItem asChild>
                 <Link href={'/my-profile'}>
                   <UserIcon className='mr-2 h-4 w-4' />
-                  <span>My Profile</span>
+                  <span>Profile Saya</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href={'/settings'}>
                   <Sliders className='mr-2 h-4 w-4' />
-                  <span>App Settings</span>
+                  <span>Pengaturan Aplikasi</span>
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>

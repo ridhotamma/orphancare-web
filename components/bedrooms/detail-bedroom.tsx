@@ -90,19 +90,22 @@ const BedRoomDetail = ({
         <Button variant='link' className='p-0' asChild>
           <Link href='/bedrooms'>
             <ArrowLeft className='h-4 w-4 mr-2' />
-            Back to bedroom List
+            Kembali ke Daftar Kamar
           </Link>
         </Button>
 
         <div className='flex items-center gap-4'>
-          <Button variant={'destructive'} onClick={() => setShowDeleteDialog(true)}>
+          <Button
+            variant={'destructive'}
+            onClick={() => setShowDeleteDialog(true)}
+          >
             <Trash2 className='h-4 w-4 mr-2' />
-            Delete Bedroom
+            Hapus Kamar
           </Button>
 
           <Button onClick={() => setIsDialogOpen(true)}>
             <Edit2 className='h-4 w-4 mr-2' />
-            Edit Bedroom
+            Edit Kamar
           </Button>
         </div>
       </div>
@@ -121,22 +124,22 @@ const BedRoomDetail = ({
         <CardContent className='pt-6'>
           <div className='flex items-center space-x-4 text-gray-600 dark:text-gray-100'>
             <Users className='h-5 w-5' />
-            <span>{bedRoom?.profiles?.length || 0} Occupants</span>
+            <span>{bedRoom?.profiles?.length || 0} Penghuni</span>
           </div>
         </CardContent>
       </Card>
 
       <h2 className='text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200'>
-        Occupants
+        Penghuni
       </h2>
       {!bedRoom?.profiles || bedRoom.profiles.length === 0 ? (
         <Card className='p-6 text-center bg-gray-50 dark:bg-gray-800'>
           <Users className='h-12 w-12 mx-auto mb-4 text-gray-400' />
           <h3 className='text-lg font-medium text-gray-700 dark:text-gray-300 mb-2'>
-            No Occupants
+            Belum Ada Penghuni
           </h3>
           <p className='text-gray-500 dark:text-gray-400 mb-4'>
-            This room currently has no assigned occupants.
+            Kamar ini belum memiliki penghuni.
           </p>
           <Button
             variant='outline'
@@ -144,7 +147,7 @@ const BedRoomDetail = ({
             className='mx-auto'
           >
             <Users className='h-4 w-4 mr-2' />
-            Assign Occupants
+            Tambahkan Penghuni
           </Button>
         </Card>
       ) : (
@@ -189,20 +192,20 @@ const BedRoomDetail = ({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Are you sure you want to delete this bedroom?
+              Apakah Anda yakin ingin menghapus kamar ini?
             </AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              bedroom and remove all associated data.
+              Tindakan ini tidak dapat dibatalkan. Ini akan secara permanen
+              menghapus kamar dan menghapus semua data yang terkait.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => onDelete(bedRoom)}
               className='bg-red-500 hover:bg-red-600'
             >
-              Delete
+              Hapus
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

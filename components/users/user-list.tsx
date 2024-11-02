@@ -167,7 +167,7 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
             <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400' />
             <Input
               type='text'
-              placeholder='Search users...'
+              placeholder='Cari pengguna...'
               className='pl-10'
               value={searchQuery}
               onChange={(e) => handleSearchUsers(e.target.value)}
@@ -178,22 +178,22 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
               <DropdownMenuTrigger asChild>
                 <Button variant='outline' className='w-full'>
                   <UserSearch className='mr-2 h-4 w-4' />
-                  Gender
+                  Jenis Kelamin
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className='w-56'>
-                <DropdownMenuLabel>Filter By Gender</DropdownMenuLabel>
+                <DropdownMenuLabel>Filter Berdasarkan Jenis Kelamin</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioGroup
                   value={genderFilter}
                   onValueChange={setGenderFilter}
                 >
-                  <DropdownMenuRadioItem value='all'>All</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value='all'>Semua</DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value='MALE'>
-                    Male
+                    Laki-laki
                   </DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value='FEMALE'>
-                    Female
+                    Perempuan
                   </DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
@@ -202,17 +202,17 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
               <DropdownMenuTrigger asChild>
                 <Button variant='outline' className='w-full'>
                   <Bed className='mr-2 h-4 w-4' />
-                  Bed Room
+                  Kamar Tidur
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className='w-56'>
-                <DropdownMenuLabel>Filter By Bed Room</DropdownMenuLabel>
+                <DropdownMenuLabel>Filter Berdasarkan Kamar Tidur</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioGroup
                   value={bedRoomFilter}
                   onValueChange={setBedRoomFilter}
                 >
-                  <DropdownMenuRadioItem value='all'>All</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value='all'>Semua</DropdownMenuRadioItem>
                   {bedRoomData.map((bedRoom) => (
                     <DropdownMenuRadioItem key={bedRoom.id} value={bedRoom.id}>
                       {bedRoom.name}
@@ -229,7 +229,7 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
                     : '/users/children/create'
                 }
               >
-                <Plus className='mr-2 h-4 w-4' /> Add User
+                <Plus className='mr-2 h-4 w-4' /> Tambah Pengguna
               </Link>
             </Button>
           </div>
@@ -241,13 +241,13 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>User</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Gender</TableHead>
-                <TableHead>Bed Room</TableHead>
-                <TableHead>Join Date</TableHead>
+                <TableHead>Pengguna</TableHead>
+                <TableHead>Peran</TableHead>
+                <TableHead>Jenis Kelamin</TableHead>
+                <TableHead>Kamar Tidur</TableHead>
+                <TableHead>Tanggal Bergabung</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className='text-right'>Actions</TableHead>
+                <TableHead className='text-right'>Aksi</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -272,10 +272,12 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
                     <Badge variant='secondary'>
                       {user.roles.includes(RoleType.ADMIN)
                         ? 'Administrator'
-                        : 'User'}
+                        : 'Pengguna'}
                     </Badge>
                   </TableCell>
-                  <TableCell>{user.profile?.gender}</TableCell>
+                  <TableCell>
+                    {user.profile?.gender === 'MALE' ? 'Laki-laki' : 'Perempuan'}
+                  </TableCell>
                   <TableCell>{user.profile?.bedRoom?.name}</TableCell>
                   <TableCell>
                     {user.profile?.joinDate
@@ -289,7 +291,7 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
                           user.active ? 'bg-green-500' : 'bg-red-500'
                         }`}
                       />
-                      <span>{user.active ? 'Active' : 'Inactive'}</span>
+                      <span>{user.active ? 'Aktif' : 'Tidak Aktif'}</span>
                     </div>
                   </TableCell>
                   <TableCell className='text-right'>
@@ -301,7 +303,7 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
                             : `/users/children/${user.id}`
                         }
                       >
-                        <Eye className='mr-2 h-4 w-4' /> View
+                        <Eye className='mr-2 h-4 w-4' /> Lihat
                       </Link>
                     </Button>
                   </TableCell>
@@ -318,23 +320,23 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
                 width={300}
                 height={300}
                 src={NotFoundImage}
-                alt='not found users'
+                alt='pengguna tidak ditemukan'
               />
             }
-            text='User not found'
+            text='Pengguna tidak ditemukan'
           />
         )}
 
         {userData.length > 0 && (
           <div className='flex items-center justify-between px-2 py-4'>
             <div className='text-sm text-muted-foreground'>
-              Showing {paginationMeta.currentPage * paginationMeta.perPage + 1}{' '}
-              to{' '}
+              Menampilkan {paginationMeta.currentPage * paginationMeta.perPage + 1}{' '}
+              sampai{' '}
               {Math.min(
                 (paginationMeta.currentPage + 1) * paginationMeta.perPage,
                 paginationMeta.total
               )}{' '}
-              of {paginationMeta.total} entries
+              dari {paginationMeta.total} entri
             </div>
             <div className='flex items-center space-x-2'>
               <Button
@@ -354,7 +356,7 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
                 <ChevronLeft className='h-4 w-4' />
               </Button>
               <span className='text-sm'>
-                Page {paginationMeta.currentPage + 1} of{' '}
+                Halaman {paginationMeta.currentPage + 1} dari{' '}
                 {paginationMeta.totalPages}
               </span>
               <Button

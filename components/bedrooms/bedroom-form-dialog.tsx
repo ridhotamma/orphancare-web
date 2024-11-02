@@ -68,27 +68,23 @@ const AbsoluteBedroomForm: React.FC<AbsoluteBedroomFormProps> = ({
 
   return (
     <>
-      {/* Backdrop */}
       <div
         className='fixed inset-0 bg-black/70 z-40'
         onClick={() => onOpenChange(false)}
       />
 
-      {/* Dialog */}
       <div className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[75%] max-w-md bg-white dark:bg-gray-900 rounded-lg shadow-xl z-50'>
-        {/* Header */}
         <div className='p-6 border-b border-gray-200 dark:border-gray-800'>
           <h2 className='text-2xl font-bold'>
-            {isEditMode ? 'Edit Bedroom' : 'Add New Bedroom'}
+            {isEditMode ? 'Edit Kamar Tidur' : 'Tambah Kamar Tidur Baru'}
           </h2>
         </div>
 
-        {/* Content */}
         <div className='p-6 max-h-[calc(90vh-200px)] overflow-y-auto'>
           <div className='space-y-6'>
             <div className='space-y-2'>
               <Label htmlFor='name' className='text-sm font-medium'>
-                Bedroom Name
+                Nama Kamar Tidur
               </Label>
               <Input
                 id='name'
@@ -97,13 +93,13 @@ const AbsoluteBedroomForm: React.FC<AbsoluteBedroomFormProps> = ({
                   setBedroom({ ...bedroom, name: e.target.value })
                 }
                 className='w-full'
-                placeholder='Enter bedroom name'
+                placeholder='Masukkan nama kamar tidur'
               />
             </div>
 
             <div className='space-y-2'>
               <Label htmlFor='type' className='text-sm font-medium'>
-                Bedroom Type
+                Tipe Kamar Tidur
               </Label>
               <Select
                 value={bedroom.bedRoomTypeId}
@@ -112,7 +108,7 @@ const AbsoluteBedroomForm: React.FC<AbsoluteBedroomFormProps> = ({
                 }
               >
                 <SelectTrigger className='w-full'>
-                  <SelectValue placeholder='Select bedroom type' />
+                  <SelectValue placeholder='Pilih tipe kamar tidur' />
                 </SelectTrigger>
                 <SelectContent>
                   {bedRoomTypes.map((type, index) => (
@@ -126,7 +122,7 @@ const AbsoluteBedroomForm: React.FC<AbsoluteBedroomFormProps> = ({
 
             <div className='space-y-2'>
               <Label htmlFor='profiles' className='text-sm font-medium'>
-                Occupants
+                Penghuni
               </Label>
               <MultiSelect
                 options={users}
@@ -135,7 +131,7 @@ const AbsoluteBedroomForm: React.FC<AbsoluteBedroomFormProps> = ({
                 onValueChange={(value) =>
                   setBedroom({ ...bedroom, profiles: value })
                 }
-                placeholder='Select Occupants'
+                placeholder='Pilih Penghuni'
                 variant='default'
                 className='w-full'
               />
@@ -143,13 +139,15 @@ const AbsoluteBedroomForm: React.FC<AbsoluteBedroomFormProps> = ({
           </div>
         </div>
 
-        {/* Footer */}
         <div className='p-6 border-t border-gray-200 dark:border-gray-800 flex justify-end space-x-4'>
           <Button variant='outline' onClick={() => onOpenChange(false)}>
-            Cancel
+            Batal
           </Button>
-          <Button onClick={handleSubmit} disabled={!bedroom.name || !bedroom.bedRoomTypeId}>
-            {isEditMode ? 'Update Bedroom' : 'Add Bedroom'}
+          <Button
+            onClick={handleSubmit}
+            disabled={!bedroom.name || !bedroom.bedRoomTypeId}
+          >
+            {isEditMode ? 'Perbarui Kamar Tidur' : 'Tambah Kamar Tidur'}
           </Button>
         </div>
       </div>
