@@ -53,7 +53,7 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
 
   const handleSaveCredentials = async () => {
     // solusi sementara untuk mencegah penghapusan super user
-    if (userDetail?.username === 'adminpsaa') {
+    if (userDetail?.id === credentials?.id) {
       toast({
         title: 'Tidak Dapat Mengedit Admin PSAA Annajah',
         description: 'Super user tidak dapat diedit',
@@ -69,7 +69,7 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
         roles.push(RoleType.ADMIN);
       }
       await requests({
-        url: `/admin/users/${credentials.id}`,
+        url: `/admin/users/${credentials?.id}`,
         method: 'PUT',
         data: { ...credentials, roles },
       });
@@ -116,7 +116,7 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
 
   const handleChangePassword = async () => {
     // solusi sementara untuk mencegah perubahan password super user
-    if (userDetail?.username === 'adminpsaa') {
+    if (userDetail?.id === credentials?.id) {
       toast({
         title: 'Tidak Dapat Mengubah Password Admin PSAA Annajah',
         description: 'Password super user tidak dapat diubah',
@@ -131,7 +131,7 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
         url: `/admin/users/change-password`,
         method: 'PUT',
         data: {
-          userId: credentials.id,
+          userId: credentials?.id,
           newPassword: newPassword,
         },
       });
@@ -168,7 +168,7 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
 
   const handleDeleteUser = async () => {
     // solusi sementara untuk mencegah penghapusan super user
-    if (userDetail?.username === 'adminpsaa') {
+    if (userDetail?.id === credentials?.id) {
       toast({
         title: 'Tidak Dapat Menghapus Admin PSAA Annajah',
         description: 'Super user tidak dapat dihapus',
@@ -180,7 +180,7 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
     try {
       setLoadingAction(true);
       await requests({
-        url: `/admin/users/${credentials.id}`,
+        url: `/admin/users/${credentials?.id}`,
         method: 'DELETE',
       });
       toast({
