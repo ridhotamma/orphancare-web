@@ -110,7 +110,7 @@ const BedRoomDetail = ({
         </div>
       </div>
 
-      <Card className='mb-8 shadow-lg'>
+      <Card className='mb-8'>
         <CardHeader className='bg-gray-50 dark:bg-gray-800'>
           <div className='flex justify-between items-center'>
             <CardTitle className='text-2xl font-bold text-gray-800 dark:text-gray-200'>
@@ -155,7 +155,7 @@ const BedRoomDetail = ({
           {bedRoom.profiles.map((profile, index) => (
             <Card
               key={index}
-              className='flex items-center p-4 space-x-4 shadow-md hover:shadow-lg transition-shadow duration-300'
+              className='flex items-center p-4 space-x-4 transition-shadow duration-300'
             >
               <Avatar className='h-12 w-12 border-2 border-gray-200'>
                 <AvatarImage

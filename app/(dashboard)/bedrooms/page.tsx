@@ -3,10 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import BedroomFormDialog from '@/components/bedrooms/bedroom-form-dialog';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Users, Search, Plus, Eye, UserX, Bed } from 'lucide-react';
+import { Search, Plus, Eye, UserX, Bed } from 'lucide-react';
 import { Profile } from '@/types/profile';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,7 +47,7 @@ const BedRoomPage: React.FC = () => {
   const [bedrooms, setBedrooms] = useState<BedRoom[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
-  const [bedroomTypeFilter, setBedroomTypeFilter] = useState<string>();
+  const [bedroomTypeFilter, setBedroomTypeFilter] = useState<string>('all');
   const [isMounted, setIsMounted] = useState(false);
 
   const { toast } = useToast();
@@ -153,7 +153,6 @@ const BedRoomPage: React.FC = () => {
     getBedroomData();
     getUserData();
     setIsMounted(true);
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -176,52 +175,31 @@ const BedRoomPage: React.FC = () => {
     }))
     .filter((user) => user.label);
 
-  const renderProfileSection = (profiles: Profile[] | undefined) => {
-    if (!profiles || profiles.length === 0) {
+  const renderProfiles = (profiles: Profile[] | undefined) => {
+    if (!profiles?.length) {
       return (
-        <div className='flex items-center justify-center p-2 bg-gray-50 dark:bg-slate-700 rounded-md'>
-          <UserX className='h-4 w-4 text-gray-400 mr-2' />
-          <span className='text-sm text-gray-500 dark:text-white'>
-            Belum ada penghuni
-          </span>
+        <div className='flex items-center text-gray-500'>
+          <UserX className='h-4 w-4 mr-2' />
+          <span className='text-sm'>Kosong</span>
         </div>
       );
     }
 
     return (
-      <div className='flex items-center justify-between'>
-        <div className='flex -space-x-4 hover:-space-x-1'>
-          {profiles.map((profile: Profile, index: number) => (
-            <>
-              {index < 5 && (
-                <Avatar
-                  key={profile.id}
-                  className='border-2 border-background transition-all ease-in-out duration-200'
-                >
-                  <AvatarImage
-                    src={profile.profilePicture}
-                    alt={profile.fullName}
-                    className='object-cover'
-                  />
-                  <AvatarFallback>{profile.fullName?.charAt(0)}</AvatarFallback>
-                </Avatar>
-              )}
-            </>
-          ))}
-          {profiles.length > 5 && (
-            <Avatar className='border-2 border-background'>
-              <AvatarFallback className='bg-blue-400 text-white font-bold'>
-                {profiles.length - 5}+
-              </AvatarFallback>
-            </Avatar>
-          )}
-        </div>
-        <div className='flex items-center space-x-1'>
-          <Users className='h-4 w-4 text-muted-foreground' />
-          <span className='text-sm text-muted-foreground'>
-            {profiles.length}
-          </span>
-        </div>
+      <div className='flex -space-x-2'>
+        {profiles.slice(0, 3).map((profile) => (
+          <Avatar key={profile.id} className='border-2 border-white h-8 w-8'>
+            <AvatarImage src={profile.profilePicture} alt={profile.fullName} />
+            <AvatarFallback>{profile.fullName?.[0]}</AvatarFallback>
+          </Avatar>
+        ))}
+        {profiles.length > 3 && (
+          <Avatar className='border-2 border-white h-8 w-8'>
+            <AvatarFallback className='bg-blue-400 text-white'>
+              +{profiles.length - 3}
+            </AvatarFallback>
+          </Avatar>
+        )}
       </div>
     );
   };
@@ -248,7 +226,7 @@ const BedRoomPage: React.FC = () => {
                   Kategori Kamar
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className='w-56'>
+              <DropdownMenuContent>
                 <DropdownMenuLabel>Filter tipe</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioGroup
@@ -275,31 +253,38 @@ const BedRoomPage: React.FC = () => {
 
       <LoadingContainer loading={loading}>
         {bedrooms.length > 0 ? (
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-            {bedrooms.map((bedroom) => (
-              <Card
-                key={bedroom.id}
-                className='hover:shadow-lg transition-shadow duration-300'
-              >
-                <CardHeader className='flex flex-col items-center justify-between space-y-2 pb-2'>
-                  <CardTitle className='text-lg font-medium'>
-                    {bedroom.name || `Kamar ${bedroom.id}`}
-                  </CardTitle>
-                  <Badge variant='secondary'>{bedroom.bedRoomType.name}</Badge>
-                </CardHeader>
-                <CardContent>
-                  <div className='mt-4'>
-                    {renderProfileSection(bedroom.profiles)}
+          <Card className='p-4'>
+            <div className='grid gap-4'>
+              {bedrooms.map((bedroom) => (
+                <div
+                  key={bedroom.id}
+                  className='flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50'
+                >
+                  <div className='flex items-center space-x-4'>
+                    <div>
+                      <h3 className='font-medium'>
+                        {bedroom.name || `Kamar ${bedroom.id}`}
+                      </h3>
+                      <Badge variant='secondary' className='mt-1'>
+                        {bedroom.bedRoomType.name}
+                      </Badge>
+                    </div>
                   </div>
-                  <Button variant='outline' className='w-full mt-8' asChild>
-                    <Link href={`/bedrooms/${bedroom.id}`}>
-                      <Eye className='mr-2 h-4 w-4' /> Lihat Detail
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+
+                  <div className='flex items-center space-x-6'>
+                    {renderProfiles(bedroom.profiles)}
+
+                    <Button variant='outline' size='sm' asChild>
+                      <Link href={`/bedrooms/${bedroom.id}`}>
+                        <Eye className='h-4 w-4 mr-2' />
+                        Detail
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
         ) : (
           <EmptyContainer
             image={
