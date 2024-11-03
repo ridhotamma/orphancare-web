@@ -28,12 +28,24 @@ import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { requests } from '@/lib/api';
 import LoadingContainer from '@/components/container/loading-container';
+import { Trash2 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 const EventFormPage: React.FC = () => {
   const router = useRouter();
   const { id } = useParams();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const isEditMode = !!id;
 
@@ -111,6 +123,27 @@ const EventFormPage: React.FC = () => {
     }
   };
 
+  const deleteEvent = async () => {
+    try {
+      await requests({
+        url: `/admin/events/${id}`,
+        method: 'DELETE',
+      });
+      router.push('/events');
+      toast({
+        title: 'Event Deleted',
+        description: 'Event has been successfully deleted',
+        variant: 'success',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Terjadi Kesalahan',
+        description: error.message,
+        variant: 'destructive',
+      });
+    }
+  };
+
   useEffect(() => {
     if (isEditMode) {
       getEventDetails();
@@ -138,13 +171,23 @@ const EventFormPage: React.FC = () => {
   return (
     <LoadingContainer loading={loading}>
       <div className='container mx-auto px-0 lg:px-20'>
-        <div className='flex items-center mb-6'>
+        <div className='flex items-center justify-between mb-6'>
           <Button variant='link' className='p-0' asChild>
             <Link href='/events'>
               <ArrowLeft className='h-4 w-4 mr-2' />
               Back to Event List
             </Link>
           </Button>
+          {isEditMode && (
+            <Button
+              variant='destructive'
+              onClick={() => setShowDeleteDialog(true)}
+              size='sm'
+            >
+              <Trash2 className='h-4 w-4 mr-2' />
+              Delete Event
+            </Button>
+          )}
         </div>
         <Card>
           <CardHeader>
@@ -254,6 +297,28 @@ const EventFormPage: React.FC = () => {
           </form>
         </Card>
       </div>
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Are you sure you want to delete this event?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete this
+              event and remove all associated data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={deleteEvent}
+              className='bg-red-500 hover:bg-red-600'
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </LoadingContainer>
   );
 };

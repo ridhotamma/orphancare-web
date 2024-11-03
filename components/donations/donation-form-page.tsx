@@ -26,10 +26,20 @@ import { DonationType } from '@/types/donation-type';
 import { Unit } from '@/types/unit';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { requests } from '@/lib/api';
 import LoadingContainer from '../container/loading-container';
+import { ArrowLeft, Trash2 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 const DonationFormPage: React.FC = () => {
   const router = useRouter();
@@ -51,6 +61,7 @@ const DonationFormPage: React.FC = () => {
   const [donationTypes, setDonationTypes] = useState<DonationType[]>([]);
   const [units, setUnits] = useState<Unit[]>([]);
   const [loading, setLoading] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const { toast } = useToast();
 
@@ -134,6 +145,27 @@ const DonationFormPage: React.FC = () => {
     }
   };
 
+  const deleteDonation = async () => {
+    try {
+      await requests({
+        url: `/admin/donations/${id}`,
+        method: 'DELETE',
+      });
+      router.push('/donations');
+      toast({
+        title: 'Berhasil hapus donasi',
+        description: 'Donasi berhasil dihapus',
+        variant: 'success',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Terjadi Kesalahan',
+        description: error.message,
+        variant: 'destructive',
+      });
+    }
+  };
+
   const getUnits = async () => {
     try {
       const response = await requests({
@@ -196,13 +228,23 @@ const DonationFormPage: React.FC = () => {
   return (
     <LoadingContainer loading={loading}>
       <div className='container mx-auto px-0 lg:px-20'>
-        <div className='flex items-center mb-6'>
+        <div className='flex items-center justify-between mb-6'>
           <Button variant='link' className='p-0' asChild>
             <Link href='/donations'>
               <ArrowLeft className='h-4 w-4 mr-2' />
-              Back to Event List
+              Back to Donation List
             </Link>
           </Button>
+          {isEditMode && (
+            <Button
+              variant='destructive'
+              onClick={() => setShowDeleteDialog(true)}
+              size='sm'
+            >
+              <Trash2 className='h-4 w-4 mr-2' />
+              Hapus Donasi
+            </Button>
+          )}
         </div>
         <Card>
           <CardHeader>
@@ -320,6 +362,28 @@ const DonationFormPage: React.FC = () => {
           </form>
         </Card>
       </div>
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Apakah Anda yakin ingin menghapus donasi ini?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Tindakan ini tidak dapat dibatalkan. Ini akan secara permanen
+              menghapus donasi dan menghapus semua data yang terkait.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={deleteDonation}
+              className='bg-red-500 hover:bg-red-600'
+            >
+              Hapus
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </LoadingContainer>
   );
 };

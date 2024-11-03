@@ -195,7 +195,7 @@ const DonationsPage: React.FC = () => {
                 <TableRow key={donation.id}>
                   <TableCell className='font-medium'>{donation.name}</TableCell>
                   <TableCell>
-                    <Badge variant='outline'>
+                    <Badge variant='outline' className='border-slate-800'>
                       {donation.donationType?.name}
                     </Badge>
                   </TableCell>
@@ -228,6 +228,7 @@ const DonationsPage: React.FC = () => {
                 alt='Empty state illustration'
                 objectFit='contain'
                 width={300}
+                height={300}
               />
             }
           />

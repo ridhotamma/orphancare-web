@@ -46,7 +46,6 @@ import Image from 'next/image';
 import LoadingContainer from '@/components/container/loading-container';
 import { useDebounce } from '@/hooks/use-debounce';
 import { EventStatus } from '@/types/enums';
-import { getEventStatusColor } from '@/lib/utils';
 
 const EventsPage: React.FC = () => {
   usePageTitle('Events');
@@ -112,7 +111,6 @@ const EventsPage: React.FC = () => {
       status: filterStatus === 'all' ? undefined : filterStatus,
     });
   };
-
 
   return (
     <div className='space-y-6'>
@@ -185,7 +183,8 @@ const EventsPage: React.FC = () => {
                   <TableCell className='font-medium'>{event.name}</TableCell>
                   <TableCell>
                     <Badge
-                      className={`${getEventStatusColor(event.status)} text-white min-w-[130px] text-center line-clamp-1 hover:bg-none`}
+                      variant={'outline'}
+                      className={`border-slate-800 min-w-[130px] text-center line-clamp-1`}
                     >
                       {EventStatusText[event.status]}
                     </Badge>
@@ -217,6 +216,7 @@ const EventsPage: React.FC = () => {
                 alt='Empty state illustration'
                 objectFit='contain'
                 width={300}
+                height={300}
               />
             }
           />
