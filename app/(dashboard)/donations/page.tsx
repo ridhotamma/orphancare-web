@@ -104,14 +104,13 @@ const DonationsPage: React.FC = () => {
 
   useEffect(() => {
     getDonationTypes();
-    getDonations();
   }, []);
 
   useEffect(() => {
     getDonations({
       name: debounceSearch,
-      startDate: dateRange?.from,
-      endDate: dateRange?.to,
+      startDate: dateRange?.from ? format(dateRange?.from || new Date(), 'yyyy-MM-dd') : null,
+      endDate: dateRange?.to ? format(dateRange?.to || new Date(), 'yyyy-MM-dd') : null,
       donationTypeId: filterCategory === 'all' ? null : filterCategory,
     });
   }, [debounceSearch, dateRange, filterCategory]);
@@ -200,8 +199,7 @@ const DonationsPage: React.FC = () => {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {formatNumber(donation.amount)}{' '}
-                    {donation.unit?.name || ''}
+                    {formatNumber(donation.amount)} {donation.unit?.name || ''}
                   </TableCell>
                   <TableCell>{format(donation.receivedDate, 'PPP')}</TableCell>
                   <TableCell>{donation.donatorName}</TableCell>
