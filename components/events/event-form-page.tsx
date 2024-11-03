@@ -88,8 +88,8 @@ const EventFormPage: React.FC = () => {
       setEvent(response);
       router.push('/events');
       toast({
-        title: 'Event Updated',
-        description: 'Event has been successfully updated',
+        title: 'Acara Diperbarui',
+        description: 'Acara telah berhasil diperbarui',
         variant: 'success',
       });
     } catch (error: any) {
@@ -110,8 +110,8 @@ const EventFormPage: React.FC = () => {
       });
       router.push('/events');
       toast({
-        title: 'Event Created',
-        description: 'Event has been successfully created',
+        title: 'Acara Dibuat',
+        description: 'Acara telah berhasil dibuat',
         variant: 'success',
       });
     } catch (error: any) {
@@ -131,8 +131,8 @@ const EventFormPage: React.FC = () => {
       });
       router.push('/events');
       toast({
-        title: 'Event Deleted',
-        description: 'Event has been successfully deleted',
+        title: 'Acara Dihapus',
+        description: 'Acara telah berhasil dihapus',
         variant: 'success',
       });
     } catch (error: any) {
@@ -175,7 +175,7 @@ const EventFormPage: React.FC = () => {
           <Button variant='link' className='p-0' asChild>
             <Link href='/events'>
               <ArrowLeft className='h-4 w-4 mr-2' />
-              Back to Event List
+              Kembali ke Daftar Acara
             </Link>
           </Button>
           {isEditMode && (
@@ -185,32 +185,32 @@ const EventFormPage: React.FC = () => {
               size='sm'
             >
               <Trash2 className='h-4 w-4 mr-2' />
-              Delete Event
+              Hapus Acara
             </Button>
           )}
         </div>
         <Card>
           <CardHeader>
             <CardTitle>
-              {isEditMode ? 'Edit Event' : 'Create New Event'}
+              {isEditMode ? 'Ubah Acara' : 'Buat Acara Baru'}
             </CardTitle>
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className='space-y-4'>
               <div className='space-y-2'>
-                <Label htmlFor='name'>Event Name</Label>
+                <Label htmlFor='name'>Nama Acara</Label>
                 <Input
                   id='name'
                   name='name'
                   value={event.name}
                   onChange={handleInputChange}
-                  placeholder='Example: Community Service Event'
+                  placeholder='Contoh: Acara Bakti Sosial'
                   required
                 />
               </div>
               <div className='grid grid-cols-2 gap-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='startDate'>Start Date</Label>
+                  <Label htmlFor='startDate'>Tanggal Mulai</Label>
                   <Input
                     id='startDate'
                     name='startDate'
@@ -221,7 +221,7 @@ const EventFormPage: React.FC = () => {
                   />
                 </div>
                 <div className='space-y-2'>
-                  <Label htmlFor='endDate'>End Date</Label>
+                  <Label htmlFor='endDate'>Tanggal Selesai</Label>
                   <Input
                     id='endDate'
                     name='endDate'
@@ -233,37 +233,37 @@ const EventFormPage: React.FC = () => {
                 </div>
               </div>
               <div className='space-y-2'>
-                <Label htmlFor='organizer'>Organizer</Label>
+                <Label htmlFor='organizer'>Penyelenggara</Label>
                 <Input
                   id='organizer'
                   name='organizer'
                   value={event.organizer}
                   onChange={handleInputChange}
-                  placeholder='Example: Community Organization'
+                  placeholder='Contoh: Organisasi Masyarakat'
                   required
                 />
               </div>
               <div className='space-y-2'>
                 <Label htmlFor='organizerPhoneNumber'>
-                  Organizer Phone Number
+                  Nomor Telepon Penyelenggara
                 </Label>
                 <Input
                   id='organizerPhoneNumber'
                   name='organizerPhoneNumber'
                   value={event.organizerPhoneNumber}
                   onChange={handleInputChange}
-                  placeholder='Example: +6281234567890'
+                  placeholder='Contoh: +6281234567890'
                   required
                 />
               </div>
               <div className='space-y-2'>
-                <Label htmlFor='place'>Place</Label>
+                <Label htmlFor='place'>Tempat</Label>
                 <Input
                   id='place'
                   name='place'
                   value={event.place}
                   onChange={handleInputChange}
-                  placeholder='Example: Community Center'
+                  placeholder='Contoh: Balai Warga'
                   required
                 />
               </div>
@@ -276,7 +276,7 @@ const EventFormPage: React.FC = () => {
                     required
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder='Select event status' />
+                      <SelectValue placeholder='Pilih status acara' />
                     </SelectTrigger>
                     <SelectContent>
                       {Object.values(EventStatus).map((status) => (
@@ -291,7 +291,7 @@ const EventFormPage: React.FC = () => {
             </CardContent>
             <CardFooter>
               <Button disabled={loading} type='submit' className='w-full'>
-                {isEditMode ? 'Update Event' : 'Create Event'}
+                {isEditMode ? 'Perbarui Acara' : 'Buat Acara'}
               </Button>
             </CardFooter>
           </form>
@@ -301,20 +301,20 @@ const EventFormPage: React.FC = () => {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Are you sure you want to delete this event?
+              Apakah Anda yakin ingin menghapus acara ini?
             </AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete this
-              event and remove all associated data.
+              Tindakan ini tidak dapat dibatalkan. Ini akan secara permanen
+              menghapus acara dan menghapus semua data yang terkait.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
             <AlertDialogAction
               onClick={deleteEvent}
               className='bg-red-500 hover:bg-red-600'
             >
-              Delete
+              Hapus
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

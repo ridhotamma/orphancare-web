@@ -120,7 +120,7 @@ const EventsPage: React.FC = () => {
             <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400' />
             <Input
               type='text'
-              placeholder='Search events...'
+              placeholder='Cari acara...'
               className='pl-10'
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -145,7 +145,9 @@ const EventsPage: React.FC = () => {
                   value={filterStatus}
                   onValueChange={setFilterStatus}
                 >
-                  <DropdownMenuRadioItem value='all'>All</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value='all'>
+                    Semua
+                  </DropdownMenuRadioItem>
                   {Object.values(EventStatus).map((status) => (
                     <DropdownMenuRadioItem key={status} value={status}>
                       {EventStatusText[status]}
@@ -156,7 +158,7 @@ const EventsPage: React.FC = () => {
             </DropdownMenu>
             <Button asChild>
               <Link href='/events/create'>
-                <Plus className='mr-2 h-4 w-4' /> Add Event
+                <Plus className='mr-2 h-4 w-4' /> Tambah Acara
               </Link>
             </Button>
           </div>
@@ -168,13 +170,13 @@ const EventsPage: React.FC = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
+                <TableHead>Nama</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Start Date</TableHead>
-                <TableHead>End Date</TableHead>
-                <TableHead>Place</TableHead>
-                <TableHead>Organizer</TableHead>
-                <TableHead className='w-[100px]'>Actions</TableHead>
+                <TableHead>Tanggal Mulai</TableHead>
+                <TableHead>Tanggal Selesai</TableHead>
+                <TableHead>Tempat</TableHead>
+                <TableHead>Penyelenggara</TableHead>
+                <TableHead className='w-[100px]'>Aksi</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -197,7 +199,7 @@ const EventsPage: React.FC = () => {
                     <Button variant='outline' size='sm' asChild>
                       <Link href={`/events/${event.id}`}>
                         <Eye className='mr-2 h-4 w-4' />
-                        View
+                        Lihat
                       </Link>
                     </Button>
                   </TableCell>
@@ -209,11 +211,11 @@ const EventsPage: React.FC = () => {
 
         {events.length === 0 && (
           <EmptyContainer
-            text='No events found'
+            text='Data acara tidak ditemukan'
             image={
               <Image
                 src={EmptyImageEvent}
-                alt='Empty state illustration'
+                alt='Ilustrasi data kosong'
                 objectFit='contain'
                 width={300}
                 height={300}
@@ -226,12 +228,13 @@ const EventsPage: React.FC = () => {
       {events.length > 0 && (
         <div className='flex items-center justify-between px-2 py-4'>
           <div className='text-sm text-muted-foreground'>
-            Showing {paginationMeta.currentPage * paginationMeta.perPage + 1} to{' '}
+            Menampilkan{' '}
+            {paginationMeta.currentPage * paginationMeta.perPage + 1} sampai{' '}
             {Math.min(
               (paginationMeta.currentPage + 1) * paginationMeta.perPage,
               paginationMeta.total
             )}{' '}
-            of {paginationMeta.total} entries
+            dari {paginationMeta.total} entri
           </div>
           <div className='flex items-center space-x-2'>
             <Button
@@ -251,7 +254,7 @@ const EventsPage: React.FC = () => {
               <ChevronLeft className='h-4 w-4' />
             </Button>
             <span className='text-sm'>
-              Page {paginationMeta.currentPage + 1} of{' '}
+              Halaman {paginationMeta.currentPage + 1} dari{' '}
               {paginationMeta.totalPages}
             </span>
             <Button

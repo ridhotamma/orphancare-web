@@ -49,7 +49,7 @@ import { DonationType } from '@/types/donation-type';
 import { formatNumber } from '@/lib/utils';
 
 const DonationsPage: React.FC = () => {
-  usePageTitle('Donations');
+  usePageTitle('Pemberian Donasi');
 
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
@@ -131,7 +131,7 @@ const DonationsPage: React.FC = () => {
             <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400' />
             <Input
               type='text'
-              placeholder='Search Donations...'
+              placeholder='Cari Donasi...'
               className='pl-10'
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -146,17 +146,19 @@ const DonationsPage: React.FC = () => {
               <DropdownMenuTrigger asChild>
                 <Button variant='outline'>
                   <Filter className='mr-2 h-4 w-4' />
-                  Category
+                  Kategori
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className='w-56'>
-                <DropdownMenuLabel>Filter Donations</DropdownMenuLabel>
+                <DropdownMenuLabel>Filter Donasi</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioGroup
                   value={filterCategory}
                   onValueChange={setFilterCategory}
                 >
-                  <DropdownMenuRadioItem value='all'>All</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value='all'>
+                    Semua
+                  </DropdownMenuRadioItem>
                   {donationTypes.map((type) => {
                     return (
                       <DropdownMenuRadioItem key={type.id} value={type.id}>
@@ -169,7 +171,7 @@ const DonationsPage: React.FC = () => {
             </DropdownMenu>
             <Button asChild>
               <Link href='/donations/create'>
-                <Plus className='mr-2 h-4 w-4' /> Add Donation
+                <Plus className='mr-2 h-4 w-4' /> Tambah Donasi
               </Link>
             </Button>
           </div>
@@ -181,13 +183,13 @@ const DonationsPage: React.FC = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Received Date</TableHead>
-                <TableHead>Donator</TableHead>
-                <TableHead>Receiver</TableHead>
-                <TableHead className='w-[100px]'>Actions</TableHead>
+                <TableHead>Nama</TableHead>
+                <TableHead>Tipe</TableHead>
+                <TableHead>Jumlah</TableHead>
+                <TableHead>Tanggal Diterima</TableHead>
+                <TableHead>Donatur</TableHead>
+                <TableHead>Penerima</TableHead>
+                <TableHead className='w-[100px]'>Aksi</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -209,7 +211,7 @@ const DonationsPage: React.FC = () => {
                     <Button variant='outline' size='sm' asChild>
                       <Link href={`/donations/${donation.id}`}>
                         <Eye className='mr-2 h-4 w-4' />
-                        View
+                        Lihat
                       </Link>
                     </Button>
                   </TableCell>
@@ -225,7 +227,7 @@ const DonationsPage: React.FC = () => {
             image={
               <Image
                 src={EmptyImageDonation}
-                alt='Empty state illustration'
+                alt='Ilustrasi data kosong'
                 objectFit='contain'
                 width={300}
                 height={300}

@@ -232,7 +232,7 @@ const DonationFormPage: React.FC = () => {
           <Button variant='link' className='p-0' asChild>
             <Link href='/donations'>
               <ArrowLeft className='h-4 w-4 mr-2' />
-              Back to Donation List
+              Kembali ke Daftar Donasi
             </Link>
           </Button>
           {isEditMode && (
@@ -249,25 +249,25 @@ const DonationFormPage: React.FC = () => {
         <Card>
           <CardHeader>
             <CardTitle>
-              {isEditMode ? 'Edit Donation' : 'Create New Donation'}
+              {isEditMode ? 'Ubah Donasi' : 'Buat Donasi Baru'}
             </CardTitle>
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className='space-y-4'>
               <div className='space-y-2'>
-                <Label htmlFor='name'>Donation Name</Label>
+                <Label htmlFor='name'>Nama Donasi</Label>
                 <Input
                   id='name'
                   name='name'
                   value={donation.name}
                   onChange={handleInputChange}
-                  placeholder='Contoh: Donasi uang untuk keperluan...'
+                  placeholder='Contoh: Donasi makanan dari lembaga...'
                   required
                 />
               </div>
               <div className='grid grid-cols-2 gap-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='amount'>Amount</Label>
+                  <Label htmlFor='amount'>Jumlah</Label>
                   <NumericFormat
                     value={donation.amount}
                     onValueChange={(values) =>
@@ -283,13 +283,13 @@ const DonationFormPage: React.FC = () => {
                   />
                 </div>
                 <div className='space-y-2'>
-                  <Label htmlFor='unit'>Unit</Label>
+                  <Label htmlFor='unit'>Satuan</Label>
                   <Select
                     onValueChange={handleUnitChange}
                     value={donation.unit?.id || ''}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder='Select unit' />
+                      <SelectValue placeholder='Pilih satuan' />
                     </SelectTrigger>
                     <SelectContent>
                       {units.map((unit) => (
@@ -302,7 +302,7 @@ const DonationFormPage: React.FC = () => {
                 </div>
               </div>
               <div className='space-y-2'>
-                <Label htmlFor='receivedDate'>Received Date</Label>
+                <Label htmlFor='receivedDate'>Tanggal Diterima</Label>
                 <Input
                   id='receivedDate'
                   name='receivedDate'
@@ -313,7 +313,7 @@ const DonationFormPage: React.FC = () => {
                 />
               </div>
               <div className='space-y-2'>
-                <Label htmlFor='receiver'>Receiver</Label>
+                <Label htmlFor='receiver'>Penerima</Label>
                 <Input
                   id='receiver'
                   name='receiver'
@@ -324,7 +324,7 @@ const DonationFormPage: React.FC = () => {
                 />
               </div>
               <div className='space-y-2'>
-                <Label htmlFor='donatorName'>Donator Name</Label>
+                <Label htmlFor='donatorName'>Nama Donatur</Label>
                 <Input
                   id='donatorName'
                   name='donatorName'
@@ -335,14 +335,14 @@ const DonationFormPage: React.FC = () => {
                 />
               </div>
               <div className='space-y-2'>
-                <Label htmlFor='donationType'>Donation Type</Label>
+                <Label htmlFor='donationType'>Jenis Donasi</Label>
                 <Select
                   onValueChange={handleDonationTypeChange}
                   value={donation.donationTypeId || ''}
                   required
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder='Select donation type' />
+                    <SelectValue placeholder='Pilih jenis donasi' />
                   </SelectTrigger>
                   <SelectContent>
                     {donationTypes.map((type) => (
@@ -356,7 +356,7 @@ const DonationFormPage: React.FC = () => {
             </CardContent>
             <CardFooter>
               <Button disabled={loading} type='submit' className='w-full'>
-                {isEditMode ? 'Update Donation' : 'Create Donation'}
+                {isEditMode ? 'Perbarui Donasi' : 'Buat Donasi'}
               </Button>
             </CardFooter>
           </form>
