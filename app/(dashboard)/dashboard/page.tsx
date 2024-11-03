@@ -20,8 +20,8 @@ import {
   Home,
   ShoppingBag,
   TrendingUp,
-  DollarSign,
   Calendar,
+  Gift,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
@@ -54,7 +54,23 @@ const BadgeVariant: Record<string, any> = {
   ON_PROGRESS: 'outline',
 };
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
+const COLORS = [
+  '#0088FE',  // Vivid Blue
+  '#00C49F',  // Teal
+  '#FFBB28',  // Golden Yellow
+  '#FF8042',  // Orange
+  '#8884D8',  // Purple
+  '#FF4D6D',  // Pink
+  '#4CAF50',  // Green
+  '#607D8B',  // Blue Gray
+  '#009688',  // Dark Teal
+  '#FF6B6B',  // Coral
+  '#3F51B5',  // Indigo
+  '#795548',  // Brown
+  '#F44336',  // Red
+  '#FFA726',  // Light Orange,
+  '#9C27B0',  // Deep Purple
+];
 
 const DashboardPage = () => {
   const { toast } = useToast();
@@ -314,7 +330,7 @@ const DashboardPage = () => {
           <Card className='hover:shadow-lg transition-shadow duration-300'>
             <CardHeader>
               <CardTitle className='flex items-center'>
-                <DollarSign className='mr-2' /> Donasi Terbaru
+                <Gift className='mr-2' /> Donasi Terbaru
               </CardTitle>
             </CardHeader>
             <CardContent>

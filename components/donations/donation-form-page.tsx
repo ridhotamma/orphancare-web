@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
+import { NumericFormat } from 'react-number-format';
 import {
   Card,
   CardContent,
@@ -25,54 +26,9 @@ import { Unit } from '@/types/unit';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-
-const mockDonationTypes: DonationType[] = [
-  {
-    id: 'edd53f5b-e213-4420-80f1-ffdfd5c896ce',
-    name: 'Food',
-    type: 'GOODS',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '2',
-    name: 'Clothing',
-    type: 'GOODS',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '3',
-    name: 'Money',
-    type: 'CASH',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-];
-
-const mockUnits: Unit[] = [
-  {
-    id: '161f1fce-92c1-4341-bbc7-fc5263a8cbdf',
-    name: 'Kg',
-    type: 'WEIGHT',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '2',
-    name: 'Piece',
-    type: 'COUNT',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '3',
-    name: 'Liter',
-    type: 'VOLUME',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-];
+import { useToast } from '@/hooks/use-toast';
+import { requests } from '@/lib/api';
+import LoadingContainer from '../container/loading-container';
 
 const DonationFormPage: React.FC = () => {
   const router = useRouter();
@@ -86,27 +42,122 @@ const DonationFormPage: React.FC = () => {
     receivedDate: new Date(),
     receiver: '',
     donatorName: '',
-    donationType: mockDonationTypes[0],
+    donationType: null,
+    donationTypeId: null,
+    unitId: null,
     unit: null,
     createdAt: new Date(),
     updatedAt: new Date(),
   });
 
+  const [donationTypes, setDonationTypes] = useState<DonationType[]>([]);
+  const [units, setUnits] = useState<Unit[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const { toast } = useToast();
+
+  const getDonationTypes = async () => {
+    try {
+      const response = await requests({
+        url: '/admin/donation-types',
+        method: 'GET',
+      });
+      setDonationTypes(response);
+    } catch (error: any) {
+      toast({
+        title: 'Terjadi Kesalahan',
+        description: error.message,
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const getDonationDetails = async () => {
+    setLoading(true);
+    try {
+      const response = await requests({
+        url: `/admin/donations/${id}`,
+        method: 'GET',
+      });
+      setDonation(response);
+    } catch (error: any) {
+      toast({
+        title: 'Terjadi Kesalahan',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateDonation = async () => {
+    try {
+      const response = await requests({
+        url: `/admin/donations/${id}`,
+        method: 'PUT',
+        data: donation,
+      });
+      setDonation(response);
+      router.push('/donations');
+      toast({
+        title: 'Berhasil ubah donasi',
+        description: 'Donasi berhasil diubah',
+        variant: 'success',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Terjadi Kesalahan',
+        description: error.message,
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const saveDonation = async () => {
+    try {
+      await requests({
+        url: `/admin/donations`,
+        method: 'POST',
+        data: donation,
+      });
+      router.push('/donations');
+      toast({
+        title: 'Berhasil tambah donasi',
+        description: 'Donasi berhasil ditambahkan',
+        variant: 'success',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Terjadi Kesalahan',
+        description: error.message,
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const getUnits = async () => {
+    try {
+      const response = await requests({
+        url: '/admin/units',
+        method: 'GET',
+      });
+      setUnits(response);
+    } catch (error: any) {
+      toast({
+        title: 'Terjadi Kesalahan',
+        description: error.message,
+        variant: 'destructive',
+      });
+    }
+  };
+
   useEffect(() => {
+    getUnits();
+    getDonationTypes();
+
     if (isEditMode) {
-      const mockDonation: Donation = {
-        id: '1',
-        name: 'Donasi Alat Masak',
-        amount: 1,
-        receivedDate: new Date('2024-08-24'),
-        receiver: 'Anita',
-        donatorName: 'Marcella',
-        donationType: mockDonationTypes[0],
-        unit: mockUnits[0],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-      setDonation(mockDonation);
+      getDonationDetails();
     }
   }, [isEditMode]);
 
@@ -116,149 +167,155 @@ const DonationFormPage: React.FC = () => {
   };
 
   const handleDonationTypeChange = (value: string) => {
-    const selectedType = mockDonationTypes.find((type) => type.id === value);
+    const selectedType = donationTypes.find((type) => type.id === value);
     if (selectedType) {
-      setDonation((prev) => ({ ...prev, donationType: selectedType }));
+      setDonation((prev) => ({
+        ...prev,
+        donationType: selectedType,
+        donationTypeId: selectedType.id,
+      }));
     }
   };
 
   const handleUnitChange = (value: string) => {
-    const selectedUnit = mockUnits.find((unit) => unit.id === value);
-    setDonation((prev) => ({ ...prev, unit: selectedUnit || null }));
+    const selectedUnit = units.find((unit) => unit.id === value);
+    setDonation((prev) => ({
+      ...prev,
+      unit: selectedUnit || null,
+      unitId: selectedUnit?.id as string,
+    }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const payload = {
-      amount: donation.amount.toString(),
-      receiver: donation.receiver,
-      name: donation.name,
-      unitId: donation.unit?.id,
-      donationTypeId: donation.donationType.id,
-      donatorName: donation.donatorName,
-      receivedDate: format(donation.receivedDate, 'yyyy-MM-dd'),
-    };
-    console.log('Submitting donation:', payload);
-    router.push('/donations');
+    if (isEditMode) {
+      updateDonation();
+    } else {
+      saveDonation();
+    }
   };
 
   return (
-    <div className='container mx-auto px-0 lg:px-20'>
-      <div className='flex items-center mb-6'>
-        <Button variant='link' className='p-0' asChild>
-          <Link href='/donations'>
-            <ArrowLeft className='h-4 w-4 mr-2' />
-            Back to Event List
-          </Link>
-        </Button>
-      </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            {isEditMode ? 'Edit Donation' : 'Create New Donation'}
-          </CardTitle>
-        </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className='space-y-4'>
-            <div className='space-y-2'>
-              <Label htmlFor='name'>Donation Name</Label>
-              <Input
-                id='name'
-                name='name'
-                value={donation.name}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className='grid grid-cols-2 gap-4'>
+    <LoadingContainer loading={loading}>
+      <div className='container mx-auto px-0 lg:px-20'>
+        <div className='flex items-center mb-6'>
+          <Button variant='link' className='p-0' asChild>
+            <Link href='/donations'>
+              <ArrowLeft className='h-4 w-4 mr-2' />
+              Back to Event List
+            </Link>
+          </Button>
+        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              {isEditMode ? 'Edit Donation' : 'Create New Donation'}
+            </CardTitle>
+          </CardHeader>
+          <form onSubmit={handleSubmit}>
+            <CardContent className='space-y-4'>
               <div className='space-y-2'>
-                <Label htmlFor='amount'>Amount</Label>
+                <Label htmlFor='name'>Donation Name</Label>
                 <Input
-                  id='amount'
-                  name='amount'
-                  type='number'
-                  value={donation.amount}
+                  id='name'
+                  name='name'
+                  value={donation.name}
+                  onChange={handleInputChange}
+                  placeholder='Contoh: Donasi uang untuk keperluan...'
+                  required
+                />
+              </div>
+              <div className='grid grid-cols-2 gap-4'>
+                <div className='space-y-2'>
+                  <Label htmlFor='amount'>Amount</Label>
+                  <NumericFormat
+                    value={donation.amount}
+                    onChange={handleInputChange}
+                    allowLeadingZeros
+                    thousandSeparator=','
+                    customInput={Input}
+                  />
+                </div>
+                <div className='space-y-2'>
+                  <Label htmlFor='unit'>Unit</Label>
+                  <Select
+                    onValueChange={handleUnitChange}
+                    value={donation.unit?.id || ''}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder='Select unit' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {units.map((unit) => (
+                        <SelectItem key={unit.id} value={unit.id}>
+                          {unit.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className='space-y-2'>
+                <Label htmlFor='receivedDate'>Received Date</Label>
+                <Input
+                  id='receivedDate'
+                  name='receivedDate'
+                  type='date'
+                  value={format(donation.receivedDate, 'yyyy-MM-dd')}
                   onChange={handleInputChange}
                   required
                 />
               </div>
               <div className='space-y-2'>
-                <Label htmlFor='unit'>Unit</Label>
+                <Label htmlFor='receiver'>Receiver</Label>
+                <Input
+                  id='receiver'
+                  name='receiver'
+                  value={donation.receiver}
+                  onChange={handleInputChange}
+                  placeholder='Contoh: Anita'
+                  required
+                />
+              </div>
+              <div className='space-y-2'>
+                <Label htmlFor='donatorName'>Donator Name</Label>
+                <Input
+                  id='donatorName'
+                  name='donatorName'
+                  value={donation.donatorName}
+                  onChange={handleInputChange}
+                  placeholder='Contoh: Pak Budi Sepriadi'
+                  required
+                />
+              </div>
+              <div className='space-y-2'>
+                <Label htmlFor='donationType'>Donation Type</Label>
                 <Select
-                  onValueChange={handleUnitChange}
-                  value={donation.unit?.id || ''}
+                  onValueChange={handleDonationTypeChange}
+                  value={donation.donationTypeId as string}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder='Select unit' />
+                    <SelectValue placeholder='Select donation type' />
                   </SelectTrigger>
                   <SelectContent>
-                    {mockUnits.map((unit) => (
-                      <SelectItem key={unit.id} value={unit.id}>
-                        {unit.name}
+                    {donationTypes.map((type) => (
+                      <SelectItem key={type.id} value={type.id}>
+                        {type.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-            </div>
-            <div className='space-y-2'>
-              <Label htmlFor='receivedDate'>Received Date</Label>
-              <Input
-                id='receivedDate'
-                name='receivedDate'
-                type='date'
-                value={format(donation.receivedDate, 'yyyy-MM-dd')}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className='space-y-2'>
-              <Label htmlFor='receiver'>Receiver</Label>
-              <Input
-                id='receiver'
-                name='receiver'
-                value={donation.receiver}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className='space-y-2'>
-              <Label htmlFor='donatorName'>Donator Name</Label>
-              <Input
-                id='donatorName'
-                name='donatorName'
-                value={donation.donatorName}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className='space-y-2'>
-              <Label htmlFor='donationType'>Donation Type</Label>
-              <Select
-                onValueChange={handleDonationTypeChange}
-                value={donation.donationType.id}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder='Select donation type' />
-                </SelectTrigger>
-                <SelectContent>
-                  {mockDonationTypes.map((type) => (
-                    <SelectItem key={type.id} value={type.id}>
-                      {type.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button type='submit' className='w-full'>
-              {isEditMode ? 'Update Donation' : 'Create Donation'}
-            </Button>
-          </CardFooter>
-        </form>
-      </Card>
-    </div>
+            </CardContent>
+            <CardFooter>
+              <Button type='submit' className='w-full'>
+                {isEditMode ? 'Update Donation' : 'Create Donation'}
+              </Button>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
+    </LoadingContainer>
   );
 };
 

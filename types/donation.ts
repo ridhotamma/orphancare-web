@@ -8,8 +8,10 @@ export type Donation = {
   receivedDate: Date;
   receiver: string;
   donatorName: string;
-  donationType: DonationType;
+  donationType?: DonationType | null;
+  donationTypeId?: string | null;
   unit: Unit | null;
+  unitId: string | null;
   createdAt: Date;
   updatedAt: Date;
 };
