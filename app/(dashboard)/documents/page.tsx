@@ -148,7 +148,7 @@ const DocumentsPage = () => {
   return (
     <DocumentList
       documents={documents}
-      metaData={metaData}
+      paginationMeta={metaData}
       onSearch={handleSearch}
       onDelete={handleDeleteDocument}
       loading={loading}

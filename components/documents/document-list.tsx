@@ -1,9 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { FileIcon, FileTextIcon, ImageIcon, Plus, Search } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  FileIcon,
+  FileTextIcon,
+  ImageIcon,
+  Plus,
+  Search,
+} from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -67,7 +76,7 @@ const DocumentIcon = ({ url }: { url: string }) => {
 
 type DocumentListProps = {
   documents: Document[];
-  metaData: Record<string, any>;
+  paginationMeta: Record<string, any>;
   onSearch: (searchTerm: string, params: Record<string, any>) => void;
   onDelete: (document: Document | null) => void;
   loading: boolean;
@@ -77,7 +86,7 @@ type DocumentListProps = {
 
 const DocumentList: React.FC<DocumentListProps> = ({
   documents,
-  metaData,
+  paginationMeta,
   onSearch,
   onDelete,
   loading,
@@ -107,6 +116,13 @@ const DocumentList: React.FC<DocumentListProps> = ({
   useEffect(() => {
     handleRefresh();
   }, [debounceSearch, filterCategory, filterUser]);
+
+  const handlePageChange = (page: number) => {
+    setSearchQuery('');
+    onSearch('', {
+      page: page,
+    });
+  };
 
   return (
     <div>
@@ -208,6 +224,62 @@ const DocumentList: React.FC<DocumentListProps> = ({
             }
             text='Dokumen tidak ditemukan'
           />
+        )}
+
+        {documents.length > 0 && (
+          <div className='flex items-center justify-between px-2 py-4'>
+            <div className='text-sm text-muted-foreground'>
+              Menampilkan{' '}
+              {paginationMeta.currentPage * paginationMeta.perPage + 1} sampai{' '}
+              {Math.min(
+                (paginationMeta.currentPage + 1) * paginationMeta.perPage,
+                paginationMeta.total
+              )}{' '}
+              dari {paginationMeta.total} entri
+            </div>
+            <div className='flex items-center space-x-2'>
+              <Button
+                variant='outline'
+                size='sm'
+                onClick={() => handlePageChange(0)}
+                disabled={paginationMeta.currentPage === 0}
+              >
+                <ChevronsLeft className='h-4 w-4' />
+              </Button>
+              <Button
+                variant='outline'
+                size='sm'
+                onClick={() => handlePageChange(paginationMeta.currentPage - 1)}
+                disabled={paginationMeta.currentPage === 0}
+              >
+                <ChevronLeft className='h-4 w-4' />
+              </Button>
+              <span className='text-sm'>
+                Halaman {paginationMeta.currentPage + 1} dari{' '}
+                {paginationMeta.totalPages}
+              </span>
+              <Button
+                variant='outline'
+                size='sm'
+                onClick={() => handlePageChange(paginationMeta.currentPage + 1)}
+                disabled={
+                  paginationMeta.currentPage === paginationMeta.totalPages - 1
+                }
+              >
+                <ChevronRight className='h-4 w-4' />
+              </Button>
+              <Button
+                variant='outline'
+                size='sm'
+                onClick={() => handlePageChange(paginationMeta.totalPages - 1)}
+                disabled={
+                  paginationMeta.currentPage === paginationMeta.totalPages - 1
+                }
+              >
+                <ChevronsRight className='h-4 w-4' />
+              </Button>
+            </div>
+          </div>
         )}
       </LoadingContainer>
 

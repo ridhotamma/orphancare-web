@@ -106,7 +106,7 @@ const DashboardLayoutContent: React.FC<DashboardLayoutProps> = ({
               onClick={() => setSidebarOpen(false)}
             ></div>
             <div
-              className={`absolute inset-y-0 left-0 w-screen transition-transform duration-300 ease-in-out transform ${
+              className={`absolute inset-y-0 left-0 w-2/3 transition-transform duration-300 ease-in-out transform ${
                 sidebarOpen ? 'translate-x-0' : '-translate-x-full'
               }`}
             >
