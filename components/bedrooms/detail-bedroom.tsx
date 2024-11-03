@@ -111,21 +111,19 @@ const BedRoomDetail = ({
       </div>
 
       <Card className='mb-8'>
-        <CardHeader className='bg-gray-50 dark:bg-gray-800'>
-          <div className='flex justify-between items-center'>
+        <CardContent className='pt-6 flex justify-between items-center'>
+          <div className='flex flex-col gap-2 justify-between items-start'>
             <CardTitle className='text-2xl font-bold text-gray-800 dark:text-gray-200'>
               {bedRoom?.name}
             </CardTitle>
-            <Badge variant='secondary' className='text-sm font-medium'>
-              {bedRoom?.bedRoomType.name}
-            </Badge>
+            <div className='flex items-center space-x-4 text-gray-600 dark:text-gray-100'>
+              <Users className='h-5 w-5' />
+              <span>{bedRoom?.profiles?.length || 0} Penghuni</span>
+            </div>
           </div>
-        </CardHeader>
-        <CardContent className='pt-6'>
-          <div className='flex items-center space-x-4 text-gray-600 dark:text-gray-100'>
-            <Users className='h-5 w-5' />
-            <span>{bedRoom?.profiles?.length || 0} Penghuni</span>
-          </div>
+          <Badge variant='secondary' className='text-sm font-medium'>
+            {bedRoom?.bedRoomType.name}
+          </Badge>
         </CardContent>
       </Card>
 
