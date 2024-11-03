@@ -76,7 +76,7 @@ export const mockDonations: Donation[] = [
     id: '1',
     name: 'Canned Food Drive',
     amount: 250,
-    receivedDate: new Date('2024-09-15'),
+    receivedDate: new Date('2024-09-15').toISOString(),
     receiver: 'Local Food Bank',
     donatorName: 'John Doe',
     donationType: donationTypes[0], // Food
@@ -89,7 +89,7 @@ export const mockDonations: Donation[] = [
     id: '2',
     name: 'Winter Coat Collection',
     amount: 50,
-    receivedDate: new Date('2024-10-01'),
+    receivedDate: new Date('2024-10-01').toISOString(),
     receiver: 'Homeless Shelter',
     donatorName: 'Jane Smith',
     donationType: donationTypes[1], // Clothing
@@ -102,7 +102,7 @@ export const mockDonations: Donation[] = [
     id: '3',
     name: 'Annual Fundraiser',
     amount: 10000,
-    receivedDate: new Date('2024-11-15'),
+    receivedDate: new Date('2024-11-15').toISOString(),
     receiver: "Children's Hospital",
     donatorName: 'Tech Corp Inc.',
     donationType: donationTypes[2], // Money
@@ -115,7 +115,7 @@ export const mockDonations: Donation[] = [
     id: '4',
     name: 'School Supply Drive',
     amount: 1000,
-    receivedDate: new Date('2024-08-20'),
+    receivedDate: new Date('2024-08-20').toISOString(),
     receiver: 'Underprivileged Schools',
     donatorName: 'Local Bookstore',
     donationType: donationTypes[3], // Books
@@ -128,7 +128,7 @@ export const mockDonations: Donation[] = [
     id: '5',
     name: 'Holiday Toy Collection',
     amount: 5,
-    receivedDate: new Date('2024-12-10'),
+    receivedDate: new Date('2024-12-10').toISOString(),
     receiver: "Children's Welfare Center",
     donatorName: 'Toy Store Chain',
     donationType: donationTypes[4], // Toys
@@ -141,7 +141,7 @@ export const mockDonations: Donation[] = [
     id: '6',
     name: 'Emergency Food Relief',
     amount: 500,
-    receivedDate: new Date('2024-07-05'),
+    receivedDate: new Date('2024-07-05').toISOString(),
     receiver: 'Disaster Relief Organization',
     donatorName: 'Anonymous Donor',
     donationType: donationTypes[0], // Food
@@ -154,7 +154,7 @@ export const mockDonations: Donation[] = [
     id: '7',
     name: 'Back-to-School Backpack Drive',
     amount: 200,
-    receivedDate: new Date('2024-08-25'),
+    receivedDate: new Date('2024-08-25').toISOString(),
     receiver: 'Local School District',
     donatorName: 'Community Association',
     donationType: donationTypes[1], // Clothing (considering backpacks as clothing)
@@ -167,7 +167,7 @@ export const mockDonations: Donation[] = [
     id: '8',
     name: 'Library Book Donation',
     amount: 1500,
-    receivedDate: new Date('2024-06-15'),
+    receivedDate: new Date('2024-06-15').toISOString(),
     receiver: 'City Public Library',
     donatorName: 'Book Publishers Association',
     donationType: donationTypes[3], // Books
