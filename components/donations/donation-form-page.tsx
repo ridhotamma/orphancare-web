@@ -338,7 +338,7 @@ const DonationFormPage: React.FC = () => {
                 <Label htmlFor='donationType'>Donation Type</Label>
                 <Select
                   onValueChange={handleDonationTypeChange}
-                  value={donation.donationTypeId as string}
+                  value={donation.donationTypeId || ''}
                   required
                 >
                   <SelectTrigger>
