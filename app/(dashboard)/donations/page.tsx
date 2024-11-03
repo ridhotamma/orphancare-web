@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -60,7 +61,7 @@ const DonationsPage: React.FC = () => {
 
   const { toast } = useToast();
 
-  const getDonationTypes = async (params: Record<string, any> = {}) => {
+  const getDonationTypes = async () => {
     try {
       const response = await requests({
         url: '/admin/donation-types',

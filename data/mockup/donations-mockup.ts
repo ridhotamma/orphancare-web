@@ -83,6 +83,7 @@ export const mockDonations: Donation[] = [
     unit: units[0], // kg
     createdAt: new Date('2024-09-14'),
     updatedAt: new Date('2024-09-15'),
+    unitId: null,
   },
   {
     id: '2',
@@ -95,6 +96,7 @@ export const mockDonations: Donation[] = [
     unit: units[1], // pieces
     createdAt: new Date('2024-09-30'),
     updatedAt: new Date('2024-10-01'),
+    unitId: null,
   },
   {
     id: '3',
@@ -107,6 +109,7 @@ export const mockDonations: Donation[] = [
     unit: units[2], // USD
     createdAt: new Date('2024-11-15'),
     updatedAt: new Date('2024-11-15'),
+    unitId: null,
   },
   {
     id: '4',
@@ -119,6 +122,7 @@ export const mockDonations: Donation[] = [
     unit: units[1], // pieces
     createdAt: new Date('2024-08-19'),
     updatedAt: new Date('2024-08-20'),
+    unitId: null,
   },
   {
     id: '5',
@@ -131,6 +135,7 @@ export const mockDonations: Donation[] = [
     unit: units[3], // boxes
     createdAt: new Date('2024-12-09'),
     updatedAt: new Date('2024-12-10'),
+    unitId: null,
   },
   {
     id: '6',
@@ -143,6 +148,7 @@ export const mockDonations: Donation[] = [
     unit: units[0], // kg
     createdAt: new Date('2024-07-04'),
     updatedAt: new Date('2024-07-05'),
+    unitId: null,
   },
   {
     id: '7',
@@ -155,6 +161,7 @@ export const mockDonations: Donation[] = [
     unit: units[1], // pieces
     createdAt: new Date('2024-08-24'),
     updatedAt: new Date('2024-08-25'),
+    unitId: null,
   },
   {
     id: '8',
@@ -167,5 +174,6 @@ export const mockDonations: Donation[] = [
     unit: units[1], // pieces
     createdAt: new Date('2024-06-14'),
     updatedAt: new Date('2024-06-15'),
+    unitId: null,
   },
 ];
