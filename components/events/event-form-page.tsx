@@ -57,7 +57,7 @@ const EventFormPage: React.FC = () => {
       setEvent(response);
     } catch (error: any) {
       toast({
-        title: 'Error Occurred',
+        title: 'Terjadi Kesalahan',
         description: error.message,
         variant: 'destructive',
       });
@@ -82,7 +82,7 @@ const EventFormPage: React.FC = () => {
       });
     } catch (error: any) {
       toast({
-        title: 'Error Occurred',
+        title: 'Terjadi Kesalahan',
         description: error.message,
         variant: 'destructive',
       });
@@ -104,7 +104,7 @@ const EventFormPage: React.FC = () => {
       });
     } catch (error: any) {
       toast({
-        title: 'Error Occurred',
+        title: 'Terjadi Kesalahan',
         description: error.message,
         variant: 'destructive',
       });

@@ -75,7 +75,7 @@ const EventsPage: React.FC = () => {
       setPaginationMeta(response.meta);
     } catch (error: any) {
       toast({
-        title: 'Error Occurred',
+        title: 'Terjadi Kesalahan',
         description: error.message,
         variant: 'destructive',
       });

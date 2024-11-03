@@ -98,12 +98,13 @@ const BedRoomDetail = ({
           <Button
             variant={'destructive'}
             onClick={() => setShowDeleteDialog(true)}
+            size={'sm'}
           >
             <Trash2 className='h-4 w-4 mr-2' />
             Hapus Kamar
           </Button>
 
-          <Button onClick={() => setIsDialogOpen(true)}>
+          <Button onClick={() => setIsDialogOpen(true)} size={'sm'}>
             <Edit2 className='h-4 w-4 mr-2' />
             Edit Kamar
           </Button>

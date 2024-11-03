@@ -107,7 +107,7 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
       handleDeleteUser();
     } else {
       toast({
-        title: 'Error',
+        title: 'Terjadi Kesalahan',
         description: 'Alamat email tidak cocok. Penghapusan dibatalkan.',
         variant: 'destructive',
       });

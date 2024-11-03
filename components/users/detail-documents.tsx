@@ -254,7 +254,7 @@ export const DetailDocuments: React.FC<DetailDocumentsProps> = ({
       });
     } catch (error: any) {
       toast({
-        title: 'Error',
+        title: 'Terjadi Kesalahan',
         description: error.message,
         variant: 'destructive',
       });
