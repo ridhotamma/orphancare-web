@@ -16,6 +16,7 @@ import { usePageTitle } from '@/hooks/use-page-title';
 import IndonesianFlag from '@/images/indonesia.png';
 import UKFlag from '@/images/united-kingdom.png';
 import JapanFlag from '@/images/japan.png';
+import NotFoundBankImage from '@/images/not-found-bank.png';
 
 import {
   Select,
@@ -330,7 +331,6 @@ const AppSettingsPage = () => {
               <CardTitle>Akun Bank</CardTitle>
               <p className='text-sm text-gray-500 mt-1'>
                 Daftar rekening bank yang dapat digunakan untuk menerima donasi.
-                Pastikan informasi rekening bank selalu akurat dan aktif.
               </p>
             </div>
             {isEdit && (
@@ -421,9 +421,20 @@ const AppSettingsPage = () => {
               </div>
             ))}
             {settings.bankAccounts.length === 0 && (
-              <div className='text-center text-gray-500 py-4'>
-                Belum ada akun bank untuk donasi. Tambahkan akun bank untuk
-                memudahkan donatur melakukan transfer donasi.
+              <div className='flex flex-col justify-center items-center'>
+                <Image
+                  src={NotFoundBankImage}
+                  width={200}
+                  height={200}
+                  alt='bank account not found'
+                />
+                <div className='text-center text-gray-500 py-4'>
+                  <p>Belum ada akun bank untuk donasi.</p>{' '}
+                  <p className='text-sm'>
+                    Tambahkan akun bank untuk memudahkan donatur melakukan
+                    transfer donasi.
+                  </p>
+                </div>
               </div>
             )}
           </CardContent>
