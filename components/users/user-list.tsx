@@ -181,7 +181,7 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
                   Jenis Kelamin
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className='w-56'>
+              <DropdownMenuContent>
                 <DropdownMenuLabel>Filter Berdasarkan Jenis Kelamin</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioGroup
@@ -205,7 +205,7 @@ const UserList: React.FC<UserListProps> = ({ isCareTaker }) => {
                   Kamar Tidur
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className='w-56'>
+              <DropdownMenuContent>
                 <DropdownMenuLabel>Filter Berdasarkan Kamar Tidur</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioGroup
