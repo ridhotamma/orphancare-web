@@ -93,9 +93,10 @@ const EventFormPage: React.FC = () => {
         variant: 'success',
       });
     } catch (error: any) {
+      const errorMessage = error.message || Object.values(error)[0];
       toast({
         title: 'Terjadi Kesalahan',
-        description: error.message,
+        description: errorMessage,
         variant: 'destructive',
       });
     }
@@ -115,9 +116,10 @@ const EventFormPage: React.FC = () => {
         variant: 'success',
       });
     } catch (error: any) {
+      const errorMessage = error.message || Object.values(error)[0];
       toast({
         title: 'Terjadi Kesalahan',
-        description: error.message,
+        description: errorMessage,
         variant: 'destructive',
       });
     }
@@ -215,7 +217,7 @@ const EventFormPage: React.FC = () => {
                     id='startDate'
                     name='startDate'
                     type='date'
-                    value={format(event.startDate, 'yyyy-MM-dd')}
+                    value={event.startDate}
                     onChange={handleInputChange}
                     required
                   />
@@ -226,7 +228,7 @@ const EventFormPage: React.FC = () => {
                     id='endDate'
                     name='endDate'
                     type='date'
-                    value={format(event.endDate, 'yyyy-MM-dd')}
+                    value={event.endDate}
                     onChange={handleInputChange}
                     required
                   />

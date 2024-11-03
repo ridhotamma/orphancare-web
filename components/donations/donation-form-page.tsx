@@ -115,9 +115,10 @@ const DonationFormPage: React.FC = () => {
         variant: 'success',
       });
     } catch (error: any) {
+      const errorMessage = error.message || Object.values(error)[0];
       toast({
         title: 'Terjadi Kesalahan',
-        description: error.message,
+        description: errorMessage,
         variant: 'destructive',
       });
     }
@@ -137,9 +138,10 @@ const DonationFormPage: React.FC = () => {
         variant: 'success',
       });
     } catch (error: any) {
+      const errorMessage = error.message || Object.values(error)[0];
       toast({
         title: 'Terjadi Kesalahan',
-        description: error.message,
+        description: errorMessage,
         variant: 'destructive',
       });
     }
@@ -307,7 +309,7 @@ const DonationFormPage: React.FC = () => {
                   id='receivedDate'
                   name='receivedDate'
                   type='date'
-                  value={format(donation.receivedDate, 'yyyy-MM-dd')}
+                  value={donation.receivedDate}
                   onChange={handleInputChange}
                   required
                 />

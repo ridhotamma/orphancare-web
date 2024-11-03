@@ -186,7 +186,7 @@ const EventsPage: React.FC = () => {
                   <TableCell>
                     <Badge
                       variant={'outline'}
-                      className={`border-slate-800 min-w-[130px] text-center line-clamp-1`}
+                      className={`border-slate-800`}
                     >
                       {EventStatusText[event.status]}
                     </Badge>
