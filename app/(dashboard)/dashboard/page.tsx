@@ -40,7 +40,6 @@ import EmptyImageRecentDonation from '@/images/not-found-money.png';
 import EmptyImageEvent from '@/images/not-found-document.png';
 import { EventStatusText } from '@/types/event';
 import { EventStatus } from '@/types/enums';
-import { getEventStatusColor } from '@/lib/utils';
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -368,9 +367,7 @@ const DashboardPage = () => {
                       <div className='flex justify-between items-center'>
                         <span className='font-semibold'>{event.name}</span>
                         <Badge
-                          className={`${getEventStatusColor(
-                            event.status
-                          )} text-white min-w-[130px] text-center line-clamp-1 hover:bg-none`}
+                          className={`text-white min-w-[130px] text-center line-clamp-1 hover:bg-none`}
                         >
                           {EventStatusText[event.status as EventStatus]}
                         </Badge>
