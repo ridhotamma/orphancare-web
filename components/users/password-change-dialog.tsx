@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -8,6 +8,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface PasswordChangeDialogProps {
   isPasswordModalOpen: boolean;
@@ -29,35 +30,94 @@ export const PasswordChangeDialog: React.FC<PasswordChangeDialogProps> = ({
   setConfirmPassword,
   handleChangePassword,
   isLoading,
-}) => (
-  <Dialog open={isPasswordModalOpen} onOpenChange={setIsPasswordModalOpen}>
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>Change Password</DialogTitle>
-      </DialogHeader>
-      <div className='space-y-4'>
-        <div>
-          <Label htmlFor='new-password'>New Password</Label>
-          <Input
-            id='new-password'
-            type='password'
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-          />
+}) => {
+  const [errors, setErrors] = useState<string[]>([]);
+
+  const validatePassword = (password: string): string[] => {
+    const errors: string[] = [];
+
+    if (password.length < 8) {
+      errors.push('Password harus minimal 8 karakter');
+    }
+    if (!/[A-Z]/.test(password)) {
+      errors.push('Password harus mengandung minimal satu huruf kapital');
+    }
+    if (!/\d/.test(password)) {
+      errors.push('Password harus mengandung minimal satu angka');
+    }
+
+    return errors;
+  };
+
+  const handleSubmit = () => {
+    const validationErrors = validatePassword(newPassword);
+
+    if (newPassword !== confirmPassword) {
+      validationErrors.push('Password tidak cocok');
+    }
+
+    setErrors(validationErrors);
+
+    if (validationErrors.length === 0) {
+      handleChangePassword();
+    }
+  };
+
+  return (
+    <Dialog open={isPasswordModalOpen} onOpenChange={setIsPasswordModalOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Ganti Password</DialogTitle>
+        </DialogHeader>
+        <div className='space-y-4'>
+          <div>
+            <Label htmlFor='new-password'>Password Baru</Label>
+            <Input
+              id='new-password'
+              type='password'
+              value={newPassword}
+              onChange={(e) => {
+                setNewPassword(e.target.value);
+                setErrors([]);
+              }}
+              className={errors.length > 0 ? 'border-red-500' : ''}
+            />
+          </div>
+          <div>
+            <Label htmlFor='confirm-password'>Konfirmasi Password Baru</Label>
+            <Input
+              id='confirm-password'
+              type='password'
+              value={confirmPassword}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                setErrors([]);
+              }}
+              className={errors.length > 0 ? 'border-red-500' : ''}
+            />
+          </div>
+
+          {errors.length > 0 && (
+            <Alert variant='destructive'>
+              <AlertDescription>
+                <ul className='list-disc pl-4'>
+                  {errors.map((error, index) => (
+                    <li key={index}>{error}</li>
+                  ))}
+                </ul>
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <Button
+            onClick={handleSubmit}
+            disabled={isLoading || !newPassword || !confirmPassword}
+            className='w-full'
+          >
+            Ganti Password
+          </Button>
         </div>
-        <div>
-          <Label htmlFor='confirm-password'>Confirm New Password</Label>
-          <Input
-            id='confirm-password'
-            type='password'
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-        </div>
-        <Button onClick={handleChangePassword} disabled={isLoading}>
-          Change Password
-        </Button>
-      </div>
-    </DialogContent>
-  </Dialog>
-);
+      </DialogContent>
+    </Dialog>
+  );
+};
