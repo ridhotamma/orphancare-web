@@ -21,7 +21,6 @@ import { Credentials, User } from '@/types/user';
 import { RoleType } from '@/types/enums';
 import { requests } from '@/lib/api';
 import { useRouter } from 'next/navigation';
-import useCurrentUser from '@/stores/current-user';
 
 type DetailCredentialsProps = {
   data: Omit<User, 'profile'>;
@@ -45,18 +44,18 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
   const [loadingAction, setLoadingAction] = useState(false);
   const [credentials, setCredentials] = useState<
     Credentials & Omit<User, 'profile'>
-  >({ ...data, isAdmin: data?.roles?.includes(RoleType.ADMIN) } as Credentials &
-    Omit<User, 'profile'>);
+  >({
+    ...data,
+    isAdmin: data?.roles?.includes(RoleType.ADMIN),
+  } as Credentials & Omit<User, 'profile'>);
 
   const router = useRouter();
-  const { userDetail } = useCurrentUser();
 
   const handleSaveCredentials = async () => {
-    // solusi sementara untuk mencegah penghapusan super user
-    if (userDetail?.id === credentials?.id) {
+    if (credentials?.superUser) {
       toast({
-        title: 'Tidak Dapat Mengedit Admin PSAA Annajah',
-        description: 'Super user tidak dapat diedit',
+        title: 'Tidak Dapat Mengedit Super User',
+        description: 'Hubungi Administrator untuk edit kredensial',
         variant: 'destructive',
       });
       return;
@@ -115,11 +114,10 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
   };
 
   const handleChangePassword = async () => {
-    // solusi sementara untuk mencegah perubahan password super user
-    if (userDetail?.id === credentials?.id) {
+    if (credentials?.superUser) {
       toast({
-        title: 'Tidak Dapat Mengubah Password Admin PSAA Annajah',
-        description: 'Password super user tidak dapat diubah',
+        title: 'Tidak Dapat Mengubah Password Super User',
+        description: 'Hubungi administrator untuk mengubah password',
         variant: 'destructive',
       });
       return;
@@ -167,11 +165,10 @@ export const DetailCredentials: React.FC<DetailCredentialsProps> = ({
   };
 
   const handleDeleteUser = async () => {
-    // solusi sementara untuk mencegah penghapusan super user
-    if (userDetail?.id === credentials?.id) {
+    if (credentials?.superUser) {
       toast({
-        title: 'Tidak Dapat Menghapus Admin PSAA Annajah',
-        description: 'Super user tidak dapat dihapus',
+        title: 'Tidak Dapat Menghapus Super User',
+        description: 'Hubungi Administrator untuk hapus akun',
         variant: 'destructive',
       });
       return;

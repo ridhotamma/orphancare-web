@@ -10,6 +10,7 @@ export type User = {
   roles: RoleType[];
   profile: Partial<Profile> | null;
   active: boolean;
+  superUser: boolean;
   documents: Set<Document>;
   createdAt: Date;
   updatedAt: Date;

@@ -20,6 +20,7 @@ const mockUsers: User[] = [
       gender: Gender.MALE,
     },
     active: true,
+    superUser: false,
     documents: new Set([
       {
         id: 'd1',
@@ -52,6 +53,7 @@ const mockUsers: User[] = [
       gender: Gender.FEMALE,
     },
     active: true,
+    superUser: false,
     documents: new Set([
       {
         id: 'd3',
@@ -79,6 +81,7 @@ const mockUsers: User[] = [
       gender: Gender.OTHER,
     },
     active: false,
+    superUser: false,
     documents: new Set(),
     createdAt: new Date('2023-03-01'),
     updatedAt: new Date('2023-04-12'),
@@ -100,6 +103,7 @@ const mockUsers: User[] = [
       gender: Gender.FEMALE,
     },
     active: true,
+    superUser: false,
     documents: new Set([
       {
         id: 'd4',
@@ -123,6 +127,7 @@ const mockUsers: User[] = [
     roles: [RoleType.USER],
     profile: null,
     active: true,
+    superUser: false,
     documents: new Set(),
     createdAt: new Date('2023-05-01'),
     updatedAt: new Date('2023-05-01'),
