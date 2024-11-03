@@ -288,19 +288,20 @@ const DashboardPage = () => {
                         fontSize: '14px',
                       }}
                     />
-                    {Object.keys(donationTrends[0] || {})
-                      .filter((key) => key !== 'month')
-                      .map((key, index) => (
+                    {Object.keys(donationTrends[0]?.data || {}).map(
+                      (key, index) => (
                         <Line
                           key={key}
                           type='monotone'
-                          dataKey={key}
-                          name={`Donasi ${key.charAt(0).toUpperCase() + key.slice(1)
-                            }`}
+                          dataKey={`data.${key}`}
+                          name={`Donasi ${
+                            key.charAt(0).toUpperCase() + key.slice(1)
+                          }`}
                           stroke={COLORS[index % COLORS.length]}
                           strokeWidth={3}
                         />
-                      ))}
+                      )
+                    )}
                   </LineChart>
                 </ResponsiveContainer>
               ) : (
@@ -367,7 +368,9 @@ const DashboardPage = () => {
                       <div className='flex justify-between items-center'>
                         <span className='font-semibold'>{event.name}</span>
                         <Badge
-                          className={`${getEventStatusColor(event.status)} text-white min-w-[130px] text-center line-clamp-1 hover:bg-none`}
+                          className={`${getEventStatusColor(
+                            event.status
+                          )} text-white min-w-[130px] text-center line-clamp-1 hover:bg-none`}
                         >
                           {EventStatusText[event.status as EventStatus]}
                         </Badge>
