@@ -62,13 +62,13 @@ const menuItems: MenuItem[] = [
   //   href: '/inventories',
   //   icon: Package,
   // },
-  // {
-  //   id: 'events',
-  //   label: 'Events',
-  //   title: 'Events',
-  //   href: '/events',
-  //   icon: CalendarDays,
-  // },
+  {
+    id: 'events',
+    label: 'Events',
+    title: 'Events',
+    href: '/events',
+    icon: CalendarDays,
+  },
   {
     id: 'donations',
     label: 'Donations',

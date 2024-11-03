@@ -38,6 +38,9 @@ import EmptyImageDistribution from '@/images/not-found-analytics.png';
 import EmptyImageDonation from '@/images/not-found-donation.png';
 import EmptyImageRecentDonation from '@/images/not-found-money.png';
 import EmptyImageEvent from '@/images/not-found-document.png';
+import { EventStatusText } from '@/types/event';
+import { EventStatus } from '@/types/enums';
+import { getEventStatusColor } from '@/lib/utils';
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -45,13 +48,6 @@ const formatDate = (dateString: string) => {
     month: 'short',
     day: 'numeric',
   });
-};
-
-const BadgeVariant: Record<string, any> = {
-  PENDING: 'secondary',
-  FINISHED: 'default',
-  CANCELLED: 'destructive',
-  ON_PROGRESS: 'outline',
 };
 
 const COLORS = [
@@ -299,9 +295,8 @@ const DashboardPage = () => {
                           key={key}
                           type='monotone'
                           dataKey={key}
-                          name={`Donasi ${
-                            key.charAt(0).toUpperCase() + key.slice(1)
-                          }`}
+                          name={`Donasi ${key.charAt(0).toUpperCase() + key.slice(1)
+                            }`}
                           stroke={COLORS[index % COLORS.length]}
                           strokeWidth={3}
                         />
@@ -371,8 +366,10 @@ const DashboardPage = () => {
                     <li key={event.id} className='border-b pb-2'>
                       <div className='flex justify-between items-center'>
                         <span className='font-semibold'>{event.name}</span>
-                        <Badge variant={BadgeVariant[event.status]}>
-                          {event.status}
+                        <Badge
+                          className={`${getEventStatusColor(event.status)} text-white min-w-[130px] text-center line-clamp-1 hover:bg-none`}
+                        >
+                          {EventStatusText[event.status as EventStatus]}
                         </Badge>
                       </div>
                       <div className='flex justify-between items-center text-sm text-gray-600 mt-1'>

@@ -37,18 +37,15 @@ const DonationFormPage: React.FC = () => {
   const isEditMode = !!id;
 
   const [donation, setDonation] = useState<Donation>({
-    id: '',
     name: '',
     amount: 0,
-    receivedDate: new Date(),
+    receivedDate: format(new Date(), 'yyyy-MM-dd'),
     receiver: '',
     donatorName: '',
     donationType: null,
     donationTypeId: null,
     unitId: null,
     unit: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
   });
 
   const [donationTypes, setDonationTypes] = useState<DonationType[]>([]);
@@ -316,7 +313,7 @@ const DonationFormPage: React.FC = () => {
               </div>
             </CardContent>
             <CardFooter>
-              <Button type='submit' className='w-full'>
+              <Button disabled={loading} type='submit' className='w-full'>
                 {isEditMode ? 'Update Donation' : 'Create Donation'}
               </Button>
             </CardFooter>

@@ -1,21 +1,27 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { format } from 'date-fns';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import {
-  CalendarIcon,
-  Eye,
-  Filter,
-  MapPinIcon,
-  Plus,
   Search,
-  UserIcon,
+  Filter,
+  Plus,
+  Eye,
+  ChevronsLeft,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsRight,
 } from 'lucide-react';
-import { EventStatus } from '@/types/enums';
-import { Event } from '@/types/event';
-import mockEvents from '@/data/mockup/events-mockup';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -29,60 +35,88 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { usePageTitle } from '@/hooks/use-page-title';
 import Link from 'next/link';
-
-const statusColors = {
-  [EventStatus.FINISHED]: 'bg-gray-500',
-  [EventStatus.PENDING]: 'bg-yellow-500',
-  [EventStatus.ON_PROGRESS]: 'bg-green-500',
-  [EventStatus.CANCELLED]: 'bg-red-500',
-};
-
-const EventCard: React.FC<{ event: Event }> = ({ event }) => (
-  <Card className='overflow-hidden transition-all hover:shadow-lg'>
-    <CardContent className='p-0'>
-      <div className='bg-gradient-to-r from-blue-500 to-purple-500 dark:from-blue-700 dark:to-purple-700 p-4 text-white'>
-        <h3 className='text-xl font-semibold mb-2'>{event.name}</h3>
-        <Badge className={`${statusColors[event.status]} text-xs font-medium`}>
-          {event.status}
-        </Badge>
-      </div>
-      <div className='p-4 space-y-3'>
-        <div className='flex items-center text-sm'>
-          <CalendarIcon className='mr-2 h-4 w-4 text-gray-500' />
-          <span>
-            {format(event.startDate, 'MMM d')} -{' '}
-            {format(event.endDate, 'MMM d, yyyy')}
-          </span>
-        </div>
-        <div className='flex items-center text-sm'>
-          <MapPinIcon className='mr-2 h-4 w-4 text-gray-500' />
-          <span>{event.place}</span>
-        </div>
-        <div className='flex items-center text-sm'>
-          <UserIcon className='mr-2 h-4 w-4 text-gray-500' />
-          <span>{event.organizer}</span>
-        </div>
-      </div>
-    </CardContent>
-    <CardFooter className='p-4'>
-      <Button variant='outline' className='w-full' asChild>
-        <Link href={`/events/${event.id}`}>
-          <Eye className='mr-2 h-4 w-4' /> View Details
-        </Link>
-      </Button>
-    </CardFooter>
-  </Card>
-);
+import { DateRange } from 'react-day-picker';
+import DateRangeFilter from '@/components/ui/date-range';
+import { Event, EventStatusText } from '@/types/event';
+import { requests } from '@/lib/api';
+import { useToast } from '@/hooks/use-toast';
+import EmptyContainer from '@/components/container/empty-container';
+import EmptyImageEvent from '@/images/not-found-event.png';
+import Image from 'next/image';
+import LoadingContainer from '@/components/container/loading-container';
+import { useDebounce } from '@/hooks/use-debounce';
+import { EventStatus } from '@/types/enums';
+import { getEventStatusColor } from '@/lib/utils';
 
 const EventsPage: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterCategory, setFilterCategory] = useState('all');
-
   usePageTitle('Events');
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [events, setEvents] = useState<Event[]>([]);
+  const [paginationMeta, setPaginationMeta] = useState<Record<string, any>>({});
+  const [loading, setLoading] = useState(false);
+
+  const { toast } = useToast();
+
+  const getEvents = async (params: Record<string, any> = {}) => {
+    setLoading(true);
+    try {
+      const response = await requests({
+        url: '/admin/events',
+        method: 'GET',
+        params: {
+          perPage: 50,
+          ...params,
+        },
+      });
+      setEvents(response.data);
+      setPaginationMeta(response.meta);
+    } catch (error: any) {
+      toast({
+        title: 'Error Occurred',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const debounceSearch = useDebounce(searchQuery, 400);
+
+  useEffect(() => {
+    getEvents({
+      name: debounceSearch,
+      startDateFrom: dateRange?.from
+        ? format(dateRange.from, 'yyyy-MM-dd')
+        : undefined,
+      startDateTo: dateRange?.to
+        ? format(dateRange.to, 'yyyy-MM-dd')
+        : undefined,
+      status: filterStatus === 'all' ? undefined : filterStatus,
+    });
+  }, [debounceSearch, dateRange, filterStatus]);
+
+  const handlePageChange = (page: number) => {
+    getEvents({
+      name: debounceSearch,
+      page,
+      startDateFrom: dateRange?.from
+        ? format(dateRange.from, 'yyyy-MM-dd')
+        : undefined,
+      startDateTo: dateRange?.to
+        ? format(dateRange.to, 'yyyy-MM-dd')
+        : undefined,
+      status: filterStatus === 'all' ? undefined : filterStatus,
+    });
+  };
+
+
   return (
-    <div>
-      <div className='mb-8 space-y-4'>
+    <div className='space-y-6'>
+      <div className='flex flex-col space-y-4'>
         <div className='flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4'>
           <div className='relative flex-grow'>
             <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400' />
@@ -95,28 +129,30 @@ const EventsPage: React.FC = () => {
             />
           </div>
           <div className='flex items-center gap-4'>
+            <DateRangeFilter
+              dateRange={dateRange}
+              onDateRangeChange={setDateRange}
+            />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant='outline'>
                   <Filter className='mr-2 h-4 w-4' />
-                  Category
+                  Status
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className='w-56'>
-                <DropdownMenuLabel>Filter Documents</DropdownMenuLabel>
+                <DropdownMenuLabel>Filter Status</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioGroup
-                  value={filterCategory}
-                  onValueChange={setFilterCategory}
+                  value={filterStatus}
+                  onValueChange={setFilterStatus}
                 >
                   <DropdownMenuRadioItem value='all'>All</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value='video'>
-                    Video
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value='pdf'>PDF</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value='image'>
-                    Image
-                  </DropdownMenuRadioItem>
+                  {Object.values(EventStatus).map((status) => (
+                    <DropdownMenuRadioItem key={status} value={status}>
+                      {EventStatusText[status]}
+                    </DropdownMenuRadioItem>
+                  ))}
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -128,11 +164,119 @@ const EventsPage: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-        {mockEvents.map((event) => (
-          <EventCard key={event.id} event={event} />
-        ))}
-      </div>
+
+      <LoadingContainer loading={loading}>
+        <div className='rounded-md border'>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Start Date</TableHead>
+                <TableHead>End Date</TableHead>
+                <TableHead>Place</TableHead>
+                <TableHead>Organizer</TableHead>
+                <TableHead className='w-[100px]'>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {events.map((event) => (
+                <TableRow key={event.id}>
+                  <TableCell className='font-medium'>{event.name}</TableCell>
+                  <TableCell>
+                    <Badge
+                      className={`${getEventStatusColor(event.status)} text-white min-w-[140px] text-center line-clamp-1 hover:bg-none`}
+                    >
+                      {EventStatusText[event.status]}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{format(event.startDate, 'PPP')}</TableCell>
+                  <TableCell>{format(event.endDate, 'PPP')}</TableCell>
+                  <TableCell>{event.place}</TableCell>
+                  <TableCell>{event.organizer}</TableCell>
+                  <TableCell>
+                    <Button variant='outline' size='sm' asChild>
+                      <Link href={`/events/${event.id}`}>
+                        <Eye className='mr-2 h-4 w-4' />
+                        View
+                      </Link>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        {events.length === 0 && (
+          <EmptyContainer
+            text='No events found'
+            image={
+              <Image
+                src={EmptyImageEvent}
+                alt='Empty state illustration'
+                objectFit='contain'
+                width={300}
+              />
+            }
+          />
+        )}
+      </LoadingContainer>
+
+      {events.length > 0 && (
+        <div className='flex items-center justify-between px-2 py-4'>
+          <div className='text-sm text-muted-foreground'>
+            Showing {paginationMeta.currentPage * paginationMeta.perPage + 1} to{' '}
+            {Math.min(
+              (paginationMeta.currentPage + 1) * paginationMeta.perPage,
+              paginationMeta.total
+            )}{' '}
+            of {paginationMeta.total} entries
+          </div>
+          <div className='flex items-center space-x-2'>
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={() => handlePageChange(0)}
+              disabled={paginationMeta.currentPage === 0}
+            >
+              <ChevronsLeft className='h-4 w-4' />
+            </Button>
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={() => handlePageChange(paginationMeta.currentPage - 1)}
+              disabled={paginationMeta.currentPage === 0}
+            >
+              <ChevronLeft className='h-4 w-4' />
+            </Button>
+            <span className='text-sm'>
+              Page {paginationMeta.currentPage + 1} of{' '}
+              {paginationMeta.totalPages}
+            </span>
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={() => handlePageChange(paginationMeta.currentPage + 1)}
+              disabled={
+                paginationMeta.currentPage === paginationMeta.totalPages - 1
+              }
+            >
+              <ChevronRight className='h-4 w-4' />
+            </Button>
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={() => handlePageChange(paginationMeta.totalPages - 1)}
+              disabled={
+                paginationMeta.currentPage === paginationMeta.totalPages - 1
+              }
+            >
+              <ChevronsRight className='h-4 w-4' />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

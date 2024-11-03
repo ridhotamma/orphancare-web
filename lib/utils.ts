@@ -1,3 +1,4 @@
+import { EventStatus } from '@/types/enums';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -24,4 +25,14 @@ export const unformatNumber = (value: string): number => {
   if (!value) return 0;
   const numberStr = value.replace(/\./g, '').replace(',', '.');
   return Number(numberStr);
+};
+
+export const getEventStatusColor = (status: EventStatus) => {
+  const colors = {
+    [EventStatus.FINISHED]: 'bg-gray-500',
+    [EventStatus.PENDING]: 'bg-yellow-500',
+    [EventStatus.ON_PROGRESS]: 'bg-green-500',
+    [EventStatus.CANCELLED]: 'bg-red-500',
+  };
+  return colors[status] || 'bg-gray-500';
 };

@@ -2,16 +2,16 @@ import { DonationType } from '@/types/donation-type';
 import { Unit } from '@/types/unit';
 
 export type Donation = {
-  id: string;
+  id?: string;
   name: string;
   amount: number;
-  receivedDate: Date;
+  receivedDate: string;
   receiver: string;
   donatorName: string;
   donationType?: DonationType | null;
   donationTypeId?: string | null;
   unit: Unit | null;
   unitId: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 };
