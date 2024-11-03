@@ -185,7 +185,7 @@ const EventsPage: React.FC = () => {
                   <TableCell className='font-medium'>{event.name}</TableCell>
                   <TableCell>
                     <Badge
-                      className={`${getEventStatusColor(event.status)} text-white min-w-[140px] text-center line-clamp-1 hover:bg-none`}
+                      className={`${getEventStatusColor(event.status)} text-white min-w-[130px] text-center line-clamp-1 hover:bg-none`}
                     >
                       {EventStatusText[event.status]}
                     </Badge>
