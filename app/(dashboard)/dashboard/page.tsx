@@ -55,21 +55,21 @@ const BadgeVariant: Record<string, any> = {
 };
 
 const COLORS = [
-  '#0088FE',  // Vivid Blue
-  '#00C49F',  // Teal
-  '#FFBB28',  // Golden Yellow
-  '#FF8042',  // Orange
-  '#8884D8',  // Purple
-  '#FF4D6D',  // Pink
-  '#4CAF50',  // Green
-  '#607D8B',  // Blue Gray
-  '#009688',  // Dark Teal
-  '#FF6B6B',  // Coral
-  '#3F51B5',  // Indigo
-  '#795548',  // Brown
-  '#F44336',  // Red
-  '#FFA726',  // Light Orange,
-  '#9C27B0',  // Deep Purple
+  '#0088FE', // Vivid Blue
+  '#00C49F', // Teal
+  '#FFBB28', // Golden Yellow
+  '#FF8042', // Orange
+  '#8884D8', // Purple
+  '#FF4D6D', // Pink
+  '#4CAF50', // Green
+  '#607D8B', // Blue Gray
+  '#009688', // Dark Teal
+  '#FF6B6B', // Coral
+  '#3F51B5', // Indigo
+  '#795548', // Brown
+  '#F44336', // Red
+  '#FFA726', // Light Orange,
+  '#9C27B0', // Deep Purple
 ];
 
 const DashboardPage = () => {
@@ -277,7 +277,7 @@ const DashboardPage = () => {
                     <XAxis dataKey='month' />
                     <YAxis
                       label={{
-                        value: 'Number of Donations',
+                        value: 'Jumlah Donasi',
                         angle: -90,
                         position: 'insideLeft',
                         offset: 0,
@@ -292,27 +292,20 @@ const DashboardPage = () => {
                         fontSize: '14px',
                       }}
                     />
-                    <Line
-                      type='monotone'
-                      dataKey='donasi makanan'
-                      stroke='#8884d8'
-                      name='Donasi Makanan'
-                      strokeWidth={3}
-                    />
-                    <Line
-                      type='monotone'
-                      dataKey='donasi kendaraan'
-                      stroke='#82ca9d'
-                      name='Donasi Kendaraan'
-                      strokeWidth={3}
-                    />
-                    <Line
-                      type='monotone'
-                      dataKey='donasi alat masak'
-                      stroke='#ffc658'
-                      name='Donasi Alat Masak'
-                      strokeWidth={3}
-                    />
+                    {Object.keys(donationTrends[0] || {})
+                      .filter((key) => key !== 'month')
+                      .map((key, index) => (
+                        <Line
+                          key={key}
+                          type='monotone'
+                          dataKey={key}
+                          name={`Donasi ${
+                            key.charAt(0).toUpperCase() + key.slice(1)
+                          }`}
+                          stroke={COLORS[index % COLORS.length]}
+                          strokeWidth={3}
+                        />
+                      ))}
                   </LineChart>
                 </ResponsiveContainer>
               ) : (
