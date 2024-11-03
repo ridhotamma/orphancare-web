@@ -230,10 +230,16 @@ const DonationFormPage: React.FC = () => {
                   <Label htmlFor='amount'>Amount</Label>
                   <NumericFormat
                     value={donation.amount}
-                    onChange={handleInputChange}
+                    onValueChange={(values) =>
+                      setDonation((prev) => ({
+                        ...prev,
+                        amount: values.floatValue as number,
+                      }))
+                    }
                     allowLeadingZeros
                     thousandSeparator=','
                     customInput={Input}
+                    name='amount'
                   />
                 </div>
                 <div className='space-y-2'>
@@ -293,6 +299,7 @@ const DonationFormPage: React.FC = () => {
                 <Select
                   onValueChange={handleDonationTypeChange}
                   value={donation.donationTypeId as string}
+                  required
                 >
                   <SelectTrigger>
                     <SelectValue placeholder='Select donation type' />

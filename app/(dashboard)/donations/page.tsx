@@ -109,8 +109,8 @@ const DonationsPage: React.FC = () => {
   useEffect(() => {
     getDonations({
       name: debounceSearch,
-      startDate: dateRange?.from ? format(dateRange?.from || new Date(), 'yyyy-MM-dd') : null,
-      endDate: dateRange?.to ? format(dateRange?.to || new Date(), 'yyyy-MM-dd') : null,
+      startDate: format(dateRange?.from || new Date(), 'yyyy-MM-dd'),
+      endDate: format(dateRange?.to || new Date(), 'yyyy-MM-dd'),
       donationTypeId: filterCategory === 'all' ? null : filterCategory,
     });
   }, [debounceSearch, dateRange, filterCategory]);
